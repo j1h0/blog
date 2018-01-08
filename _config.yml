@@ -5,8 +5,9 @@ description: |-
   관심분야 : Cybercrime, Digital forensics, Data Analysis
 baseurl: ''
 url: ''
-twitter_username: ''
+twitter_username: 'j1h0'
 github_username: j1h0
+facebook_username: jh10.s
 markdown: kramdown
 theme: minima
 plugins:
