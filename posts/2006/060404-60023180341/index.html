@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[MS-SQL] SQL의 ANSI 표준 옵션 인자들.. · 심플하고 여유있는 삶</title><meta name="description" content="SQL 옵션 SQL 옵션은 ANSI 표준 옵션을 제어합니다. ANSINULLDEFAULT 사용자가 데이터베이스의 기본 Null 허용 여부를 결정할 수 있도록 합니다. NULL 또는 NOT NULL이…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2006/060404-60023180341/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[MS-SQL] SQL의 ANSI 표준 옵션 인자들.."><meta property="og:description" content="SQL 옵션 SQL 옵션은 ANSI 표준 옵션을 제어합니다. ANSINULLDEFAULT 사용자가 데이터베이스의 기본 Null 허용 여부를 결정할 수 있도록 합니다. NULL 또는 NOT NULL이…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2006/060404-60023180341/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2006-04-04T00:40:00.000Z" data-pagefind-meta="date:2006-04-04">2006.04.04.</time></p><h1>[MS-SQL] SQL의 ANSI 표준 옵션 인자들..</h1></header><div class="prose"><h3 id="sql-옵션">SQL 옵션</h3>
+<p>SQL 옵션은 ANSI 표준 옵션을 제어합니다.</p>
+<p><strong>ANSI_NULL_DEFAULT</strong></p>
+<p>사용자가 데이터베이스의 기본 Null 허용 여부를 결정할 수 있도록 합니다. NULL 또는 NOT NULL이 확실히 지정되지 않으면 사용자 정의 데이터 형식이나 열 정의에서 Null 허용 여부의 기본값을 사용합니다. Null 허용 여부는 세션 및 데이터베이스 설정에 의해 결정됩니다. Microsoft SQL Server™ 2000의 기본값은 NOT NULL입니다. ANSI 호환을 위해 데이터베이스 옵션 ANSI_NULL_DEFAULT를 ON으로 설정하면 데이터베이스의 기본값이 NULL로 변경됩니다.</p>
+<p>이 옵션이 ON으로 설정되면, CREATE TABLE 또는 ALTER TABLE 문에서 NOT NULL로 정의되지 않은 모든 사용자 정의 데이터 형식 또는 열에서 Null 값을 허용합니다. 제약 조건이 정의된 열은 이 설정에 상관없이 제약 조건 규칙을 따릅니다.</p>
+<p>SET 문을 사용하여 설정한 연결 수준의 설정은 ANSI_NULL_DEFAULT의 기본 데이터베이스 수준 설정을 무시합니다. 기본적으로, ODBC 및 OLE DB 클라이언트는 SQL Server에 연결할 때 세션에 대해 ANSI_NULL_DEFAULT를 ON으로 설정하여 SET 문을 실행합니다. 자세한 내용을 보려면 SET ANSI_NULL_DFLT_ON을 참조하십시오.</p>
+<p>이 옵션의 상태는 DATABASEPROPERTYEX 함수의 <strong>IsAnsiNullDefault</strong> 속성을 검사하여 알 수 있습니다.</p>
+<p><strong>ANSI_NULLS</strong></p>
+<p>이 옵션이 ON으로 설정되면 Null 값과의 모든 비교는 NULL(알 수 없음)이 됩니다. 이 옵션이 OFF로 설정되면, 유니코드가 아닌 값과 Null 값을 비교하여 두 값이 모두 Null일 때 TRUE가 됩니다. ANSI_NULLS 데이터베이스 옵션의 기본값은 OFF입니다.</p>
+<p>SET 문을 사용하여 설정한 연결 수준의 설정은 ANSI_NULLS의 기본 데이터베이스 설정을 무시합니다. 기본적으로, ODBC 및 OLE DB 클라이언트는 SQL Server에 연결할 때 세션에 대해 ANSI_NULLS을 ON으로 설정하여 연결 수준의 SET 문을 실행합니다. 자세한 내용은 SET ANSI_NULLS를 참조하십시오.</p>
+<p>계산된 열 또는 인덱스된 뷰에서 인덱스를 만들거나 변경할 때에도 SET ANSI_NULLS을 ON으로 설정해야 합니다.</p>
+<p>이 옵션의 상태는 DATABASEPROPERTYEX 함수의 <strong>IsAnsiNullsEnabled</strong> 속성을 검사하여 알 수 있습니다.</p>
+<p><strong>ANSI_PADDING</strong></p>
+<p>이 옵션이 ON으로 설정되면, <strong>varchar</strong> 열에 삽입된 문자 값의 후행 공백과 <strong>varbinary</strong> 열에 삽입된 이진 값의 후행 0이 잘리지 않습니다. 값은 열의 길이만큼 채워지지 않습니다. 이 옵션을 OFF로 설정하면, 후행 공백(<strong>varchar</strong>에서)과 0(<strong>varbinary</strong>에서)이 잘립니다. 이 설정은 새 열의 정의에만 영향을 미칩니다.</p>
+<p>SET ANSI_PADDING이 ON으로 설정되면 Null을 허용하는 <strong>Char(<strong>n</strong>)</strong> 및 <strong>binary(<strong>n</strong>)</strong> 열이 열의 길이에 채워지지만, SET ANSI_PADDING이 OFF로 설정되면 후행 공백과 0이 잘립니다. Null을 허용하지 않는 <strong>Char(<strong>n</strong>)</strong> 및 <strong>binary(<strong>n</strong>)</strong> 열은 항상 열의 길이에 채워집니다.</p>
+<p><strong>중요</strong> ANSI_PADDING을 항상 ON으로 설정하도록 권장합니다. 계산된 열 또는 인덱스된 뷰에서 인덱스를 만들거나 변경할 때 SET ANSI_PADDING은 ON이어야 합니다.</p>
+<p>이 옵션의 상태는 DATABASEPROPERTY 함수의 <strong>IsAnsiPaddingEnabled</strong> 속성을 검사하여 알 수 있습니다.</p>
+<p><strong>ANSI_WARNINGS</strong></p>
+<p>이 옵션이 ON으로 설정되면 "0으로 나누기" 또는 집계 함수에 Null이 나타나는 등의 상태에서 오류 또는 경고가 발생합니다. 이 옵션이 OFF로 설정되면, 집계 함수에 Null 값이 나타날 때 경고가 발생하지 않고, "0으로 나누기"와 같은 상태가 발생할 때 Null 값이 반환됩니다. ANSI_WARNINGS의 기본값은 OFF입니다.</p>
+<p>계산된 열 또는 인덱스된 뷰에서 인덱스를 만들거나 변경할 때 SET ANSI_WARNINGS은 ON으로 설정되어야 합니다.</p>
+<p>SET 문을 사용하여 설정한 연결 수준 설정은 ANSI_WARNINGS의 기본 데이터베이스 설정을 무시합니다. 기본적으로, ODBC 및 OLE DB 클라이언트는 SQL Server에 연결할 때 세션에 대해 ANSI_WARNINGS를 ON으로 설정하여 연결 수준의 SET 문을 실행합니다. 자세한 내용을 보려면 SET ANSI_WARNINGS를 참조하십시오.</p>
+<p>이 옵션의 상태는 DATABASEPROPERTYEX 함수의 <strong>IsAnsiWarningsEnabled</strong> 속성을 검사하여 알 수 있습니다.</p>
+<p><strong>ARITHABORT</strong></p>
+<p>이 옵션이 ON으로 설정되면, 오버플로 또는 0으로 나누기 오류가 발생하여 쿼리 또는 일괄 처리가 종료되도록 합니다. 트랜잭션에서 오류가 발생하면 트랜잭션이 롤백됩니다. 이 옵션이 OFF로 설정되면, 이러한 오류 중 하나가 발생할 경우 경고 메시지가 표시되지만, 쿼리, 일괄 처리 또는 트랜잭션이 오류가 발생하지 않은 것처럼 계속 처리됩니다.</p>
+<p>계산된 열 또는 인덱스된 뷰에서 인덱스를 만들거나 변경할 때 SET ARITHABORT는 ON으로 설정되어야 합니다.</p>
+<p>이 옵션의 상태는 DATABASEPROPERTYEX 함수의 <strong>IsArithmeticAbortEnabled</strong> 속성을 검사하여 알 수 있습니다.</p>
+<p><strong>NUMERIC_ROUNDABORT</strong></p>
+<p>ON을 지정하면 식에서 정밀도 손실이 발생할 경우 오류가 생성됩니다. 이 옵션이 OFF로 설정되면, 정밀도의 손실로 인한 오류 메시지가 생성되지 않고 결과를 저장하는 열 또는 변수의 정밀도에 따라 결과값이 반올림됩니다.</p>
+<p>계산된 열 또는 인덱스된 뷰에서 인덱스를 만들거나 변경할 때 SET NUMERIC_ROUNDABORT는 ON으로 설정되어야 합니다.</p>
+<p>이 옵션의 상태는 DATABASEPROPERTYEX 함수의 <strong>IsNumericRoundAbortEnabled</strong> 속성을 검사하여 알 수 있습니다.</p>
+<p><strong>CONCAT_NULL_YIELDS_NULL</strong></p>
+<p>이 옵션이 ON으로 설정될 경우, 연결 연산의 피연산자 중 하나가 NULL이면 연산 결과는 NULL이 됩니다. 예를 들어, 문자열 "This is"와 NULL을 연결하면 결과는 "This is"가 아니라 NULL이 됩니다.</p>
+<p>이 옵션이 OFF로 설정될 경우, Null 값과 특정 문자열을 연결하면 연산 결과가 문자열이 됩니다. Null 값은 빈 문자열로 간주됩니다. CONCAT_NULL_YIELDS_NULL의 기본값은 OFF입니다.</p>
+<p>계산된 열 또는 인덱스된 뷰에서 인덱스를 만들거나 변경할 때 SET CONCAT_NULL_YIELDS_NULL은 ON으로 설정되어야 합니다.</p>
+<p>SET 문을 사용하여 설정한 연결 수준의 설정은 CONCAT_NULL_YIELDS_NULL의 기본 데이터베이스 설정을 무시합니다. 기본적으로, ODBC 및 OLE DB 클라이언트는 SQL Server에 연결할 때 세션에 대해 CONCAT_NULL_YIELDS_NULL을 ON으로 설정하여 연결 수준의 SET 문을 실행합니다. 자세한 내용은 SET CONCAT_NULL_YIELDS_NULL을 참조하십시오.</p>
+<p>이 옵션의 상태는 DATABASEPROPERTYEX 함수의 <strong>IsNullConcat</strong> 속성을 검사하여 알 수 있습니다.</p>
+<p><strong>QUOTED_IDENTIFIER</strong></p>
+<p>이 옵션이 ON으로 설정되면, 식별자를 큰따옴표로 구분할 수 있고 리터럴을 작은따옴표로 구분해야 합니다. 큰따옴표로 구분되는 모든 문자열은 개체 식별자로 해석됩니다. 따옴표 붙은 식별자는 Transact-SQL 식별자 규칙을 따르지 않아도 됩니다. 따옴표 붙은 식별자는 키워드일 수 있고 Transact-SQL 식별자에서 일반적으로 허용되지 않는 문자를 포함할 수 있습니다. 작은따옴표(')가 리터럴 문자열의 일부이면, 큰따옴표(")로 나타낼 수 있습니다.</p>
+<p>이 옵션이 OFF(기본값)로 설정되면, 식별자가 따옴표 안에 있을 수 없고 모든 Transact-SQL 식별자 규칙을 따라야 합니다. 리터럴은 작은따옴표 또는 큰따옴표로 구분할 수 있습니다.</p>
+<p>SQL Server는 식별자가 대괄호([ ])로 구분되는 것을 허용합니다. 대괄호로 묶인 식별자는 QUOTED_IDENTIFIER의 설정에 관계없이 항상 사용될 수 있습니다. 자세한 내용은 구분 식별자를 참조하십시오.</p>
+<p>계산된 열 또는 인덱스된 뷰에서 인덱스를 만들거나 변경할 때 SET SET QUOTED_IDENTIFIER는 ON으로 설정되어야 합니다.</p>
+<p>SET 문을 사용하여 설정한 연결 수준의 설정은 QUOTED_IDENTIFIER의 기본 데이터베이스 설정을 무시합니다. 기본적으로, ODBC 및 OLE DB 클라이언트는 SQL Server에 연결할 때 QUOTED_IDENTIFIER를 ON으로 설정하여 연결 수준의 SET 문을 실행합니다. 자세한 내용을 보려면 SET QUOTED_IDENTIFIER를 참조하십시오.</p>
+<p>이 옵션의 상태는 DATABASEPROPERTYEX 함수의 <strong>IsQuotedIdentifiersEnabled</strong> 속성을 검사하여 알 수 있습니다.</p>
+<p><strong>RECURSIVE_TRIGGERS</strong></p>
+<p>이 옵션이 ON으로 설정되면, 트리거를 재귀적으로 시작합니다. 이 옵션이 OFF(기본값)이면, 트리거가 재귀적으로 시작될 수 없습니다..</p>
+<p><strong>참고</strong> RECURSIVE_TRIGGERS가 OFF로 설정되면 직접 재귀만 허용되지 않습니다. 간접 재귀를 비활성 상태로 만들려면, <strong>nested triggers</strong> 서버 옵션을 <strong>0</strong>으로 설정해야 합니다.</p>
+<p>이 옵션의 상태는 DATABASEPROPERTYEX 함수의 <strong>IsRecursiveTriggersEnabled</strong> 속성을 검사하여 알 수 있습니다.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60023180341" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2006/060404-60023180210/"><span>이전 글</span>[MS-SQL] QUOTED_IDENTIFIER</a><a class="newer" href="/blog/posts/2006/060424-60023822981/"><span>다음 글</span>[공유] 주민번호 체크섬</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[리눅스]sendmail SMTP포트변경 · 심플하고 여유있는 삶</title><meta name="description" content="| 리눅스에 센드메일 을 설치하려하는데 SMTP포트(25)를 변경하고싶습니다.방법이있는지.. | |---| | 평점 : + 1 (1 명) 나도 평가하기 leejae25 조회 :175 답변 : 1 |…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2005/051015-60018423736/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[리눅스]sendmail SMTP포트변경"><meta property="og:description" content="| 리눅스에 센드메일 을 설치하려하는데 SMTP포트(25)를 변경하고싶습니다.방법이있는지.. | |---| | 평점 : + 1 (1 명) 나도 평가하기 leejae25 조회 :175 답변 : 1 |…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2005/051015-60018423736/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2005-10-15T02:36:00.000Z" data-pagefind-meta="date:2005-10-15">2005.10.15.</time></p><h1>[리눅스]sendmail SMTP포트변경</h1></header><div class="prose">
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>리눅스에 센드메일 을 설치하려하는데 SMTP포트(25)를 변경하고싶습니다.방법이있는지..</th></tr></thead><tbody><tr><td>평점 :                 + 1 (1 명) <a href="http://kin.naver.com/db/detail.php?d1id=1&#x26;dir_id=10202&#x26;eid=V5j%2FbrpKsXVvD0Igr70Icd4MzVApqlly#g_b_zone">나도 평가하기</a> leejae25  조회 :175 답변 : 1</td></tr></tbody></table>
+
+
+
+
+
+
+
+<table><thead><tr><th>답변이 완료된 질문입니다. (2005-08-17 00:46 작성)</th><th>신고하기</th></tr></thead></table>
+<p>리눅스에 기존 자바메일이 운용중입니다.. 물론 SMTP포트 25번을 사용중이고 이번에 센드메일을 또 설치하여 2개의 메일서버를 운용하려고합니다.. 센드메일의 SMTP 포트 변경할수 있는 방법이 있는지.. ( 자바메일은 주 메일로 사용하고 센드메일은 로컬계정에만 이용할려고 합니다..) 답변부탁드립니다..</p>
+
+
+
+
+
+
+
+<table><thead><tr><th>질문자가 선택한 답변</th><th></th></tr></thead></table>
+<p>re: 리눅스에 센드메일 을 설치하려하는데 SMTP포트(25)를 변경하고싶습니다.방법이있는지..</p>
+<p>| rarravis (2005-08-17 10:44 작성) | 이의제기 \| 신고하기 |
+|---|---|</p>
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>질문자 평 ㅎㅎ 감사합니다~ 저도열씨미배워 남들에게 도움이 되겠습니다~^^</th></tr></thead></table>
+<p>안녕하세요.</p>
+<p>smtp 포트를 변경하는 방법은 여러개가 있지만, 가장 쉬운 방법을 알려드리겠습니다.</p>
+<p>/etc/services 파일을 열어서 보시면 smtp 를 검색해 보시면</p>
+<p>smtp 25/tcp</p>
+<p>smtp 25/udp</p>
+<p>라고된 부분이 보일겁니다. 여기의 25를 사용하고자 하는 포트 번호로 변경해 주세요.</p>
+<p>2525 정도...</p>
+<p>smtp 2525/tcp</p>
+<p>smtp 2525/udp</p>
+<p>이렇게 하시면 되겠죠... 여기서 한가지 주의하실점은 만약 기존의 메일서버가 /etc/services 파일을 참조하여 포트를 설정한다면 이런 방식으로 하면 기존의 메일서버가 작동하지 않는다는 것입니다.</p>
+<p>위와 같이 변경해 보시고 기존 메일이 제대로 전송되지 않는다면, 아래의 작업을 따라해 보세요. 위의 방법으로 둘다 문제 없이 된다면 아래부분을 일부러 손댈 필요는 없을듯 싶습니다.</p>
+<p># vi /etc/sendmail.cf<br>
+# SMTP daemon options<br>
+O Daemon<strong>Port</strong>Options=<strong>Port</strong>=smtp,Addr=127.0.0.1, Name=MTA</p>
+<p>라는 부분을 찾아서 아래와 같이 바꿔주세요.<br>
+O Daemon<strong>Port</strong>Options=<strong>Port</strong>=2525,Name=MTA</p>
+<p>사용자 인증을 사용하기 위해서는 아래의 부분도 수정해 주세요.</p>
+<p># vi /etc/mail/sendmail.mc<br>
+dnl TRUST_AUTH_MECH(`DIGEST-MD5 CRAM-MD5 LOGIN PLAIN')dnl<br>
+dnl define(`confAUTH_MECHANISMS', `DIGEST-MD5 CRAM-MD5 LOGIN PLAIN')dnl<br>
+위의 2 라인을 찾아서 앞쪽의 dnl(주석) 을 제거해 주시고,<br>
+DAEMON_OPTIONS(`<strong>Port</strong>=smtp,Name=MTA')</p>
+<p>라는 라인을 찾아서<br>
+DAEMON_OPTIONS(`<strong>Port</strong>=2525,Name=MTA')</p>
+<p>로 바꿔주세요</p>
+<p>파일을 저장하고 나서 sendmail.cf 파일을 다시 만들어줘야합니다.</p>
+<p># m4 /etc/mail/sendmail.mc > /etc/sendmail.cf</p>
+<p>이렇게 하시고 /etc/init.d/sendmail restart 또는 start 하시면 될겁니다.</p>
+<p>좋은 하루 되십시오.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60018423736" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2005/051015-60018423436/"><span>이전 글</span>[리눅스][펌] Sendmail 서버 구축하기</a><a class="newer" href="/blog/posts/2005/051108-60019241225/"><span>다음 글</span>[델파이] [펌] [DOCS] 델파이 관련 자료 및 사이트</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

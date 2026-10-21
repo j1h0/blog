@@ -1,0 +1,591 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[오라클*리눅스]Oracle8 + Linux 설치와 네트웍설정  · 심플하고 여유있는 삶</title><meta name="description" content="목적 : Linux 에 Oracle 8 on Linux Enterprise Edition 을 설치하고 SQLNet 과 Windows 에서 Odbc 를 설정한다. +-------------------…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2005/050924-60017747115/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[오라클*리눅스]Oracle8 + Linux 설치와 네트웍설정 "><meta property="og:description" content="목적 : Linux 에 Oracle 8 on Linux Enterprise Edition 을 설치하고 SQLNet 과 Windows 에서 Odbc 를 설정한다. +-------------------…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2005/050924-60017747115/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2005-09-24T06:17:00.000Z" data-pagefind-meta="date:2005-09-24">2005.09.24.</time></p><h1>[오라클*리눅스]Oracle8 + Linux 설치와 네트웍설정 </h1></header><div class="prose"><p>목적 : Linux 에 Oracle 8 on Linux Enterprise Edition 을 설치하고 SQL*Net 과<br>
+Windows 에서 Odbc 를 설정한다.</p>
+<p>+-----------------------------------------------------------------------------+<br>
+참고한곳 <a href="http://technet.oracle.co.kr">http://technet.oracle.co.kr</a><br>
+<a href="http://database.sarang.net">http://database.sarang.net</a><br>
+<a href="http://technet.oracle.com">http://technet.oracle.com</a><br>
+참고한글 : 오라클 메뉴얼<br>
++-----------------------------------------------------------------------------+</p>
+<p>시스템 요구사항</p>
+<p>메모리 : 최소 48MB RAM<br>
+- 활용의 목적이 아닐 경우 32메가도 가능</p>
+<p>스왑영역 : 일반적으로 RAM의 3배 크기의 스왑영역이 권장.<br>
+1GB이상의 RAM을 가진 시스템에서는 2배 크기의 스왑영역이 권장된다.</p>
+<p>디스크 : 최소한 4개(At least four devices) : Oracle 소프트웨어 설치를 위해<br>
+하나, 나머지 세개는 OFA호환 데이터베이스를 생성하기 위해 사용된다.<br>
+- 활용의 목적이 아닐 경우 한 개의 디스크라도 상관없다.<br>
+- 활용의 목적이라면 최소 2개의 물리적 디스크 추천 (리눅스, 오라클 )<br>
+- 다운로드받은파일과 압축을 풀고 설치할 용량으로 최소 1기가 이상이<br>
+필요하다.</p>
+<p>Operating System : Linux 2.0.34<br>
+- 오라클의 리눅스 팀은 실제 2.0.33 이상이라고 한다.<br>
+- 필자는 참고로 국내에서 유명한 알짜 리눅스 5.2를 사용하였으며 커널은<br>
+2.0.36을 사용하였다.</p>
+<p>System Libraries : GNU C Library, version 2.0.7<br>
+- 문서상에서는 2.0.7이상을 요구하고 있으나 오라클의 리눅스 개발팀으로<br>
+부터의 설명으로는 실제 2.0.6이상이면 된다고한다.</p>
+<p>Window Manager : 어떤 X 윈도우 시스템도 가능<br>
+- 솔라리스에서는 X-window 상에서 관리할수 있는 svrmgrm 이 있지만 Linux<br>
+에서는 현재 커맨드라인모드에서만 작동하는svrmgrl 만이 존재한다.</p>
+<p>root 로 하여야 할일</p>
+<p>1. 다운로드</p>
+<p><a href="http://technet.oracle.com%EC%97%90%EC%84%9C">http://technet.oracle.com에서</a> 반드시 엔터프라이즈 버젼의 오라클 리눅스를 다운<br>
+받는다.<br>
+- 필자의 경험상으로 오라클은 0.0.01 의 버전차이도 상당한 차이(안정성<br>
+,설치)가 있다. 실제로 엔터프라이즈 버전에서는 기존 install 상의 문제점<br>
+이대다수 해결이 되었다.</p>
+<p>2. ora 라는 임시디렉토리를 만든다<br>
+# mkdir ora</p>
+<p>3. /usr/src 에 다운로드 받은 Oracle8051EE_Inter.tgz 파일을 옮긴다.<br>
+# cp mv /home/urstory/Oracle8051EE_Intel.tgz /usr/src/ora</p>
+<p>3. Oracle8051EE_Intel.tgz을 /usr/src/ora에서 압축을 푼다.<br>
+tar xvfz Oracle8051EE_Intel.tgz</p>
+<p>/usr/src/ora 상에 다음과 같은 파일과 디렉토리가 생성되었을 것이다.<br>
++------------------------------------------------------------------------------+<br>
+|[root@julia ora]# ls |<br>
+|DST.LST network/ plsql/ |<br>
+|Oracle8051EE_Intel.tgz nlsrtl/ precomp/ |<br>
+|RELDESC.TXT ocommon/ rdbms/ |<br>
+|bin/ oemagent/ slax/ |<br>
+|ctx/ oracore/ sqlplus/ |<br>
+|jdbc/ orainst/ svrmgr/ |<br>
+|lib/ ord/ unix.prd |<br>
+|mlx/ otrace/ unixdoc/ |<br>
++------------------------------------------------------------------------------+</p>
+<p>4. Create Mount Points<br>
+이제 오라클을 설치할 위치를 정하는 단계이다. 여기서는 /home/oracle에 오라클을<br>
+설치하는 것으로 가정하겠다. 이 위치에 오라클을 설치할 하드디스크 파티션을 마운트<br>
+시켜야한다.<br>
+- 대부분의 사용자가 하나의 파티션에 리눅스를 설치할 것이다. 그렇지만 만일 두개<br>
+이상의 하드디스크 파티션을 이용할 것이라면 /etc/fstab의 내용을 적합하게 고쳐야<br>
+한다.각 파티션의 내용을 다음에 설명하도록 하겠다.</p>
+<p>5. DBA group 생성<br>
+/etc/group 파일에 dba라는 그룹을 생성한다.<br>
+1) linux 유틸리티를 이용한 그룹생성 - 유틸리티를 이용하여서 생성하였다 하더래<br>
+도 dba 의 gid 는 vi나 cat 명령등으로<br>
+확인하여야 한다.<br>
+# groupadd dba<br>
+2) 혹은 직접 vi edit 로 /etc/group을 편집할수도 있다.</p>
+<p>+----------------------------------------------------------------------------+<br>
+dba:x:502: &#x3C;== 다음과 같은식으로 gid 가 중복이 안되도록 하여 삽입한다.<br>
+gid<br>
++----------------------------------------------------------------------------+</p>
+<p>+-----------------------------------------------------------------------------+<br>
+여기서 잠깐 ***<br>
+- 리눅스 커널 설정 : 솔라리스의 경우에는 다음의 값들을 /etc/system 파일에서<br>
+설정해 주어야 하지만, 설정을 하지 않아 문제가 발생한적은 없었다. 기본 커널<br>
+상태로 놓고 인스톨하여도 무방하다. (레드헷의 디폴트 커널이든 다시 컴파일한<br>
+커널이든)</p>
+<p>-오라클8 서버의 SGA 구조를 수용하기위해 리눅스 커널의 Interprocess<br>
+Communication (IPC) 파라메터들을 설정해야한다. 시스템이 SGA를 수용하기에 충분한<br>
+shared 메모리를 가지지 않았다면 데이터베이스를 실행할 수 없을 것이다.</p>
+<p>1. 시스템의 현재 shared 메모리dhk 세마포어(semaphore) 세그먼트 상황을 알기<br>
+위해서 ipcs 명령을 사용한다.</p>
+<p>2. 다음에 상응하는 커널 파라메터를 설정한다.<br>
+maximum size of a shared memory segment(SHMMAX)<br>
+maximum number of shared memory segments in the system(SHMMNI)<br>
+maximum number of shared memory segments a user process can attatch(SHMSEG)<br>
+maximum amount of shared memory that can be allocated system-wide(SHMMNS)<br>
+SHMMAX*SHMSEG에 의해 허용되는 전체 shred 메모리 크기가 결정된다.</p>
+<p>3. 아래에 설명된 세마포어와 shared 메모리 제어를 위한 파라메터들의 권장값들은<br>
+하나의 인스턴스에 최적화 되어 있으며 디폴트 initsid.ora 파일에 기반을 두고<br>
+있다. 만일 하나이상의 인스턴스를 설치하려거나 initsid.ora 파일을 수정하려면<br>
+여기있는 파라메터들의 값들을 높여 주어야 한다.<br>
+Oracle사는 가능한한 이 값들을 높게 지정할 것을 권장하지만 너무 높은 값은<br>
+오히려 컴퓨터가 부팅하지 못하는 사태를 일으키기도 한다.</p>
+<p>4. 공유 메모리와 세마포어 파라메터<br>
+1) SHMMAX = 4294967295 : 단일 공유메모리 세그먼트의 최대크기(바이트단위)<br>
+2) SHMMIN = 1 : 단일 공유메모리 세그먼트의 최소크기(바이트)<br>
+3) SHMIMNI = 100 : 공유메모리 지시자(identifiers)의 갯수<br>
+4) SHMSEG = 10 : 각 프로세스에 부여될 수 있는 공유메모리 세그먼드의 최대 갯수<br>
+5) SEMMNS = 200 : 시스템 내의 세마포어 갯수<br>
+6) SEMMNI = 70 : 세마포어 지시자(identifiers)의 갯수. SEMMNI은 동시에 생성될<br>
+수 있는 세마포어 갯수를 결정한다.<br>
+7) SEMMSL = PROCESSES 초기화 파라메터의 값과 같거나 크도록 : 하나의 세마포어<br>
+안에 존재할 수 있는 세마포어들의 최대 갯수. 오라클 프로세스들의 최대 갯수와<br>
+같아야 한다.</p>
+<p>+-----------------------------------------------------------------------------+</p>
+<p>6. 오라클 관리자 계정 생성<br>
+adduser 혹은 useradd 로 dba그룹에 속하는 유저 oracle을 생성한다.<br>
+Login Name : oracle<br>
+GID : dba의 gid를 참조한다.<br>
+HOME : ORACLE_HOME과과 같으며 /home/oralce로 하겠다.<br>
+Shell : /bin/sh, /bin/csh/, or /bin/ksh 가능.<br>
+이 문서는 /bin/bash로 가정한다.</p>
+<p>1) adduser 명령으로 oracle user를 생성한다.<br>
+# adduser oracle<br>
+2) vi /etc/passwd 명령을 사용하여 oracle user 의 설정값을 위에서 설명한것대<br>
+로 바꾼다. - 항목 5에서 설명한것처럼 dba gid 와 같아야 한다.</p>
+<p>+-----------------------------------------------------------------------------+<br>
+oracle:hkfPW0UVl2zHo:501:502::/home/oracle:/bin/bash<br>
+Login Name:password:uid :gid : home : shell<br>
++-----------------------------------------------------------------------------+</p>
+<p>7. oratab 파일 생성<br>
+오라클 인스턴스에 대한 정보는 oracle 소유의 oratab 파일에 저장된다. 하지만 이<br>
+스크립트를 root로 실행해서 /var/opt/oracle 디렉토리에 oratab 파일이 생성되도록<br>
+한다. 위의 내용중의 /var/opt/oracle 디렉토리는 솔라리스용 오라클에 해당되는<br>
+말이다. 물론 리눅스용 오라클 설치 가이드를 보면 /var/opt/oracle디렉토리라고<br>
+되어있어서 그대로 번역하였지만, 실제 레드헷에서 인스톨해보면 /etc/oratab이<br>
+생성되는 것을 확인할 수 있다.</p>
+<p>1) 실제 인스톨과정에서 oratab.sh을 실행하면 ORACLE_OWNER환경변수가 설정되어있<br>
+는지 묻고 있다. 따라서 ORACLE_OWNER을 다음과 같이 설정한다.<br>
+#export ORACLE_OWNER=oracle</p>
+<p>+-----------------------------------------------------------------------------+<br>
+- ORACLE_OWNER을 설정하지 않았을 경우 나오는 메시지<br>
+[root@julia orainst]# /usr/src/ora/orainst/oratab.sh</p>
+<p>*************************************************************************<br>
+Following conditions should be met to run this script successfully.<br>
+1. Needs root permission to run this script.<br>
+2. Need to set ORACLE_OWNER enviornment variable to the user who<br>
+installs oracle product.<br>
+3. This ORACLE_OWNER should be part of group "dba".</p>
+<p>If any of these conditions are not met, please re-run after satisfying<br>
+these conditions.<br>
+*************************************************************************<br>
+Is it OK to continue (Y/N)? [Y]: y<br>
+ORACLE_OWNER is not set.<br>
+Set and export ORACLE_OWNER, then restart oratab.sh execution.<br>
++-----------------------------------------------------------------------------+</p>
+<p>2) 7-1) 과 같이 설정을 하였다면 /usr/src/ora/orainst/oratab.sh를 실행한다.<br>
+위와 같이 실행해야 /etc/oratab 파일이 생성된다.</p>
+<p>+-----------------------------------------------------------------------------+<br>
+- 아래와 같이 oratab file 이 /etc 아래에 oracle.dba 권한으로 설정되어 있음을<br>
+알수가 있다.<br>
+[root@julia orainst]# ls -la /etc/oratab<br>
+-rw-rw-r-- 1 oracle dba 667 Apr 24 21:26 /etc/oratab<br>
++-----------------------------------------------------------------------------+</p>
+<p>+-----------------------------------------------------------------------------+<br>
+- ORACLE_OWNER을 설정한후 oratab.sh을 실행한다.<br>
+[root@julia orainst]# /usr/src/ora/orainst/oratab.sh<br>
+*************************************************************************<br>
+Following conditions should be met to run this script successfully.<br>
+1. Needs root permission to run this script.<br>
+2. Need to set ORACLE_OWNER enviornment variable to the user who<br>
+installs oracle product.<br>
+3. This ORACLE_OWNER should be part of group "dba".</p>
+<p>If any of these conditions are not met, please re-run after satisfying<br>
+these conditions.<br>
+*************************************************************************<br>
+Is it OK to continue (Y/N)? [Y]: y</p>
+<p>The ORACLE_OWNER is set as: oracle<br>
+Are these settings correct (Y/N)? [Y]: y</p>
+<p>Checking for "oracle" user id...</p>
+<p>Creating /etc/oratab file...<br>
++-----------------------------------------------------------------------------+</p>
+<p>oracle user 로 할 일.</p>
+<p>8. ~/.bash_profile의 수정 ( sh을 사용할 경우 .profile을 수정한다. redhat 리눅스를 기준으로<br>
+설명한다. )</p>
+<p>+-----------------------------------------------------------------------------+<br>
+oracle 로 접속하여 다음과 같이 .profile을 만든다.<br>
+RedHat에서는 .bash_profile 이다.</p>
+<p>export ORACLE_HOME=/home/oracle/app/oracle/product/8.0.5<br>
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$ORACLE_HOME/jdbc/lib<br>
+export ORACLE_SID=linux<br>
+export ORACLE_TERM=386<br>
+export ORA_NLS33=$ORACLE_HOME/ocommon/nls/admin/data<br>
+export PATH=$PATH:$ORACLE_HOME/bin<br>
+export TMPDIR=/tmp<br>
+export CLASSPATH=$ORACLE_HOME/jdbc/lib/classes111.zip<br>
+umask 022<br>
+위의 경우는 "root 작업 4"의 "Create Mount Points"에서 이야기한 오라클을 설치할<br>
+경로로 /home/oracle인 경우이다.<br>
++-----------------------------------------------------------------------------+</p>
+<p>+-----------------------------------------------------------------------------+<br>
+각 설정에 대한 설명</p>
+<p>ORACLE_HOME : 오라클을 /home/oracle에 설치하기로 하였으므로<br>
+/home/oracle/app/oracle/product/8.0.5 로 지정된다.</p>
+<p>LD_LIBRARY_PATH : 오라클의 동적/정적 라이브러리의 경로를 나타내는 환경변수로<br>
+Pro*C나 PHP등을 사용할때 중요하게 적용된다.</p>
+<p>ORACLE_SID : 오라클 인스턴스의 이름이다. 영문자로 3-4글자로 정해준다.필자는<br>
+인스턴트의 이름을 linux 라고 지었다.</p>
+<p>그 외의 환경변수는 예제에 나와 있는 데로 하면 된다.</p>
+<p>지역언어설정 환경변수 NLS_LANG은 모든 인스톨이 끝나고 설명하도록 하겠다.</p>
+<p>환경변수 갱신<br>
+위와 같이 .profile내용을 변경하였다면<br>
+# . .bash_profile 혹은<br>
+# source .bash_profile 하여 환경변수 내용을 업데이트한다.<br>
+또는 oracle계정으로 다시 로그인한다.<br>
++-----------------------------------------------------------------------------+</p>
+<p>9. 요약<br>
+Oracle8 서버를 설치하기위해 필요한 환경설정 사항을 Oracle Installation<br>
+Guide의 내용 그대로 요약한 것이다.</p>
+<p>+-----------------------------------------------------------------------------+<br>
+환경설정요소<br>
+요구사항<br>
+Linux Kernel Parameters<br>
++-----------------------------------------------------------------------------+<br>
+SHMMAX 4294967295<br>
+Note: 이 설정은 얼마나 많은 shared 메모리가 오라클이나<br>
+시스템에 의해 사용/요구되는지에 영향을 주는 것은 아니며<br>
+단지 최대한 허용되는 크기를 나타낼때 사용될 뿐이다. 이<br>
+설정은 시스템 커널 리소스에 영향을 주지 않는다.<br>
+SHMMIN 1<br>
+SHMMNI 100<br>
+SHMSEG 10<br>
+SEMMNS 200<br>
+SEMMNI 70<br>
+SEMMSL PROCESSES 초기화 파라메터와 같거나 큰값.</p>
+<p>Mount Points (Storage Devices)<br>
+디렉토리 구조상 동일 레벨의 최소한 4개의 마운트 포인트(mount<br>
+points). 소프트웨어를 위해 1개, OFA 호환 데이터 베이스를 위해<br>
+3개. ( 설명에서는 /home/oracle 로 하였다. )<br>
+그룹<br>
+OSDBA role을 위해 LINUX에 group을 생성하여야 하며 보통 dba라<br>
+명해진다. OSOPER role은 OSDBA와 동일한 그룹에 속하게 되거나<br>
+다른 그룹으로 만들 수 도 있다.<br>
+계정<br>
+Oracle system을 설치하고 업그레이드하기위한 계정. 이 계정은<br>
+반드시 OSDBA 그룹에 속해야 한다. (보통 oracle이란 계정을<br>
+만들어 사용한다.)</p>
+<p>/usr/local/bin<br>
+Oracle 사용자들이 오라클을 사용하기 위한 디렉토리로 디폴트는<br>
+/usr/local/bin이다.<br>
+oratab 파일<br>
+Oracle instances에 대한 정보를 담고 있다.<br>
+파일 생성 권한<br>
+umask를 022로 설정<br>
+DISPLAY<br>
+서버에 연결할 컴퓨터의 이름과 모니터를 설정 (X에서의 설정)<br>
+LD_LIBRARY_PATH<br>
+Oracle 제품들이 사용할 shared libraries에 대한 경로로 반드시<br>
+$ORACLE_HOME/lib 를 포함해야한다.<br>
+ORACLE_BAE<br>
+필수는 아니며, OFA호환 설치를 위해 권장사항이다.<br>
+ORACLE_HOME<br>
+Oracle이 설치될 디렉토리를 설정한다.<br>
+ORACLE_SID<br>
+인스턴스 이름과 Oracle서버의 sid를 지정한다. 동일 기계에서<br>
+운영되는 Oracle 인스턴스끼리는 유일해야한다. 영문 4자 이하를<br>
+권장<br>
+ORACLE_TERM<br>
+문자 모드와 Motif 모드의 오라클 제품을 위해 필요<br>
+ORA_NLS33 US7ASCII이 아닌 문자셋으로 데이터베이스를 생성하기위해 필요<br>
+PATH<br>
+반드시 다음을 포함해야한다.:<br>
+$ORACLE_HOME/bin, /bin, /usr/bin, /usr/local/bin<br>
+SRCHOME<br>
+installer를 실행하기 전에 이 환경변수가 설정되어 있지 않음을<br>
+확인할 것. 만일 SRCHOME이 설정되면 Installer는 설치할<br>
+소프트웨어를 설정된 디렉토리에서 찾는다.<br>
+TWO_TASK<br>
+Oracle8 Server를 설치하기 전에 정의되지 않았음을 확인할 것<br>
+TMPDIR<br>
+20MB이상의 여유공간이 있고 oracle 계정이 쓰기 권한이 있는 디렉토리.<br>
+디폴트는 /usr/tmp 이다.</p>
+<p>실제적인 Oracle 의 설치</p>
+<p>1. 인스톨러 실행</p>
+<p>1) oracle 로 로그인 한다. - 절대 root 로 인스톨로를 실행하면 안된다.<br>
+2) oracle 설치 디렉토리로 이동<br>
+# cd /usr/src/ora/orainst<br>
+3) orainst를 실행한다.<br>
+# ./orainst 를 실행한다.</p>
+<p>- 화면에서 [TAB]키, 화살표키, 스페이스바를 이용하여 항목을 선택할 수 있다.</p>
+<p>2. 검은 배경의 설치화면이 나오면 Custom Install을 선택한다.</p>
+<p>3. 아래와 같은 오라클에 간략한 readme를 읽고 다음으로 넘어갑니다.</p>
+<p>4. 처음 설치하는 것이므로, (o) Install, Upgrade, or De-Install Software을<br>
+선택한다.</p>
+<p>5. 새롭게 인스톨할것이므로 Install New Product - Create DB Objects을 선택한다.</p>
+<p>5. Mount Point를 설정한다.<br>
+root user 로 할 일 5. 번에서 설정한것처럼 mount point를 /home/oracle 로<br>
+설정한다.</p>
+<p>6. .bash_profile에서 설정한것처럼 $ORACLE_HOME 디렉토리를 설정한다.</p>
+<p>7. ORACLE_BASE 와 ORACLE_HOME을 설정한다.</p>
+<p>8. log 파일이 남을 위치를 설정한다.</p>
+<p>9. Install from CD-ROM을 선택하여야 한다.</p>
+<p>10. ORACLE_SID를 .bash_profile에서 설정한것과 같이 linux 로 선택한다.</p>
+<p>11. NLS 의 설정 - 여기에서는 일단 ALL language를 선택한다.</p>
+<p>12. install 이 끝이 난후 root.sh을 실행하라는 메시지가 출력된다.<br>
+반드시 install 후에는 root.sh을 실행하여야 한다.</p>
+<p>13. Software Asset Manager에서 설치한 부분을 선택합니다.<br>
+여기에서는 모든 부분을 설치한다고 가정을 합니다.<br>
+Pro*C 와 같은 Precompiler 는 자신이 필요없다고 생각하면 선택을 하지 않으셔도<br>
+됩니다.</p>
+<p>14. 13)에서 처럼 Install을 선택한후 몇가지 사항에 대하여 OK를 한후<br>
+OSOPER group (dba)를 설정한다.</p>
+<p>15. 생성할 DB Object를 선택한다. - Filesystem-Based Database을 선택한다.</p>
+<p>16. Database Mount Points를 정한다.<br>
+- 설치도중에 3개의 mount points를 기입하라고 하는데 물리적으로 분리된 하드가<br>
+3개 존재하면 가장 좋지만 실제 PC에서는 힘든일이다. 이렇게 3곳으로 데이터를<br>
+분리하는 이유는 데이터베이스가 하드 디스크로의 읽기/쓰기를 하는 과정에서<br>
+경합을 줄이고 에러 및 문제의 발생시 자연스런 복구를 위한 것이다.<br>
+하지만 오라클 프로그램과 동일한 하드디스에 밖에 인스톨할 공간이 없다면 여기에<br>
+모두 동일한 경로를 적어주면 된다.</p>
+<p>필자도 오라클을 설치할 때 /home/oracle에 오라클 프로그램을 설치하고 데이터<br>
+파일을 위한 3개의 마운트 포인트도 /home/oracle로 설정하였다.</p>
+<p>17. Character Set 설정 - US7ASCII 로 설정하였지만, 나중에 Character 은 바꿀수<br>
+있다.보통은 KO16KSC5601 로 설정한다.</p>
+<p>18. National Character Set 설정</p>
+<p>19. System password 의 설정 (보통 manager 라고 password를 입력한다. )</p>
+<p>20. sys password 의 설정 ( manager 로 password를 설정. )</p>
+<p>21. dba password 의 설정 ( no 라고 설정한다. )</p>
+<p>22. TNS Listener Password 의 설정</p>
+<p>23. Configure MTS and start SQL*Net listener 설정은 no 로 한다.</p>
+<p>24. Control files 의 위치 확인.</p>
+<p>25. 기본적인 데이터베이스 관련 파일의 위치와 용량의 확인</p>
+<p>26. JDBC 셋의 선택 (default 로 선택을한다. )</p>
+<p>27. Default tablespace for Oracle ConText Cartridge users and data dictionary 의 선택</p>
+<p>28. CTX Temporary Tablespace을 선택한다.</p>
+<p>29. CTX demo table을 설치할 것을 선택한후에, Oracle Document를 설치할것에 대하여<br>
+셋팅한다. 디렉토리를 설정한후 pdf ,html , both 어떤 형식으로 설치할것인지 묻는데<br>
+그때에는 자신이 원하는 항목중에서 한가지를 선택하면 된다.</p>
+<p>30. 이제 인스톨이 시작되기 시작하고 그래프가 올라가기 시작한다. 하염없이<br>
+기다리자 -_-;</p>
+<p>31. 설치완료 화면.</p>
+<p>32. 설치 검증<br>
+설치가 모두 끝났다면 $ORACLE_HOME/orainst 디렉토리에 생성된 root.sh을 root<br>
+계정으로 실행 시킨다.</p>
+<p>1) root로 로그인한다.<br>
+2) cd $ORACLE_HOME/orainst<br>
+3) ./root.sh</p>
+<p>+-----------------------------------------------------------------------------+<br>
+[root@julia orainst]# ./root.sh</p>
+<p>Running Oracle8 root.sh script...</p>
+<p>The following environment variables are set as:<br>
+ORACLE_OWNER= oracle<br>
+ORACLE_HOME= /home/oracle/app/oracle/product/8.0.5<br>
+ORACLE_SID= linux<br>
+Are these settings correct (Y/N)? [Y]: y</p>
+<p>Enter the full pathname of the local bin directory [/usr/lbin]: /usr/local/bin</p>
+<p>Checking for "oracle" user id...<br>
+ORACLE_HOME does not match the home directory for oracle.<br>
+Okay to continue? [N]: y<br>
+Replacing existing entry for SID in /etc/oratab...<br>
+The previous entry is now in a comment.</p>
+<p>Leaving common section of Oracle8 root.sh.<br>
++-----------------------------------------------------------------------------+</p>
+<p>+-----------------------------------------------------------------------------+<br>
+- /etc/oratab 아래에 다음과 같은 내용이 추가되었다.<br>
+*:/home/oracle//app/oracle/product/8.0.5:N<br>
+linux:/home/oracle/app/oracle/product/8.0.5:N<br>
++-----------------------------------------------------------------------------+</p>
+<p>Oracle Database 의 구동</p>
+<p>1. oracle user 로 login.<br>
+2. svrmgrl을 실행시킨후 database를 가동한다.</p>
+<p>+-----------------------------------------------------------------------------+<br>
+[oracle@julia oracle]$ svrmgrl - svrmgrl 의 실행</p>
+<p>Oracle Server Manager Release 3.0.5.0.0 - Production</p>
+<p>(c) Copyright 1997, Oracle Corporation. All Rights Reserved.</p>
+<p>Oracle8 Enterprise Edition Release 8.0.5.1.0 - Production<br>
+With the Partitioning and Objects options<br>
+PL/SQL Release 8.0.5.1.0 - Production</p>
+<p>SVRMGR> connect internal - internal 접속<br>
+Connected.</p>
+<p>SVRMGR> startup;<br>
+ORACLE instance started.<br>
+Total System Global Area 4754704 bytes<br>
+Fixed Size 48400 bytes<br>
+Variable Size 4222976 bytes<br>
+Database Buffers 409600 bytes<br>
+Redo Buffers 73728 bytes<br>
+ORA-01102: cannot mount database in EXCLUSIVE mode</p>
+<p>SVRMGR> exit - svrmgrl 의 종료<br>
+Server Manager complete.<br>
++-----------------------------------------------------------------------------+</p>
+<p>3. lsnrctl 명령을 이용하여 Oracle listener을 가동시킨다.<br>
+- lsnrctl start : Oracle listener 의 가동<br>
+- lsnrctl stop : Oracle listener 의 멈춤</p>
+<p>+-----------------------------------------------------------------------------+<br>
+[oracle@julia bin]$ lsnrctl start</p>
+<p>LSNRCTL for Linux: Version 8.0.5.0.0 - Production on 26-APR-99 21:56:51</p>
+<p>(c) Copyright 1997 Oracle Corporation. All rights reserved.</p>
+<p>Starting /home/oracle/app/oracle/product/8.0.5/bin/tnslsnr: please wait...</p>
+<p>TNSLSNR for Linux: Version 8.0.5.0.0 - Production<br>
+System parameter file is /home/oracle/app/oracle/product/8.0.5/network/admin/<br>
+listener.ora<br>
+Log messages written to /home/oracle/app/oracle/product/8.0.5/network/log/<br>
+listener.log<br>
+Listening on: (ADDRESS=(PROTOCOL=ipc)(DEV=6)(KEY=linux))<br>
+Listening on: (ADDRESS=(PROTOCOL=ipc)(DEV=10)(KEY=PNPKEY))<br>
+Listening on: (ADDRESS=(PROTOCOL=tcp)(DEV=11)(HOST=192.168.1.1)(PORT=1521))</p>
+<h2 id="connecting-to-addressprotocolipckeylinuxstatus-of-the-listener">Connecting to (ADDRESS=(PROTOCOL=IPC)(KEY=linux))<br>
+STATUS of the LISTENER</h2>
+<p>Alias LISTENER<br>
+Version TNSLSNR for Linux: Version 8.0.5.0.0 - Production<br>
+Start Date 26-APR-99 21:56:56<br>
+Uptime 0 days 0 hr. 0 min. 1 sec<br>
+Trace Level off<br>
+Security OFF<br>
+SNMP OFF<br>
+Listener Parameter File /home/oracle/app/oracle/product/8.0.5/network/admin/<br>
+listener.ora<br>
+Listener Log File /home/oracle/app/oracle/product/8.0.5/network/log/<br>
+listener.log<br>
+Services Summary...<br>
+extproc has 1 service handler(s)<br>
+linux has 1 service handler(s)<br>
+The command completed successfully<br>
++-----------------------------------------------------------------------------+</p>
+<p>- 오라클 리스너가 제대로 실행이 되지 않을 경우 listener.ora, tnsnames.ora을<br>
+알맞게 편집한다. ( /home/oracle/app/oracle/product/8.0.5/network/admin 위치하여<br>
+있다. )</p>
+<p>다음은 tcp/ip 프로토콜을 기준으로 하여서 listener.ora를 알맞게 편집한것이다.<br>
++-----------------------------------------------------------------------------+<br>
+#<br>
+# Installation Generated Net8 Configuration<br>
+# Version Date: Jun-17-97<br>
+# Filename: Listener.ora<br>
+#<br>
+LISTENER =<br>
+(ADDRESS_LIST =<br>
+(ADDRESS= (PROTOCOL= IPC)(KEY= linux))<br>
+(ADDRESS= (PROTOCOL= IPC)(KEY= PNPKEY))<br>
+(ADDRESS= (PROTOCOL= TCP)(Host= 192.168.1.1)(Port= 1521))<br>
+- database 가 설치되어 있는 ip를 적어준다.<br>
+)<br>
+SID_LIST_LISTENER =<br>
+(SID_LIST =<br>
+(SID_DESC =<br>
+(GLOBAL_DBNAME= 192.168.1.1.)<br>
+- database 가 설치되어 있는 ip를 적어준다.<br>
+(ORACLE_HOME= /home/oracle/app/oracle/product/8.0.5)<br>
+(SID_NAME = linux)<br>
+- linux sid , 설치도중 적어준 sid를 적어준다.<br>
+)<br>
+(SID_DESC =<br>
+(SID_NAME = extproc)<br>
+(ORACLE_HOME = /home/oracle/app/oracle/product/8.0.5)<br>
+(PROGRAM = extproc)<br>
+)<br>
+)<br>
+STARTUP_WAIT_TIME_LISTENER = 0<br>
+CONNECT_TIMEOUT_LISTENER = 10<br>
+TRACE_LEVEL_LISTENER = OFF<br>
++-----------------------------------------------------------------------------+</p>
+<p>+-----------------------------------------------------------------------------+<br>
+#<br>
+# Installation Generated Net8 Configuration<br>
+# Version Date: Oct-27-97<br>
+# Filename: Tnsnames.ora<br>
+#<br>
+extproc_connection_data =<br>
+(DESCRIPTION =<br>
+(ADDRESS = (PROTOCOL = IPC)(KEY = linux))<br>
+(CONNECT_DATA = (SID = extproc))<br>
+)</p>
+<p>linux =<br>
+- oracle alias<br>
+(DESCRIPTION =<br>
+(ADDRESS = (PROTOCOL= TCP)(Host= 192.168.1.1)(Port= 1521))<br>
+- database 가 설치되어있는 database 의 ip<br>
+(CONNECT_DATA = (SID = linux))<br>
+- oracle sid<br>
+)</p>
+<p>linux_BEQ =<br>
+(DESCRIPTION =<br>
+(ADDRESS = (PROTOCOL = BEQ)(PROGRAM = /home/oracle/app/oracle/product/8.0.5)<br>
+(argv0 = oraclelinux)<br>
+(args = '(DESCRIPTION = (LOCAL=YES)(ADDRESS=(PROTOCOL=BEQ)))')<br>
+(envs = 'ORACLE_HOME=/home/oracle/app/oracle/product/8.0.5,ORACLE_SID=linux')<br>
+)<br>
+)<br>
++-----------------------------------------------------------------------------+</p>
+<p>4. 이제 다시 lsnrctl start 명령으로 실행하여 Oracle listener을 실행한다. 이제<br>
+sqlplus을 실행하여 접속이 되나 확인을 하자. test 용으로 id : scott password :<br>
+tiger 가 죄공됨을 알수 있다. 이미 설치중에 system 과 sys 의 password 는 직접<br>
+입력하였으므로, system 혹은 sys로 접속이 가능한지 확인할수 있다.</p>
+<p>5. sqlplus 로 접속이 확인 되었으면 이제 listener을 종료한후 database를 종료시켜<br>
+보자.</p>
+<p>+-----------------------------------------------------------------------------+<br>
+- listener 의 종료<br>
+[oracle@julia admin]$ lsnrctl stop</p>
+<p>LSNRCTL for Linux: Version 8.0.5.0.0 - Production on 26-APR-99 22:18:35</p>
+<p>(c) Copyright 1997 Oracle Corporation. All rights reserved.</p>
+<p>Connecting to (ADDRESS=(PROTOCOL=IPC)(KEY=linux))<br>
+The command completed successfully<br>
++-----------------------------------------------------------------------------+</p>
+<p>+-----------------------------------------------------------------------------+<br>
+- oracle database 의 shutdown<br>
+[oracle@julia admin]$ svrmgrl</p>
+<p>Oracle Server Manager Release 3.0.5.0.0 - Production</p>
+<p>(c) Copyright 1997, Oracle Corporation. All Rights Reserved.</p>
+<p>Oracle8 Enterprise Edition Release 8.0.5.1.0 - Production<br>
+With the Partitioning and Objects options<br>
+PL/SQL Release 8.0.5.1.0 - Production</p>
+<p>SVRMGR> connect internal<br>
+Connected.<br>
+SVRMGR> shutdown<br>
+Database closed.<br>
+Database dismounted.<br>
+ORACLE instance shut down.<br>
+SVRMGR> exit<br>
+Server Manager complete.<br>
+[oracle@julia admin]$<br>
++-----------------------------------------------------------------------------+</p>
+<p>Oracle SQL*Net 설정.</p>
+<p>1. Oracle Net8 Assistant을 실행하여 Oracle 8 SQL*Net을 설정한다.<br>
++ 버튼을 눌러 linux Oracle 에 접속가능하도록 새로운 Service Name을 추가한다.</p>
+<p>2. Oracle Net8 에 새롭게 추가할 Service Name을 추가한다.</p>
+<p>3. TCP/IP를 선택한다.</p>
+<p>4. 데이터베이스가 설치된 서버의 ip(혹은 도메인)을 알맞게 적은후 Next 버튼을<br>
+누른다.</p>
+<p>5. Oracle SID를 설정한다. Oracle Database를 설치할 때 설정한 sid를 적어준다.</p>
+<p>6. 이제 SQL*Net 이 잘 설정이 되어있는지 Test Service 버튼을 누른후, test( demo )<br>
+용으로 기본제공되어지는 Scott/tiger 로 접속test를 하여본다.</p>
+<p>- 아래와 같이 successful 이 나온다면 SQL*Net 은 바르게 설치된 것이다.<br>
+이제 Done 버튼을 빠져나가보면 SQL*Net 에 linux.World 라는 이름이 하나 추가된<br>
+것을 볼수 있을 것이다.</p>
+<p>7. C:\orant\NET80\ADMIN\tnsnames.ora을 직접 edit 로 수정하여 SQL*Net을 설정할수<br>
+있다. ( sid 가 linux, imap 두가지인 이유는 2개의 데이터 베이스가 설치되어있기<br>
+때문이다. )</p>
+<p>+-----------------------------------------------------------------------------+<br>
+# C:\ORANT\NET80\ADMIN\TNSNAMES.ORA Configuration File:C:\orant\net80\admin\<br>
+tnsnames.ora<br>
+# Generated by Oracle Net8 Assistant</p>
+<p>LINUX.WORLD =<br>
+(DESCRIPTION =<br>
+(ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.1.1)(PORT = 1521))<br>
+(CONNECT_DATA = (SID = linux))<br>
+)</p>
+<p>IMAP.WORLD =<br>
+(DESCRIPTION =<br>
+(ADDRESS = (PROTOCOL = TCP)(Host = 127.0.0.1)(Port = 1521))<br>
+(CONNECT_DATA = (SID = imap))<br>
+)</p>
+<p>ODB.WORLD =<br>
+(DESCRIPTION =<br>
+(ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.1.1)(PORT = 1521))<br>
+(CONNECT_DATA = (SID = linux))<br>
+)</p>
+<p>BEQ-LOCAL.WORLD =<br>
+(DESCRIPTION =<br>
+(ADDRESS = (PROTOCOL = BEQ)(PROGRAM = oracle80)(ARGV0 = oracle80imap)(ARGS =<br>
+'(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))'))<br>
+(CONNECT_DATA = (SID = imap))<br>
+)<br>
++-----------------------------------------------------------------------------+</p>
+<p>Oracle ODBC 설치</p>
+<p>1. Oracle ODBC를 설치하기 위하여는 기본적으로 Oracle Installer 가 설치되어<br>
+있어야 하며, SQL*Net 이 설정되어 있어야한다. Oracle ODBC 드라이버는 SQL*Net을<br>
+기초로 작동하기 때문이다. ( Oracle Installer 는 설치되어있는 것으로 가정한다. )</p>
+<p>2. <a href="http://www.oracle.com%EC%97%90%EC%84%9C">http://www.oracle.com에서</a> Oracle ODBC 드라이버를 다운로드 받는다.<br>
+- Oracle ODBC 8.0.5.3을 예제로 한다.</p>
+<p>3. 다운로드받은 ora8053.exe를 실행한다.<br>
+- 자동으로 압축풀릴 디렉토리를 지정한다. 기본은 c:\temp 이다.<br>
+- 압축이 풀리면, C:\TEMP\orainst\win32\install\<br>
+C:\TEMP\orainst\win32\odbc32\<br>
+와 같은 디렉토리가 생긴다.</p>
+<p>4. Oracle Installer를 실행한후, From... 버튼을 누른후 C:\TEMP\orainst\win32\<br>
+install\ 에 있는 Nt.prd를 선택한후 열기 버튼을 누른다.</p>
+<p>5. Oracle ODBC Driver 8.0.5.3.0을 선택한후 Install 버튼을 누른다. 잠시후<br>
+인스톨이 끝이나면 exit 하여 나온다.</p>
+<p>6. 제어판에서 ODBC 아이콘을 더블클릭한다.</p>
+<p>7. Add 버튼을 누른후, Oracle ODBC Driver 8.00.0500을 선택한후 마침버튼을 누른다.</p>
+<p>8. ODBC 설정후 OK 버튼을 누른다. 이제 linux 에 설치한 Oracle 에 접속할수 있는<br>
+Odbc 가 설치되었다.</p>
+<p>작성 : 김성박 ( <a href="mailto:urstory@nownuri.net">urstory@nownuri.net</a><br>
+<a href="http://sunny.sarang.net">http://sunny.sarang.net</a> )</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60017747115" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2005/050924-60017744590/"><span>이전 글</span>[펌] 오라클 기동과 종료</a><a class="newer" href="/blog/posts/2005/050924-60017747360/"><span>다음 글</span>[오라클]ORA-12560: TNS:프로토콜 어댑터 오류</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

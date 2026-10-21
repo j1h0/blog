@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[공유] 백업 파일 복원하기 · 심플하고 여유있는 삶</title><meta name="description" content="회원 디비가 작살이 나는 바람에 백업 파일로 복원. .bak,파일과 , .trn 파일을 일단 다운받았다. 먼저 쿼리 분석기를 실행 시킨후 master 테이블에서 spwho 실행에 세션을 제거한다.…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2006/060506-60024141302/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[공유] 백업 파일 복원하기"><meta property="og:description" content="회원 디비가 작살이 나는 바람에 백업 파일로 복원. .bak,파일과 , .trn 파일을 일단 다운받았다. 먼저 쿼리 분석기를 실행 시킨후 master 테이블에서 spwho 실행에 세션을 제거한다.…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2006/060506-60024141302/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2006-05-06T11:26:00.000Z" data-pagefind-meta="date:2006-05-06">2006.05.06.</time></p><h1>[공유] 백업 파일 복원하기</h1></header><div class="prose"><p>회원 디비가 작살이 나는 바람에 백업 파일로 복원.</p>
+<p>.bak,파일과 , .trn 파일을 일단 다운받았다.</p>
+<p>먼저</p>
+<p>쿼리 분석기를 실행 시킨후</p>
+<p>master 테이블에서</p>
+<p>sp_who 실행에 세션을 제거한다.</p>
+<p>kill 번호..</p>
+<p>세션이 제거 된후</p>
+<p>restore databas TB from disk='현재 백업 파일이 있는 경로 확장자가 .bak'</p>
+<p>실행하고 순차적으로 log 파일을 업데이트 해야 하므로</p>
+<p>with norecovery 옵션으로 미리 데이타베이스에게 완전하게 복구가 이루어 지지 않았으므로 대기 상태를 만든다.</p>
+<p>restore log TB from disk='d:\tb_tlog_200602190600.TRN' with stopat='2006-02-22 18:00:00',RECOVERY</p>
+<p>예를 들어 이렇게 실행 해보니 이후에 생성된 파일이 존재 함으로 데이타 베이스는 로드 상태로 대기 한다.</p>
+<p>이후에</p>
+<p>restore log TB from disk='d:\newstorm_tlog_200602190800.TRN' with noRecovery<br>
+restore log TB from disk='d:\newstorm_tlog_200602191000.TRN' with noRecovery</p>
+<p>이후에 계속해서 남은 로그를 복원하다음에</p>
+<p>마지막</p>
+<p>restore log newstorm from disk='d:\newstormtranlog\newstorm_tlog_200602221800.TRN' with Recovery</p>
+<p>모두 복원 끝 .. ㅠ.ㅠ</p>
+<p>이런일이 없도록 모두 조심하시구요..</p>
+<p>데이타 백업은 꼭꼭 받으세요.. 소잃고 외양간 고칩니다.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60024141302" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2006/060425-60023848385/"><span>이전 글</span>[바코드]EAN 시리즈 체크디지트(CheckSum)구하기</a><a class="newer" href="/blog/posts/2006/060510-60024232479/"><span>다음 글</span>[공유] Delphi Unit 작명법</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

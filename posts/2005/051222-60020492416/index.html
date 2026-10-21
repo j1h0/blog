@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[펌] 하드디스크 로우포맷하는 방법 · 심플하고 여유있는 삶</title><meta name="description" content="하드디스크의 로우포맷 포맷에는 하이포맷(일반포맷)과 로우포맷이 있는데 하이포맷은 하드디스크에 주소를 처음부터 끝까지 지정해 주는 것이고 로우포맷은 하드디스크를 공장에서 처음 판매될 때처럼 완전 초기…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2005/051222-60020492416/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[펌] 하드디스크 로우포맷하는 방법"><meta property="og:description" content="하드디스크의 로우포맷 포맷에는 하이포맷(일반포맷)과 로우포맷이 있는데 하이포맷은 하드디스크에 주소를 처음부터 끝까지 지정해 주는 것이고 로우포맷은 하드디스크를 공장에서 처음 판매될 때처럼 완전 초기…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2005/051222-60020492416/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2005-12-22T01:33:00.000Z" data-pagefind-meta="date:2005-12-22">2005.12.22.</time></p><h1>[펌] 하드디스크 로우포맷하는 방법</h1></header><div class="prose"><hr>
+<p>하드디스크의 로우포맷</p>
+<hr>
+<p>포맷에는 하이포맷(일반포맷)과 로우포맷이 있는데 하이포맷은 하드디스크에 주소를 처음부터 끝까지 지정해 주는 것이고 로우포맷은 하드디스크를 공장에서 처음 판매될 때처럼 완전 초기화하는 것입니다.<br>
+하드를 정리하거나 바이러스 감염 등으로 일반적으로 하이포맷을 많이 사용하는데 하이포맷으로 하드의 많은 오류를 100% 해결하기에는 한계가 있습니다. 하드의 오류를 100% 제거하기 위해서는 로우포맷보다 좋은 것은 없습니다.<br>
+하이포맷 명령어는 WINDOWS 디렉토리 내에 있는데 이것으로 명령어의 형식에 맞게 실행하면 되지만 로우포맷은 CMOS SETUP내에 명령어가 있어 이곳에서 실행합니다.<br>
+처음 구입한 하드는 LOW FORMAT이 되어서 나오기 때문에 이 부분을 생략해도 되지만 사용중인 하드디스크를 로우포맷을 꼭 해야하는 경우가 여러 가지 있습니다.</p>
+<p><strong>** 로우포맷을 꼭 해야하는 경우 **</strong></p>
+<p>1. FDISK의 할당과 해제가 안되는 경우<br>
+2. 논리적인 배드섹터 삭제하려는 경우<br>
+3. FDISK나 하이포맷을 했는데도 컴퓨터의 이상 증세가 계속되는 경우<br>
+4. 악성 바이러스에 감염되어 백신으로 해결이 안되는 경우</p>
+<p>이러한 증세가 있어 로우포맷을 했는데도 같은 증세가 계속되면 하드의 물리적인 고장일 수 있고 컴퓨터 자체의 문제일 수 있습니다. 컴퓨터의 기계적인 이상이 없다면 위의 증세는 100% 해결할 수 있습니다.<br>
+하드 MODE에는 LBA NORMAL LARGE로 구분을 하는데 로우포맷 할 때에는 하드 MODE를 IDE HDD AUTO DETECTION 에서 반드시 NORMAL로 수정을 해야합니다. LBA모드에서 로우포맷을 하면 진행하는 과정만 나오고 로우포맷이 실제로는 안되는 메인보드가 간혹 있습니다. 그리고 로우포맷이 모두 끝나면 다시 IDE HDD AUTO DETECTION에서 MODE를 LBA로 수정하고 CMOS SETUP를 종료해야 합니다.</p>
+<p><strong>CMOS SETUP 초기화면에서 HDD LOW LEVEL FORMAT 선택</strong></p>
+<p>PREFORMAT을 선택하고 ENTER를 누릅니다.<br>
+CMOS SETUP 의 초기화면에서 HDD LOW LEVEL FORMAT을 선택하면 위와 같이 나오는데 LOW FORMAT 할 때는 하드 MODE를 반드시 NORMAL이 설정되어 있는지 확인합니다. 만약 LBA로 되어 있다면 IDE HDD AUTO DETECTION에 가서 MODE를 NORMAL로 수정하고 다시 로우포맷을 실행합니다.</p>
+<p>AUTO SCAN BAD TRACT에서 y를 누릅니다.<br>
+START에서도 y를 누르고 ENTER를 누릅니다.<br>
+Enter will destroy all data on current drive.(y/n)에서도 y를 누릅니다.<br>
+위의 과정을 거치면 포맷하는 과정이 나오는데 하드에 이상이 없다면 그냥 끝나고 만약 베드 섹터 하드의 고장이 있다면 진행이 안되거나 No. CYLS HE AD난에 베드 섹터 번지가 나타나게 됩니다. 이러한 하드는 A/S를 받거나 교체를 해야합니다. 로우포맷이 끝나면 하드 MODE를 LBA로 수정하고 종료합니다.</p>
+<p><strong>유틸리티(AMIDIAG.EXE)를 이용한 로우포맷</strong></p>
+<p>어워드 바이오스를 사용한 메인보드에는 CMOS SETUP 내의 "HDD Low Level Format"에서 로우포맷이 가능하지만 이외의 바이오스는 CMOS SETUP에 로우포맷 기능이 없어 파일로 제공되는 유틸리티로 로우포맷을 해야합니다.<br>
+유틸리티로 제공되는 로우포맷의 종류가 많이 있는데 그 중에 가장 많이 사용하고 안정적인 AMIDIAG.EXE에 대해서 자세히 알아보겠습니다.</p>
+<p>로우포맷 파일은 부팅 디스켓 내에 복사해서 보관합니다.</p>
+<p>A드라이브에 부팅 디스켓을 넣고 부팅을 합니다.</p>
+<p>A:AMIDIAG 라고 쓰고 ENTER를 누릅니다.</p>
+<p>로우포맷의 초기 화면으로 아무 키나 누르면 다음으로 넘어갑니다.</p>
+<p>아무 키나 누릅니다.</p>
+<p>ESC를 누릅니다.</p>
+<p>방향키를 이용해서 HARD DISK 이동하고 HARD DISK FORMAT에서 ENTER를 누릅니다.</p>
+<p>Disk Drive (C/D)에서 포맷할 하드 드라이브를 선택합니다.<br>
+D를 누릅니다.<br>
+드라이브를 입력할 때에는 정확히 해야합니다. 자료를 전부 잃을 수도 있습니다.</p>
+<p>하드 디스크의 타입을 입력해야하는데 우측에 하드 타입에 관한 리스트가 나오는데 이곳에서 방향키를 이용하여 제일 아래로 이동하여 USER를 선택하고 ENTER를 누릅니다.</p>
+<p>Disk Drive type를 결정되면 중앙에 창이 나오는데 여기서는 무조건 ENTER를 누릅니다. 그러면 자동으로 값이 입력됩니다.</p>
+<p>Interleave 난에서 커서가 여기서도 계속해서 그냥 ENTER를 누르고 Proceed(Y/N)에서는 Y를 누릅니다.</p>
+<p>하드의 자료를 잃게 된다는 경고 메시지가 나오는데 Y를 입력하고 ENTER를 누릅니다.</p>
+<p>포맷 진행 과정을 보여주면서 포맷을 진행합니다. 만약 하드에 배드 섹터가 있다면 Bad Track List 난에 나타나게 됩니다.</p>
+<p>하드에 문제가 없이 로우포맷이 완료되었다면 이와 같은 화면이 나옵니다.</p>
+<p>종료 후에 재부팅하고 FDISK, FORMAT를 실행하면 됩니다.</p>
+<p>Disk Drive type를 결정되면 중앙에 창이 나오는데 여기서는 무조건 ENTER를 누릅니다. 그러면 자동으로 값이 입력됩니다.</p>
+<p>Interleave 난에서 커서가 여기서도 계속해서 그냥 ENTER를 누르고 Proceed(Y/N)에서는 Y를 누릅니다.</p>
+<p>하드의 자료를 잃게 된다는 경고 메시지가 나오는데 Y를 입력하고 ENTER를 누릅니다.</p>
+<p>포맷 진행 과정을 보여주면서 포맷을 진행합니다. 만약 하드에 배드 섹터가 있다면 Bad Track List 난에 나타나게 됩니다.</p>
+<p>하드에 문제가 없이 로우포맷이 완료되었다면 이와 같은 화면이 나옵니다.</p>
+<p>종료 후에 재부팅하고 FDISK, FORMAT를 실행하면 됩니다.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60020492416" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2005/051221-60020477333/"><span>이전 글</span>[델파이]프린터 직접제어 커맨드 보내기</a><a class="newer" href="/blog/posts/2006/060108-60020880860/"><span>다음 글</span>[펌] cmd 네트웍 관련 명령어</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[리눅스]Redhat 9.0 기반에서 오라클 9.2.0 설치하기 · 심플하고 여유있는 삶</title><meta name="description" content="INSTALL oracle9i On redhat 9.0 1. 참조문서 http://linux.oreillynet.com/lpt/a/4141 http://otn.oracle.co.kr/Starter/…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2005/050821-60016392098/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[리눅스]Redhat 9.0 기반에서 오라클 9.2.0 설치하기"><meta property="og:description" content="INSTALL oracle9i On redhat 9.0 1. 참조문서 http://linux.oreillynet.com/lpt/a/4141 http://otn.oracle.co.kr/Starter/…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2005/050821-60016392098/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2005-08-21T08:07:00.000Z" data-pagefind-meta="date:2005-08-21">2005.08.21.</time></p><h1>[리눅스]Redhat 9.0 기반에서 오라클 9.2.0 설치하기</h1></header><div class="prose"><p>INSTALL oracle9i On redhat 9.0</p>
+<p>1. 참조문서<br>
+<a href="http://linux.oreillynet.com/lpt/a/4141">http://linux.oreillynet.com/lpt/a/4141</a><br>
+<a href="http://otn.oracle.co.kr/Starter/database/install/9ir2_install_viewlet_swf.html">http://otn.oracle.co.kr/Starter/database/install/9ir2_install_viewlet_swf.html</a> (강력추천)</p>
+<p>2. 설치전 필요한 페키지<br>
+X-Window 필수<br>
+gcc-3.2.2-5<br>
+cpp-3.2.2-5<br>
+glibc-devel-2.3.2-11.9<br>
+binutils-2.13.90.0.18-9<br>
+compat-gcc-7.3-2.96.118.i386.rpm<br>
+compat-libgcj-7.3-2.96.118.i386.rpm<br>
+compat-libgcj-devel-7.3-2.96.118.i386.rpm<br>
+nss_db-compat-2.2-20.i386.rpm<br>
+pdksh-5.2.14-21<br>
+libncursers</p>
+<p>3. 다운로드 소스<br>
+<a href="http://otn.oracle.com/software/products/oracle9i/htdocs/linuxsoft.html">http://otn.oracle.com/software/products/oracle9i/htdocs/linuxsoft.html</a><br>
+적당한곳에 3개의 파일을 받아 압축을 푼다.<br>
+# zcat lnx_920_disk1.cpio.gz | cpio -idmv &#x3C;-- http로 받지 않았을 때<br>
+# cpio -idmv &#x3C; lnx_920_disk1.cpio.gz.cpio.gz &#x3C;-- http로 받았을 때</p>
+<p>4. 계정 및 그룹생성 시스템 설정<br>
+# groupadd dba<br>
+# adduser -g dba oracle</p>
+<p># vi /etc/sysctl.conf<br>
+kernel.shmmax = 536870912<br>
+kernel.shmmni = 4096<br>
+kernel.shmall = 2097152<br>
+kernel.sem = 250 32000 100 128<br>
+fs.file-max = 65536<br>
+net.ipv4.ip_local_port_range = 1024 65000</p>
+<p># vi /etc/security/limits.conf<br>
+oracle soft nofile 65536<br>
+oracle hard nofile 65536<br>
+oracle soft nproc 16384<br>
+oracle hard nproc 16384</p>
+<p>만약 리붓팅하지 않을려면 다음과 같이한다.<br>
+# echo 250 32000 100 128 > /proc/sys/kernel/sem<br>
+# echo 536870912 > /proc/sys/kernel/shmmax<br>
+# echo 4096 > /proc/sys/kernel/shmmni<br>
+# echo 2097152 > /proc/sys/kernel/shmall<br>
+# echo 65536 > /proc/sys/fs/file-max<br>
+# echo 1024 65000 > /proc/sys/net/ipv4/ip_local_port_range</p>
+<p>오라클은 최소 512MB의 메모리와 400MB의 스왑 공간을 필요로 한다. 따라서 부족하다면<br>
+임시적으로 스왑공간을 아래와 같이 만들어준다.</p>
+<p># dd if=/dev/zero of=tmp_swap bs=1k count=900000<br>
+# chmod 600 tmp_swap<br>
+# mkswap tmp_swap<br>
+# swapon tmp_swap</p>
+<p>스왑해제<br>
+# swapoff tmp_swp<br>
+# rm tmp_swap</p>
+<p>5. 환경변수 설정(여기서 부터 oracle 계정으로 바꾼다.)<br>
+$ vi .bash_profile<br>
+export ORACLE_BASE=/home/oracle<br>
+export ORACLE_HOME=$ORACLE_BASE/product/9.2.0.1<br>
+export ORACLE_OWNER=oracle<br>
+export ORACLE_SID=oraccle<br>
+export ORACLE_TERM=xterm<br>
+#export TMPDIR=$ORACLE_BASE/tmp<br>
+#export TNS_ADMIN=$ORACLE_HOME/network/admin<br>
+export NLS_LANG='AMERICAN_AMERICA.KO16KSC5601'<br>
+export ORA_NLS33=$ORACLE_HOME/ocommon/nls/admin/data<br>
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$ORAClE_HOME/oracm/lib:/lib:/usr/lib:/usr/local/lib<br>
+export LANG=C<br>
+export LD_ASSUME_KERNEL=2.4.1<br>
+export THREADS_FLAG=native<br>
+export PATH=$PATH:$ORACLE_HOME/bin:$ORACLE_HOME/oracm/bin</p>
+<p>CLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib:$ORACLE_HOME/network/jlib</p>
+<p>$ /Where/Disk1/runInstaller &#x3C;- 오라클 소스압축푼 디렉터리</p>
+<p>6. 5번의 과정이 성공적으로 끝났다면 설치창이 뜬다.<br>
+언어설정에 korean을 추가하고 설치는 custem으로하여 +sqlplus를 체크하고 넘어간다.</p>
+<p>설치 중 두번의 에러메세지가 나온다.<br>
+Error in invoking target install of makefile<br>
+/usr/ora9/product/9.2/network/lib/ins_oemagent.mk</p>
+<p>위의 경우 무시하고 지나간다.</p>
+<p>Error in invoking target install of makefile<br>
+/usr/ora9/product/9.2/ctx/lib/ins_ctx.mk</p>
+<p>위의 경우는 X terminel을 하나 더 띄우고 oracle 계정으로 아래순서대로 실행한다.<br>
+$ cd $ORACLE_HOME/install<br>
+$ tail make.log<br>
+gcc -o ctxhx -L/opt/ora9/product/9.2/ctx/lib/ -L/opt/ora9/product/9.2/lib/<br>
+-L/opt/ora9/product/9.2/lib/stubs/ /opt/ora9/product/9.2/ctx/lib/ctxhx.o<br>
+-L/opt/ora9/product/9.2/ctx/lib/ -lm -lsc_ca -lsc_fa -lsc_ex -lsc_da -lsc_ut<br>
+-lsc_ch -lsc_fi -lctxhx -lc -Wl,-rpath,/opt/ora9/product/9.2/ctx/lib -lnls9<br>
+-lcore9 -lnls9 -lcore9 -lnls9 -lxml9 -lcore9 -lunls9 -lnls9</p>
+<p>긁어 붙인다음 -ldl 을 추가한 후 엔터한다.</p>
+<p>100% 설치후 루트권한으로 아래 명령을 실행시키라는 메세지가 뜬다.<br>
+/home/oracle/product/9.2.0.1/root.sh</p>
+<p>모든 과정이 다 끝났다.<br>
+이후의 설정이나 가지고 노는것(?)에 대해서는 잘 모르겠다....<br>
+처음깔아보는거라.. ^^;<br>
+9.0 으로 설치했지만 7.3에서도 적용됨.</p>
+<p>오라클코리아 기술지원팀과 통화를 통해 알게되었는데 물론 오라클 홈페이지에도 언급이<br>
+된 내용이지만 레드핫 스탠다드 버젼에서는 7.2 기반에서 제작되었기 때문에 다른 버젼에서는<br>
+문제가 될수있다고한다. 물론 9.0에 설치했을때도 다운되는 문제가 생겼다. 설치시 다운된<br>
+시점의 로그를 살펴본다면 어떤문제인지 자세히 알수있을것이다.(기록하는 습관이 들지 않아 기록해 놓지 않았따.^^;) 오라클측에서는레드핫 엔터프라이즈버젼을 사용할것을 권고하고 있습니다.</p>
+<p>저의 경험으로는 스탠다드 7.3 버젼에서도 무리없이 설치되고 구동되는것을 확인했습니다.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60016392098" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2005/050821-60016392028/"><span>이전 글</span>[리눅스*오라클]RedHAt Linux 9 에서 Oracle9.2.0 설치</a><a class="newer" href="/blog/posts/2005/050825-60016528154/"><span>다음 글</span>[이클립스]eclipse상에서 java파일의 유형(주석)을 바꾸고 싶다면..</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

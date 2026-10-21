@@ -1,0 +1,257 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[공유] [IIS 웹 서버와 보안 ⑥] IIS 6.0의 소개 · 심플하고 여유있는 삶</title><meta name="description" content="Windows Server 2003 제품군에 포함된 IIS(인터넷 정보 서비스) 6.0은 인트라넷이나 인터넷 환경에서 보다 안전하고 확장성이 높은 웹 서버 기능을 제공한다. IIS는 웹 서버 시장에…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2006/060510-60024245472/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[공유] [IIS 웹 서버와 보안 ⑥] IIS 6.0의 소개"><meta property="og:description" content="Windows Server 2003 제품군에 포함된 IIS(인터넷 정보 서비스) 6.0은 인트라넷이나 인터넷 환경에서 보다 안전하고 확장성이 높은 웹 서버 기능을 제공한다. IIS는 웹 서버 시장에…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2006/060510-60024245472/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2006-05-10T10:51:00.000Z" data-pagefind-meta="date:2006-05-10">2006.05.10.</time></p><h1>[공유] [IIS 웹 서버와 보안 ⑥] IIS 6.0의 소개</h1></header><div class="prose"><p>Windows Server 2003 제품군에 포함된 IIS(인터넷 정보 서비스) 6.0은 인트라넷이나 인터넷 환경에서 보다 안전하고 확장성이 높은 웹 서버 기능을 제공한다. IIS는 웹 서버 시장에서 많은 비중을 차지하고 있었으나 앞서 살펴보았던 취약점에 대한 잦은 공격으로 관리상의 이슈가 많은 것이 사실이었다. 새롭게 선보이는 IIS 6.0에서는 보안과 가용성 측면에 많은 비중을 두고 상당부분이 재설계되었다. 이번 호에서는 IIS 6.0의 구성 요소와 변경 및 개선된 사항에 대해서 알아보도록 하겠다.</p>
+<p><strong>1. IIS 6.0 개요</strong></p>
+<p>윈도우 운영체제의 주요 컨셉이 '관리하기 쉬운'에 초점이 맞추어져 있었던 만큼 서버 제품군을 설치하면 대부분의 어플리케이션의 서비스가 기본적으로 활성화된 상태가 된다. IIS도 예외는 아니어서 기본으로 설치되며 대부분의 서비스를 설치와 동시에 바로 운영할 수 있는 상태로 설정이 된다. 하지만 서비스들의 취약점이 주요 위협대상인 만큼 앞서 연재를 통해 살펴보았던 내용의 대부분은 이들 서비스를 비활성화 시키는 방법에 대한 내용이었다.</p>
+<p>Windows Server 2003에서는 이러한 문제점을 보완하기 위해서 이전과는 다른 방법을 도입했다. IIS는 기본적으로는 설치되지 않으며, 설치하더라도 보안 수준이 높은 '잠금 모드(lock down mode)'로 초기 설정되어 정적인 컨텐츠(.htm이나 .html)만 처리할 수 있는 상태가 된다. ASP나 ASP.NET, SSI(Server-Side Include) 등의 기능을 사용하려면 직접 수동으로 해당 구성요소를 활성화 시켜줘야 한다. 이로써 사용되지 않는 서비스에 의한 잠재적인 위협을 막고 관리적인 이슈를 줄일 수 있다.</p>
+<p><strong>2. IIS 6.0에서 향상된 기능</strong></p>
+<p>IIS 6.0은 기존에 제작된 웹 어플리케이션에 대한 하위 호환성을 제공하기 위해 IIS 5.0 격리모드를 제공하며, 다음과 같은 향상된 기능을 제공한다.</p>
+<p>① 안정성</p>
+<p>사용자의 요청을 처리하는데 있어 새로운 아키텍처를 제공하고 웹 어플리케이션이 서로 격리된 환경에서 실행된다. 따라서 이전 버전처럼 하나의 웹 사이트에 의해서 모든 웹 서비스가 중단되는 사태를 막을 수 있다. 또한 어플리케이션 별로 상태 모니터링 기능도 제공된다.</p>
+<p>② 확장성</p>
+<p>웹 서버의 처리 능력 및 멀티 프로세서 컴퓨터에서의 확장성을 높이기 위해 새로운 HTTP 구문 분석 및 캐싱용 커널 모드 드라이버가 제공된다. 이로써 단일 IIS 6.0 서버가 호스팅 할 수 있는 사이트 수와 동시 실행될 수 있는 작업자 프로세스의 수가 증가되었다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="38" height="12" src="/blog/_astro/60024245423-02.SZhGgEwQ_Z7jREg.webp"></figure>
+<p>③ 보안성</p>
+<p>IIS는 불필요한 설치에 의한 잠재적인 공격 위험을 줄이기 위해 기본적으로 설치되지 않는다. 사이트에서 전송되는 데이터의 무결성 외에 웹 및 FTP 사이트 컨텐츠의 무결성도 보장하기 위해 사용할 수 있는 보안 기능과 기술이 여러 가지 포함되어 있다.</p>
+<p>IIS 6.0에서는 응용 프로그램 서버를 보안하기 위해 다음과 같은 다양한 기능을 제공한다.</p>
+<p>- 새로운 고급 다이제스트 인증을 포함한 인증 메커니즘<br>
+- URL 인증 : 특정 URL에 대한 역할 기반 인증을 제공한다.<br>
+- SSL(Secure Sockets Layer) 3.0 : 보다 안전한 정보를 교환 기능을 제공한다.<br>
+- 선택 가능한 암호화 서비스 공급자(CSP) : 이를 통해 사용자의 필요에 맞는 CSP(암호화 서비스 공급자)를 선택할 수 있다.</p>
+<p>④ 관리 편의성</p>
+<p>다양한 고객의 필요를 충족시키기 위해 IIS는 다양한 관리 편의성을 제공하며 이를 위한 관리 도구를 제공한다. 관리자는 IIS 관리자나 관리 스크립트를 사용하거나 직접 IIS 텍스트 구성 파일을 편집하여 IIS 6.0 서버를 구성할 수 있으며 IIS 서버와 사이트를 원격으로 관리할 수도 있다. IIS 6.0에 포함되어 있는 일반 텍스트기반 XML 메타베이스 구성 파일은 대부분의 IIS 구성 값이 저장되는 저장소로서 직접 편집이 가능하다. 메타베이스를 재구성함으로써 전반적인 메타베이스 성능과 서버 시작 및 종료 시간 등을 향상 시킬 수 있다.</p>
+<p>⑤ 개발 능력 향상</p>
+<p>마이크로소프트에서 제공하는 차세대 웹 솔루션인 ASP.NET과 IIS 6.0의 통합을 통해 향상된 개발자 경험을 제공한다. ASP.NET을 사용하면 형식 안전성, 상속, 언어 상호 운용성 및 버전 관리 같은 CLR(Common Language Runtime) 기능을 활용할 수 있다. 그리고 XML, SOAP 및 IPv6(IP 버전 6)을 포함하여 최신 웹 표준을 지원한다.</p>
+<p><strong>3. IIS 6.0에서 제공되는 서비스</strong></p>
+<p>IIS는 웹 환경으로의 정보 게시, 파일 전송, 사용자 통신 지원 등의 기본 서비스를 제공하며 이러한 서비스가 저장되는 데이터 저장소를 업데이트한다. 여기서는 IIS 6.0이 제공하는 서비스들의 종류를 알아보자.</p>
+<p>다음 표는 IIS에서 제공되는 서비스와 서비스를 구성하는 기본 요소 그리고 해당 서비스를 호스트하는 프로세스를 정리한 것이다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>서비스</strong></th><th><strong>기본 구성요소</strong></th><th><strong>호스트 프로세스</strong></th></tr></thead><tbody><tr><td>World Wide Web 게시 서비스 (WWW 서비스)</td><td>Iisw3Adm.dll</td><td>SvcHost.exe</td></tr><tr><td>FTP 서비스 (파일 전송 프로토콜 서비스)</td><td>FtpSvc.dll</td><td>InetInfo.exe</td></tr><tr><td>SMTP 서비스 (Simple Mail Transfer Protocol 서비스)</td><td>SmtpSvc.dll</td><td>InetInfo.exe</td></tr><tr><td>NNTP 서비스 (Network News Transfer Protocol 서비스)</td><td>NntpSvc.dll</td><td>InetInfo.exe</td></tr><tr><td>IIS Admin 서비스</td><td>IisAdmin.dll</td><td>InetInfo.exe</td></tr></tbody></table>
+<p><strong>[표 1] IIS 6.0의 구성 요소와 호스트 프로세스</strong></p>
+<figure><img alt="" loading="lazy" decoding="async" width="38" height="12" src="/blog/_astro/60024245423-02.SZhGgEwQ_Z7jREg.webp"></figure>
+<p>IIS 5.0까지는 WWW 서비스를 비롯한 FTP나 SMTP와 같은 모든 서비스들이 InetInfo.exe라는 단일 프로세스에 의해 호스트 되었지만 IIS 6.0에서는 특별히 WWW 서비스가 별도의 독립된 SvcHost.exe에 의해 호스트 되도록 변경되었다. 이것은 FTP나 NNTP와 같은 다른 서비스에 의해 발생한 오류가 웹 서비스를 제공하는데 영향을 받지 않도록 하기 위해 분리한 것이다.</p>
+<p>IIS 6.0 핵심 구성 요소는 커널 모드 프로세스와 사용자 모드 프로세스로 구성되어 있다.</p>
+<p>기존의 IIS 5.0에서는 별도의 커널 모드 프로세스 없이 TCP/IP를 통해 전달된 사용자의 요청이 사용자 모드 프로세스에서 WinSock을 통해서 InetInfo.exe 프로세스로 전달되고 해당 어플리케이션에 의해서 처리되는 과정으로 진행되었다. IIS 6.0에서는 보다 성능과 가용성 측면의 향상을 위해 HTTP.SYS라는 커널 모드 드라이버를 별도로 제공한다.</p>
+<p>그리고 앞서 언급했듯이 IIS 6.0에서는 WWW 서비스가 InetInfo.exe 프로세스에 호스트 되지 않고 각각의 웹 어플리케이션이 별도의 작업자 프로세스(worker process)인 w3wp.exe에 의해서 처리된다. 각각의 웹 어플리케이션이 서로 독립적인 프로세스로 격리되어 실행되는 작업자 프로세스 격리 모드로 기본 구성되며 프로세스 별로 헬스 모니터링 및 재생(recycling) 기능이 제공된다.</p>
+<p>새롭게 추가되는 구성요소인 WAS(Web Admin Service)는 WWW 서비스를 구성하며 작업자 프로세스의 상태를 감시 및 관리하는 역할을 담당한다.</p>
+<p>InetInfo.exe는 IIS 6.0 구동에 필요한 환경설정 정보를 담고 있는 메타베이스를 관리하고 WWW 서비스외에 다른 서비스(FTP, SMTP, NNTP 등)를 호스트하는 프로세스이다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="430" height="271" src="/blog/_astro/60024245472-02.C9tiADd8_GApK6.webp"></figure>
+<p><strong>[그림 1] IIS 5.0와 6.0의 구성요소 비교</strong></p>
+<p>그럼 IIS 6.0의 핵심 구성요소와 이들의 상호 작용 방법에 대해서 보다 자세히 살펴보도록 하자.</p>
+<p><strong>3.1 HTTP.sys</strong></p>
+<p>HTTP 수신 대기자는 HTTP.sys라는 커널 모드 디바이스 드라이버를 통해서 실행된다. HTTP.sys는 HTTP 요청을 사용자 모드 어플리케이션으로 라우팅하는 커널 모드 디바이스 드라이버로서 Windows의 네트워킹 하위 시스템에 포함되어 있지만 IIS 6.0의 핵심 구성 요소로 이용된다.</p>
+<p>HTTP.sys를 커널 모드 구성 요소로 실행함으로써 다음과 같은 두 가지 성능 향상을 얻을 수 있다. 이러한 성능 향상은 HTTP 수신 대기자를 사용자 모드 구성 요소로 실행할 때는 제공되지 않는다.</p>
+<p>커널에서 올바른 프로세스로 직접 디스패치함으로써 컨텍스트 전환 오버헤드를 줄여 사용자 요청을 빠르게 처리한다. 커널 모드 캐시를 사용하면 캐시된 반환 요청을 사용자 모드로 전환하지 않고도 처리할 수 있다.</p>
+<p>HTTP.sys는 다음과 같은 방법으로 동작한다.</p>
+<p>- IIS에서 웹 사이트를 만들면 해당 웹 사이트는 HTTP.sys에 등록된다.<br>
+- HTTP.sys는 웹 요청을 이 웹 사이트를 실행하는 사용자 모드 프로세스로 라우팅하고 처리된 결과를 클라이언트로 다시 보낸다.<br>
+- HTTP.sys는 내부 캐시에서 저장된 응답을 검색하기만 하고 받은 요청을 처리하지는 않는다. 따라서 웹 어플리케이션 관련 코드는 커널 모드에 로드되지 않으며 사용자 모드의 어플리케이션 코드의 영향을 받지 않는다.<br>
+- 결과적으로 어플리케이션 관련 코드 버그나 악성 코드가 커널 모드 프로세스에 영향을 주거나 시스템 오류를 유발하지 못한다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="38" height="12" src="/blog/_astro/60024245423-02.SZhGgEwQ_Z7jREg.webp"></figure>
+<p>HTTP.sys는 IIS가 사용하는 기타 서비스 기능을 다음과 같이 제공한다.</p>
+<p>- TCP(전송 제어 프로토콜) 연결 관리<br>
+- HTTP를 올바른 요청 큐로 라우팅<br>
+- 커널 모드에서 응답 캐싱<br>
+- WWW 서비스에 대한 텍스트 기반 로깅 수행<br>
+- 연결 제한, 연결 시간 제한, 큐 길이 제한 및 대역폭 조절을 포함하는 QoS(서비스 품질) 기능 구현</p>
+<p><strong>커널 모드(Kernel Mode)와 사용자 모드(User Mode)</strong></p>
+<p>커널 모드는 컴퓨터의 모든 메모리에 접근할 수 있고 다른 어플리케이션의 프로세스로부터 격리된 메모리 공간에서 실행된다. 커널 모드 구성요소만이 하드웨어와 같은 리소스에 직접 접근이 가능하다. 반면 어플리케이션과과 이를 지원하는 서브시스템은 사용자 모드에서 실행된다. 사용자 모드의 프로세스는 직접 자원에 접근할 수 없으며 자원데 대한 접근 요구가 커널 모드 구성 요소에 의해 허가되어야 한다.</p>
+<p>이렇게 분리함으로써 어플리케이션의 오동작이나 허가되지 않는 사용자 접근으로부터 시스템을 보호할 수 있다. 사용자 모드는 우선 순위가 낮아 보통 커널 모드에서 수행되는 프로세스보다 CPU 사이클 접근을 덜한다.</p>
+<p><strong>3.2 WAS(Web Admin Service)</strong></p>
+<p>WAS는 WWW 서비스(World Wide Web 게시 서비스)의 새 구성 요소로 WWW 서비스 관리 및 모니터링과 같은 관리 작업을 수행하고 프로세스 관리를 담당한다. 관리 작업 측면에서 WWW 서비스 관리 및 모니터링은 WWW 서비스의 서비스 제어 기능을 구현하고 메타베이스와 상호 작용하여 HTTP.sys에 전달되거나 작업자 프로세스를 관리할 때 사용되는 구성을 가져온다. 프로세스 관리 측면에서는 작업자 프로세스의 시작 및 실행 중에 필요한 정보를 유지하고 관리한다.</p>
+<p>이 프로세스는 공유되지 않는 svchost.exe의 사용자 모드에서 Local System 권한으로 실행된다.</p>
+<p><strong>3.3 작업자 프로세스(Worker Process)</strong></p>
+<p>작업자 프로세스는 사용자 모드에서 실행되는 어플리케이션으로서 HTTP.sys로부터 전달받은 사용자의 요청을 처리하여 정적 페이지로 반환한다. 그리고 ISAPI(인터넷 서버 API) 확장 또는 필터를 호출하거나 CGI(Common Gateway Interface) 처리기를 실행하는 기능도 제공한다. 작업자 프로세스는 실제로 W3wp.exe라는 프로세스로 실행되며 WAS(WWW 서비스 관리 및 모니터링)에 의해 제어된다.</p>
+<p>기본적으로 작업자 프로세스는 IIS 6.0에서 필수적인 기능과 호환되는 가장 강력한 보안(최소한의 액세스만 허용)을 제공하는 NetworkService 계정으로 실행된다. 작업자 프로세스는 HTTP.sys를 통해 사용자의 요청을 처리하고 응답을 보내며 작업자 프로세스는 ASP.NET와 같은 웹 어플리케이션 코드를 실행한다. IIS 구성에 따라 서로 다른 웹 어플리케이션을 처리하는 여러 개의 작업자 프로세스가 동시에 실행될 수 있다. 이렇듯 각 어플리케이션을 프로세스 경계로 구분하기 때문에 서로 영향을 미치지 않으므로 웹 서버의 안정성을 극대화할 수 있다.</p>
+<p><strong>3.4 InetInfo.exe</strong></p>
+<p>InetInfo.exe는 WWW 서비스가 아닌 IIS 6.0의 구성 요소를 호스트하는 사용자 모드 구성 요소이다. InetInfo.exe가 호스트하는 서비스에는 FTP(File Transfer Protocol) 서비스, SMTP(Simple Mail Transfer Protocol) 서비스, NNTP(Network News Transfer Protocol) 서비스 및 IIS 메타베이스가 있다. 또한 Inetinfo.exe는 IIS 6.0에서 작업자 프로세스 격리 모드가 아니라 IIS 5.0 격리 모드로 실행되는 단일 작업자 프로세스를 호스트 한다.</p>
+<p><strong>4. IIS 6.0의 보안 측면 특징</strong></p>
+<p>마이크로소프트사는 IIS의 취약점에 대한 악의적인 공격의 패턴을 분석하고 IIS 6.0을 보다안전하게 만들기 위해서 다양한 예방 수단을 도입했다. 보안 측면에서 IIS 6.0의 특징을 살펴보면 다음과 같이 정리할 수 있다.</p>
+<p>① IIS는 Windows Server 2003에 기본적으로 설치되지 않는다. 예상되는 시스템의 공격 요소를 줄이기 위해 IIS 5.0와는 다르게 운영체제 설치 시에 기본적으로 설치되지 않는다. 웹 서비스를 제공하기 위해서는 관리자가 직접 IIS 구성 요소를 설치해야 한다.</p>
+<p>② IIS를 설치하더라도 초기 상태는 잠금 모드이다. 즉, 정적인 컨텐츠(.htm, .html)에 대한 기능만 제공되며 ASP나 ASP.NET과 같은 동적인 컨텐츠를 제공하려면 해당 요소를 활성화 시켜야 한다.</p>
+<p>③ 도메인 관리의 그룹 정책을 통해 구성원들이 자신의 컴퓨터에 IIS를 임의로 설치할 수 없도록 지정할 수 있다.</p>
+<p>④ IIS 6.0에서 사용자의 요청을 처리하는 작업자 프로세스는 낮은 권한을 가진 NetworkService 계정으로 실행되며 이로써 악의적인 공격에 의한 피해를 최소화 할 수 있다.</p>
+<p>⑤ IIS 6.0에서는 지정된 파일 확장자에 대한 요청에만 응답하며 인식하지 못하는 파일 확장자에 대한 요청은 거부한다.</p>
+<p>⑥ 악의적인 사용자가 웹 서버에 접근하여 웹 사이트의 파일을 훼손하는 것을 막기 위해 웹사용자에게 웹 컨텐츠 파일에 대한 쓰기 권한을 부여하지 않는다.</p>
+<p>⑦ 서버에 업로드 될 수 있는 데이터의 크기를 제한할 수 있고, 웹 사용자에 대한 응답 시간 제한을 제어함으로써 위험 요소를 최소화할 수 있다.</p>
+<p>⑧ 웹 사용자들에 대하여 명령줄 도구(command line tool)의 접근을 막음으로써 이러한 도구를 이용한 악의적인 공격을 막을 수 있다.</p>
+<p>⑨ 기존의 IIS의 버퍼 오버플로우 결함을 이용한 공격을 막기 위해 IIS 6.0의 작업자 프로세스는 버퍼 오버플로우가 발생하면 해당 어플리케이션을 찾아서 종료시킨다.</p>
+<p>⑩ 웹 서버 상에서 여러 개의 웹 사이트를 운영할 경우 이들 어플리케이션을 서로 분리된 프로세스에서 실행 될 수 있도록 함으로써 이전처럼 공격에 의하여 모든 웹 서비스가 중단되는 상황을 막을 수 있다.</p>
+<p>⑪ IIS 6.0에는 SSL의 개선된 버전이 포함되어 있다. 이로써 보다 빠른 성능을 얻을 수 있고, SSL 인증서를 원격으로 관리하거나 선택적으로 암호화 서비스 공급자를 지정할 수 있다.</p>
+<p>⑫ IIS 6.0 인증 기능에 마이크로소프트의 인증 서비스인 Passport를 통합하였다. Passport 인증 서비스를 이용해서 확인된 Passport ID를 Active Directory 사용자로 매핑하여 사용할 수 있다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="38" height="12" src="/blog/_astro/60024245423-02.SZhGgEwQ_Z7jREg.webp"></figure>
+<p><strong>5. IIS 6.0의 격리 모드</strong></p>
+<p>IIS 6.0은 어플리케이션을 작업자 프로세스 격리 모드 또는 IIS 5.0 격리 모드에서 실행한다. 두 격리 모드는 모두 HTTP(하이퍼텍스트 전송 프로토콜) 수신 대기자인 HTTP.sys의 영향을 받지만 내부 작업은 완전히 다르게 수행된다.</p>
+<p>작업자 프로세스 격리 모드는 IIS 6.0의 새 아키텍처 및 작업자 프로세스 핵심 구성 요소를 사용하는 반면 IIS 5.0 격리 모드는 기존의 IIS 5.0의 특정 기능과 동작에 종속된 어플리케이션의 호환성을 위해 제공된다. 격리 모드는 IIs5IsolationModeEnabled 메타베이스 속성을 사용하여 지정한다.</p>
+<p>어떠한 어플리케이션 격리 모드를 선택하느냐에 따라 성능, 안정성, 보안 및 기능 가용성이 달라진다. 작업자 프로세스 격리 모드는 어플리케이션에 보다 강력한 플랫폼을 제공하므로 IIS 6.0에 권장되는 모드이다. 또한 작업자 프로세스 격리 모드에서는 작업자 프로세스에서 실행 중인 어플리케이션이 기본적으로 NetworkService 계정으로 실행되므로 보다 높은 수준의 보안을 제공한다.</p>
+<p>반면 IIS 5.0 격리 모드에서 실행 중인 어플리케이션은 기본적으로 LocalSystem 계정으로실행 된다. 이 계정을 사용하면 컴퓨터에 있는 거의 모든 리소스를 액세스 및 변경할 수 있으므로 보안에 주의해야 한다.</p>
+<p>작업자 프로세스 격리 모드가 향상된 격리, 안정성, 가용성 및 성능을 제공할지라도 기존 환경에서 작성된 일부 어플리케이션에서 호환성 문제가 발생할 수 있으므로 이 경우에는 IIS 5.0 격리 모드를 사용해야 한다.</p>
+<p>IIS 5.0 격리 모드를 사용하려면 다음 그림과 같이 IIS 관리자에서 웹 사이트의 [등록정보]의 [서비스] 탭에서 [IIS 5.0 격리 모드에서 WWW 서비스 실행]을 선택하면 된다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="450" height="358" src="/blog/_astro/60024245472-03.CtwEaeJP_Zh3CdA.webp"></figure>
+<p><strong>[그림 1] IIS 5.0 격리 모드</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>잠깐!</strong></th></tr></thead><tbody><tr><td>IIS 6.0에서는 두 어플리케이션 격리 모드를 동시에 실행할 수 없다. 예를 들어 같은 IIS 서버에서 하나의 웹 어플리케이션은 작업자 프로세스 격리 모드에서 실행하고 다른 웹 어플리케이션은 IIS 5.0 격리 모드에서 실행할 수 없다. 어플리케이션을 별도의 모드에서 실행해야 하는 경우에는 다른 컴퓨터에서 실행해야 한다.</td></tr></tbody></table>
+<figure><img alt="" loading="lazy" decoding="async" width="38" height="12" src="/blog/_astro/60024245423-02.SZhGgEwQ_Z7jREg.webp"></figure>
+<p><strong>5.1 작업자 프로세스 격리 모드</strong></p>
+<p>작업자 프로세스 격리 모드는 새로운 IIS 6.0 핵심 구성 요소를 모두 사용한다. 작업자 프로세스 격리 모드를 사용하면 다음 섹션에서 설명할 어플리케이션 풀링, 재생 및 상태 검색 기능을 사용할 수 있다.</p>
+<p>다음은 작업자 프로세스 격리 모드에서 실행 중인 IIS 6.0의 아키텍처를 보여주는 그림이다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="450" height="450" src="/blog/_astro/60024245472-04.DH1EbLg6_YimBn.webp"></figure>
+<p><strong>[그림 2] 작업자 프로세스 격리 모드</strong></p>
+<p>위 그림을 보면 어플리케이션 관련 코드가 작업자 프로세스에만 로드 됨을 알 수 있다. 이 아키텍처는 작업자 프로세스에서 서비스 장애가 발생하더라도 World Wide Web 게시 서비스(WWW 서비스)나 IIS Admin 서비스 및 HTTP.sys는 영향을 받지 않고 계속 실행될 수 있으므로 IIS를 매우 안정적인 상태로 유지되도록 한다. 또한 작업자 프로세스에서 실행 중인 웹 사이트는 프로세스 경계를 통해 서로 격리되므로 다른 작업자 프로세스에서 장애가 발생해도 영향을 받지 않는다.</p>
+<p>작업자 프로세스 격리 모드에서 사용자 요청을 처리하는 과정을 정리해보면 다음과 같다.</p>
+<p>① HTTP.sys에 사용자 요청이 도착<br>
+② HTTP.sys는 요청이 유효한지 확인한다. 요청이 유효하지 않으면 HTTP.sys가 해당 코드를 클라이언트에게 다시 보낸다.<br>
+③ 요청이 유효하면 HTTP.sys가 해당 응답이 자신의 커널 코드 캐시에 있는지 검사한다.<br>
+④ 커널 코드 캐시에 응답이 있으면 HTTP.sys가 응답을 즉시 반환한다.<br>
+⑤ 캐시에 응답이 없으면 HTTP.sys가 올바른 요청 큐를 찾아서 이 큐에 요청을 추가한다.<br>
+⑥ 큐에 할당된 작업자 프로세스가 없으면 HTTP.sys가 작업자 프로세스 하나를 시작하도록 WWW 서비스로 신호를 보낸다.<br>
+⑦ 작업자 프로세스가 큐에서 요청을 가져와서 처리한다.<br>
+⑧ 작업자 프로세스가 HTTP.sys로 처리한 결과를 보낸다.<br>
+⑨ HTTP.sys가 클라이언트에게 응답을 보낸다.</p>
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>요청 큐(Request Queue)</strong></th></tr></thead><tbody><tr><td>HTTP.sys는 커널 모드에서 사용자의 HTTP 요청을 접수하고 이를 등록된 작업 프로세스 별로 요청 큐에 해당 정보를 저장한다. 즉, 작업자 프로세스당 하나의 요청 큐를 가지게 되고 큐에 저장된 정보를 순서대로 꺼내와서 처리하는 방법으로 진행된다. 이러한 구조는 윈도우 어플리케이션에서 OS에서 메시지 펌핑으로 각 윈도우 메시지 큐에 메시지를 전달하고 어플리케이션이 메시지를 꺼내서 이를 처리하기 위한 윈도우 프로시저를 호출하는 것과 매우 흡사하다. 작업자 프로세스에 오류가 발생하거나 성능상의 병목현상 또는 프로세스 재생으로 인한 대기시간이 발생하더라도 커널 모드에서 해당 작업자 프로세스에 대한 요청 큐를 관리하므로 사용자의 요청을 처리할 수 있게 된다.</td></tr></tbody></table>
+<p><strong>5.2 IIS 5.0 격리 모드</strong></p>
+<p>IIS 5.0 격리 모드는 IIS 5.0용으로 개발된 어플리케이션에 대한 호환성을 제공한다. IIS 6.0이 IIS 5.0에서 실행 중일 때의 요청 처리 방법은 IIS 5.0에서의 요청 처리 방법과 거의 같다. 하지만 IIS 5.0 격리 모드에서는 IIS 6.0에서 제공되는 어플리케이션 풀링, 재생 및 상태 검색 기능을 사용할 수 없다.</p>
+<p>다음은 IIS 5.0 격리 모드에서 실행 중인 IIS 6.0의 아키텍처를 보여주는 그림이다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="450" height="385" src="/blog/_astro/60024245472-05.D4wlHE4-_Z2nx098.webp"></figure>
+<p><strong>[그림 3] IIS 5.0 격리 모드</strong></p>
+<p>IIS 5.0 격리 모드에서 HTTP.sys를 사용하는 방법은 요청을 WWW 서비스에서 관리하는 단일 요청 큐에만 라우팅한다는 점만 제외하고 작업자 프로세스 격리 모드에서 HTTP.sys를 사용하는 방법과 같다. 격리 모드의 구성 방법(in-process, 풀링됨 또는 out-of-process)에 따라 요청이 Inetinfo.exe에서 처리되거나 별도의 DLLHost.exe에 의해서 호스트 되어 처리된다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="38" height="12" src="/blog/_astro/60024245423-02.SZhGgEwQ_Z7jREg.webp"></figure>
+<p><strong>5.3 격리 모드별 기능 비교</strong></p>
+<p>다음 표는 작업자 프로세스 격리 모드와 IIS 5.0 격리 모드에서 웹 어플리케이션을 실행할 때 IIS 6.0 기능이 어떤 역할을 하는지에 대해 정리한 것이다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>IIS 기능</strong></th><th><strong>IIS 5.0 격리 모드 (호스트/구성 요소)</strong></th><th><strong>작업자 프로세스 격리 모드 (호스트/구성 요소)</strong></th></tr></thead><tbody><tr><td>작업자 프로세스 관리</td><td>없음</td><td>Svchost.exe/WWW 서비스</td></tr><tr><td>작업자 프로세스</td><td>없음</td><td>W3wp.exe/작업자 프로세스</td></tr><tr><td>in-process ISAPI 확장 실행</td><td>Inetinfo.exe</td><td>W3wp.exe</td></tr><tr><td>out-of-process ISAPI 확장 실행</td><td>DLLHost.exe</td><td>없음(모든 ISAPI 확장이 in-process임)</td></tr><tr><td>ISAPI 필터 실행</td><td>Inetinfo.exe</td><td>W3wp.exe</td></tr><tr><td>HTTP.sys 구성</td><td>Svchost.exe/WWW 서비스</td><td>Svchost.exe/WWW 서비스</td></tr><tr><td>HTTP 프로토콜 지원</td><td>Windows 커널/HTTP.sys</td><td>Windows 커널/HTTP.sys</td></tr><tr><td>IIS 메타베이스</td><td>Inetinfo.exe</td><td>Inetinfo.exe</td></tr><tr><td>FTP</td><td>Inetinfo.exe</td><td>Inetinfo.exe</td></tr><tr><td>NNTP</td><td>Inetinfo.exe</td><td>Inetinfo.exe</td></tr><tr><td>SMTP</td><td>Inetinfo.exe</td><td>Inetinfo.exe</td></tr></tbody></table>
+<p><strong>연재를 마치며</strong></p>
+<p>지금까지 IIS 웹 서버의 보안 취약점 분석 및 웹 서버 보호 방법, 그리고 최근에 출시된 IIS 6.0에 대하여 알아보았다.</p>
+<p>세상에 100% 완벽하고 안전한 프로그램은 없다. 약간의 취약점이라도 있다면 그 부분을 찾아서 악의적으로 사용하려는 시도는 계속될 것이다. 관리자들은 계속해서 새로운 보안 소식에 관심을 가지고 웹 서버를 안전한 상태로 유지하는 노력을 해야 할 것이다.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60024245472" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2006/060510-60024245455/"><span>이전 글</span>[공유] [IIS 웹 서버와 보안 ⑤] IIS 웹 서버 보호방법(4)</a><a class="newer" href="/blog/posts/2006/060512-60024287640/"><span>다음 글</span>[델파이] 윈도우 종료시 프로그램 때문에 종료가 안되는데요~</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

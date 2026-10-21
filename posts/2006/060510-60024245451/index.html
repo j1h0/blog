@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[공유] [IIS 웹 서버와 보안 ④] IIS 웹 서버 보호방법(3) · 심플하고 여유있는 삶</title><meta name="description" content="이번 호에서는 계정 관리, 공유 자원 관리, 감사관리 측면에서 IIS 웹 서버를 보호하는 방법을 알아보도록 하자. 5. 계정 관리 서버에서 사용되지 않는 계정들은 공격자가 이 계정을 이용해서 접근할…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2006/060510-60024245451/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[공유] [IIS 웹 서버와 보안 ④] IIS 웹 서버 보호방법(3)"><meta property="og:description" content="이번 호에서는 계정 관리, 공유 자원 관리, 감사관리 측면에서 IIS 웹 서버를 보호하는 방법을 알아보도록 하자. 5. 계정 관리 서버에서 사용되지 않는 계정들은 공격자가 이 계정을 이용해서 접근할…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2006/060510-60024245451/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2006-05-10T10:51:00.000Z" data-pagefind-meta="date:2006-05-10">2006.05.10.</time></p><h1>[공유] [IIS 웹 서버와 보안 ④] IIS 웹 서버 보호방법(3)</h1></header><div class="prose"><p>이번 호에서는 계정 관리, 공유 자원 관리, 감사관리 측면에서 IIS 웹 서버를 보호하는 방법을 알아보도록 하자.</p>
+<p><strong>5. 계정 관리</strong></p>
+<p>서버에서 사용되지 않는 계정들은 공격자가 이 계정을 이용해서 접근할 수 있으므로 제거하는 것이 좋다. 또한 단순하거나 유추하기 쉬운 패스워드는 무차별 대입 공격(brute force)이나 사전 공격(dictionary attack)에 취약하다.</p>
+<p>5.1 사용하지 않는 계정을 제거한다.</p>
+<p>서버상에 사용되지 않는 계정을 이용해서 공격자가 권한을 얻어서 접근할 수 있으므로 이러한 계정은 제거하는 것이 좋다. 실제 서버에 반영하기 전에 테스트 서버에서 계정을 제거한 후에 서비스에 이상이 없는지 먼저 확인하는 것이 좋다.</p>
+<p>5.2 Guest 계정을 비활성화한다.</p>
+<p>Guest 계정은 컴퓨터에 익명 접속을 연결할 때 사용되는데 이를 비활성시킴으로써 익명 연결을 제한할 수 있다. Guest 계정의 활성화 여부는 [컴퓨터 관리] 도구에서 [로컬 사용자 및 그룹]의 [사용자] 메뉴의 목록에서 확인할 수 있다.</p>
+<p>5.3 관리계정의 이름을 바꾸고 복잡한 패스워드를 사용한다.</p>
+<p>기본적으로 관리자에게 지정되는 Administrator 계정은 컴퓨터에 대한 모든 권한을 가지므로 악의적인 목적으로 사용하기 위한 목표가 된다. 따라서 이 계정의 이름을 다른 이름으로 변경하고 유추하기 어려운 복잡한 패스워드를 사용하는 것이 좋다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="430" height="274" src="/blog/_astro/60024245451-01.CAZGDlXh_ZMuAqC.webp"></figure>
+<p>[그림 1] Administrator 계정의 이름 바꾸기</p>
+<p>5.4 기본 익명 계정(IUSR_Machine) 대신 사용자 정의한 계정을 사용한다.</p>
+<p>인터넷으로 익명으로 접근하는 사용자들은 IIS 설치시 기본적으로 생성되는 IUSR_Machine (서버의 NetBIOS명) 계정으로 접근하게 된다. 예를 들어 'WebSvr'라는 이름의 서버에는 'IUSR_WebSvr'이라는 계정이 생성된다. 이 계정을 비활성화하고 웹 서버의 익명 접속에 사용할 계정을 직접 정의하는 것이 좋다.</p>
+<p>웹 애플리케이션의 기능을 제공하는데 필요한 최소한의 권한을 가지는 계정을 만들고, 인터넷 관리자에서 웹 애플리케이션 별로 직접 정의한 계정을 지정하면 서버 상에 여러 개의 웹 사이트를 운영하는 경우 로그 분석에도 용이하다.</p>
+<p>특정 웹 사이트에 대해서 익명 연결에 사용할 계정을 지정하려면 다음 그림과 같이 [인터넷관리자]에서 해당 사이트의 [등록정보]-[디렉토리 보안]-[익명 액세스 및 인증 제어]-[편집]에서 익명 사용자 계정을 지정하면 된다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="38" height="12" src="/blog/_astro/60024245423-02.SZhGgEwQ_Z7jREg.webp"></figure>
+<figure><img alt="" loading="lazy" decoding="async" width="430" height="339" src="/blog/_astro/60024245451-03.CoMOXSV7_Ziu4xk.webp"></figure>
+<p>[그림 2] 익명 사용자 계정의 변경</p>
+<p>5.5 강력한 암호 정책을 적용한다.</p>
+<p>계정 암호에 대한 무차별 대입 공격이나 사전 공격을 막기 위해 암호의 최소 길이나 특수문자의 사용여부를 지정하는 등의 보다 강화된 정책을 사용하는 것이 좋다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>암호 정책</strong></th><th><strong>기본 설정</strong></th><th><strong>권장 설정</strong></th></tr></thead><tbody><tr><td><strong>최근 암호 기억</strong></td><td>0개 암호 기억됨</td><td>24개 암호 기억됨</td></tr><tr><td><strong>최대 암호 사용 기간</strong></td><td>42일</td><td>42일</td></tr><tr><td><strong>최소 암호 사용 기간</strong></td><td>0일</td><td>2일</td></tr><tr><td><strong>최소 암호 길이</strong></td><td>0문자</td><td>8문자</td></tr><tr><td><strong>암호는 복잡성을 만족해야 함</strong></td><td>사용안함</td><td>사용함</td></tr></tbody></table>
+<p>암호 정책은 [관리 도구] - [로컬 보안 설정]에서 [계정 정책] - [암호 정책]에서 설정할 수 있다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="430" height="228" src="/blog/_astro/60024245451-04.DfhVSYp5_OV5Fi.webp"></figure>
+<p>[그림 3] 암호 정책의 설정</p>
+<p>5.6 익명 로그온(널 세션)을 비활성화 한다.</p>
+<p>널 세션(Null Session) 접속은 인증을 받지 않은 상태에서 해당 컴퓨터에 접근하는 것을 의미하며 해커들은 이를 이용해서 원격 컴퓨터의 정보를 제공 받을 수 있고, 특정 권한으로 승격하거나 DoS 공격을 수행할 수도 있다. 널 세션 접속을 허용하지 않으려면 레지스트리 편집기를 이용해서 'HKLM\System\CurrentControlSet\Control\LSA' 키의 RestrictAnonymous 값을 '1'로 설정하면 된다.</p>
+<p><strong>6. 공유</strong></p>
+<p>서버에서 사용되지 않는 공유를 제거하고 사용중인 공유 자원에 대해서는 NTFS 권한을 부여함으로써 자원을 보호할 필요가 있다. 특히 기본적으로 공유가 생성될 때 모든 사용자들에게 모든 권한이 부여되므로 NTFS 권한을 적용해서 필요한 사용자에게만 접근을 허용하도록 관리해야 한다.</p>
+<p>또한 관리목적에서 사용되는 C$, ADMIN$와 같은 관리 공유를 사용하지 않는다면 제거하는 것이 권장된다. 관리 공유를 사용하지 않으려면 레지스트리 편집기를 이용해서 HKLM\SYSTEM\CurrentControlSet\Services\lanmanserver\parameters 키에 AutoShareServer와 AutoShareWks 값을 REG_DWORD로 만들고 '0'으로 설정하면 된다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="38" height="12" src="/blog/_astro/60024245423-02.SZhGgEwQ_Z7jREg.webp"></figure>
+<p><strong>7. 감사관리</strong></p>
+<p>감사관리는 시스템 공격을 막지는 못하지만 진행중인 공격이나 침입자를 인식하고 공격의 흔적을 추적하는데 많은 도움을 준다. 웹 서버의 감사정책 수준을 높이고 NTFS 권한으로 로그 파일을 보호함으로써 공격자가 로그파일을 지우거나 변조하는 것을 방지하는 것도 필요하다.</p>
+<p>7.1 로그인 실패 로그를 기록한다.</p>
+<p>시스템에 로그인하는데 실패한 이벤트에 대해서는 반드시 로그를 기록해야 한다. 로그를 통해서 암호에 대한 무차별 대입 공격이나 사전 공격의 흔적을 찾을 수 있으며 공격자가 어떠한 게정으로 접근을 시도했는지도 알 수 있다.</p>
+<p>[관리도구]에서 [로컬 보안 설정] 도구를 실행하고 [로컬 정책]-[감사 정책]에서 '로그온 이벤트 감사' 항목에서 '실패' 로그를 기록하도록 설정하면 된다. 이렇게 설정하면 이후에 발생하는 로그인 실패 이벤트에 대한 내역을 [이벤트 뷰어]의 [보안 로그] 목록에서 확인할 수 있게 된다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="430" height="293" src="/blog/_astro/60024245451-05.BVw0N7yf_2logFe.webp"></figure>
+<p>[그림 4] 로그온 실패에 대한 감사 기록 설정</p>
+<p>7.2 개체 접근 실패에 대한 로그를 기록한다.</p>
+<p>파일이나 폴더 등의 개체에 대한 악의적인 접근 시도에 대하여 감사기록을 하는 방법을 알아보자. 먼저 7.1에서 설명한 것과 동일한 방법으로 감사정책에서 '개체 액세스 감사'에 대하여 '실패'시 로그를 기록하도록 설정한다.</p>
+<p>그리고 감사하려는 대상 폴더나 파일을 탐색기에서 선택하고 [등록정보]의 [보안]탭에서 [고급] 버튼을 누른다. 액세스 컨트롤 설정 창에서 [감사]탭을 선택하고 [추가] 버튼을 클릭한 뒤 'Everyone' 그룹에 대한 모든 실패 이벤트를 기록하도록 감사 항목을 설정하면 된다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="430" height="322" src="/blog/_astro/60024245451-06.B4fvhSvT_Z2iVxlc.webp"></figure>
+<p>[그림 5] 개체 액세스 실패에 대한 감사기록 설정하기</p>
+<p>개체 액세스에 대한 감사기능은 해당 디스크 볼륨이 NTFS 파티션일 경우에만 사용할 수 있다. NTFS 파일시스템은 FAT과 비교했을 때 파일 및 폴더 단위의 권한 부여 및 관리가 용이하므로 웹 서버의 자원이 저장되는 파티션은 NTFS를 사용하는 것이 좋다.</p>
+<p>7.3 IIS 로그파일의 위치를 변경하고 NTFS 권한을 적용한다.</p>
+<p>기본적으로 IIS 로그파일은 '%systemroot%\system32\LogFiles'에 사이트별로 저장되는데 이를 다른 폴더에 저장하거나 이름을 변경함으로써 공격자가 로그 파일을 변경하거나 삭제하는 것을 어느 정도 막을 수 있다. 가능하면 이 로그 파일이 저장되는 디렉토리를 웹 사이트가 위치한 디스크와 다른 볼륨을 사용하고 NTFS 권한을 Administrator(모든 권한), System(모든 권한), Backup Operators(읽기)로 지정하여 다른 계정으로 로그 파일에 접근하는 것을 막는 것이 좋다.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60024245451" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2006/060510-60024245443/"><span>이전 글</span>[공유] [IIS 웹 서버와 보안 ③] IIS 웹 서버 보호방법(2)</a><a class="newer" href="/blog/posts/2006/060510-60024245455/"><span>다음 글</span>[공유] [IIS 웹 서버와 보안 ⑤] IIS 웹 서버 보호방법(4)</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

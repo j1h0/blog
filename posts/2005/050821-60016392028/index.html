@@ -1,0 +1,141 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[리눅스*오라클]RedHAt Linux 9 에서 Oracle9.2.0 설치 · 심플하고 여유있는 삶</title><meta name="description" content="oracle 9.2.0 설치 Oracle 9i R2(9.2.0.1) 설치를 위한 선행 작업 1). Linux 커널 설정 ← root 계정 - 현재 linux에 설정되어 있는 공유 메모리 세그먼트의…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2005/050821-60016392028/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[리눅스*오라클]RedHAt Linux 9 에서 Oracle9.2.0 설치"><meta property="og:description" content="oracle 9.2.0 설치 Oracle 9i R2(9.2.0.1) 설치를 위한 선행 작업 1). Linux 커널 설정 ← root 계정 - 현재 linux에 설정되어 있는 공유 메모리 세그먼트의…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2005/050821-60016392028/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2005-08-21T08:04:00.000Z" data-pagefind-meta="date:2005-08-21">2005.08.21.</time></p><h1>[리눅스*오라클]RedHAt Linux 9 에서 Oracle9.2.0 설치</h1></header><div class="prose"><p>oracle 9.2.0 설치<br>
+Oracle 9i R2(9.2.0.1) 설치를 위한 선행 작업<br>
+1). Linux 커널 설정 ← root 계정<br>
+- 현재 linux에 설정되어 있는 공유 메모리 세그먼트의 최대 크기(shmmax)를 확인한다.<br>
+[root@jini root]# cat /proc/sys/kernel/shmmax<br>
+33554432<br>
+- 공유 메모리 세그먼트의 최대 크기를 2048MB로 변경한다.<br>
+echo 2147483648 > /proc/sys/kernel/shmmax<br>
+cat /proc/sys/kernel/shmmax<br>
+2147483648<br>
+- 수정한 값은 일시적으로만 시스템에 적용되므로 영구적으로 시스템에 적용하기<br>
+위해서는 다음과 같은 명령어를 수행하면 된다.<br>
+echo “kernel.shmmax = 2147483648” >> /etc/sysctl.conf<br>
+ipcs ?al<br>
+--------- Shared Memory Limits ------------<br>
+max number of segments = 4096<br>
+max seg size (kbytes) = 2097151 ?? 확인</p>
+<p>2)사용자 생성 및 셋팅 ← root 계정</p>
+<p># groupadd dba</p>
+<p># useradd -g dba oracle</p>
+<p># passwd oracle</p>
+<p># chmod 755 /home/oracle</p>
+<p>3)오라클 다운 ← oracle계정</p>
+<p>오라클다운(여기테스트본은 한글폰트들어가있음. 만약 다른 오라클로 설치한다면 한글폰트추가작업요망)</p>
+<p>source 폴더도 다운받음(패치자료 들어있음.)</p>
+<p>다운받은후 압축 해제한다. tar xvzf 파일명</p>
+<p>4) glibc Downgrade ← root 계정</p>
+<p># cd ~oracle/program2/redhat 9i - old</p>
+<p># rpm --import /usr/share/rhn/RPM-GPG-KEY</p>
+<p># rpm ?-checksig glibc-2.3.2-5.i686.rpm \</p>
+<p>> glibc-common-2.3.2-5.i386.rpm \</p>
+<p>> glibc-devel-2.3.2-5.i386.rpm</p>
+<p># rpm ?Uvh ?-oldpackage glibc-2.3.2-5.i686.rpm \</p>
+<p>> glibc-common-2.3.2-5.i386.rpm \</p>
+<p>> glibc-devel-2.3.2-5.i386.rpm</p>
+<p>5) JDK 설치 ← root 계정</p>
+<p># cd /usr/local</p>
+<p># cp ~oracle/program2/jdk-1_5_0-beta2-linux-i586.bin .</p>
+<p># chmod 755 jdk-1_5_0-beta2-linux-i586.bin</p>
+<p># ./jdk-1_5_0-beta2-linux-i586.bin</p>
+<p>6) 오라클 환결설정파일 수정 ← root 계정</p>
+<p># vi /home/oracle/.bash_profile</p>
+<p># .bash_profile</p>
+<p># Get the aliases and functions<br>
+if [ -f ~/.bashrc ]; then<br>
+. ~/.bashrc<br>
+fi</p>
+<p># User specific environment and startup programs</p>
+<p>PATH=$PATH:$HOME/bin</p>
+<p>#Oracle Environment</p>
+<p>export LD_ASSUME_KERNEL=2.4.1</p>
+<p>export ORACLE_BASE=/home/oracle/oracle</p>
+<p>export ORACLE_HOME=/home/oracle/oracle/product/9.2.0</p>
+<p>export ORACLE_SID=ocp166</p>
+<p>export ORACLE_TERM=xterm</p>
+<p>export ORACLE_OWNER=oracle</p>
+<p>export LANG=ko_KR.eucKR</p>
+<p>export NLS_LANG=AMERICAN_AMERICA.KO16KSC5601</p>
+<p>export ORA_NLS33=$ORACLE_HOME/ocommon/nls/admin/data</p>
+<p>LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib</p>
+<p>LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib</p>
+<p>export LD_LIBRARY_PATH</p>
+<p>#Set shell search paths</p>
+<p>export PATH=$PATH:$ORACLE_HOME/bin</p>
+<p>#CLASSPATH:</p>
+<p>export CLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib</p>
+<p>export CLASSPATH=$CLASSPATH:$ORACLE_HOME/network/jlib</p>
+<p>export PATH<br>
+unset USERNAME<br>
+주의: 위에 내용중 export ORACLE_SID=ocp166 부분중에 sid는 사용자에 맞게 수정하여 고쳐넣는다.<br>
+***** 필요한 폴더 미리 생성 *****<br>
+[root@mk oracle]# mkdir /home/oracle/oracle</p>
+<p>[root@mk oracle]# mkdir /home/oracle/oracle/product</p>
+<p>[root@mk oracle]# mkdir /home/oracle/oracle/product/9.2.0</p>
+<p>[root@mk oracle]# chown -R oracle.dba /home/oracle</p>
+<p>[root@mk oracle]# mkdir /var/opt/oracle</p>
+<p>[root@mk oracle]# chown oracle.dba /var/opt/oracle</p>
+<p>[root@mk oracle]# chmod 755 /var/opt/oracle</p>
+<p>7) Reboot<br>
+Oracle 계정으로 로그인<br>
+한텀에서 xterm 띄어서 ./runinstaller 시켜 인스톨 시킨다.</p>
+<p>a. welcome… a next</p>
+<p>b. inventory location… a ok</p>
+<p>c. unix 그룹이름넣으라는 대화상자 a “윰” 입력</p>
+<p>d. root 권한으로 /tmp/orainRoot.sh 스크립트 실행후 계속 눌러 설치</p>
+<p>e. File Location … a next</p>
+<p>f. Avaliable Products a Oralce Database 9.2.0.4 다음 클릭</p>
+<p>g. Installation Types a custom 클릭</p>
+<p>h. iSQL*PLUS 9.2.0.4 와 Oracle JDBC/OCI Interface 9.2.0.4 를 체크</p>
+<p>i. Privileged Operationg System Groups 창에서 a 모두 dba 입력후 다음</p>
+<p>j. Oracle Management Server Repository 창에서</p>
+<p>What repository will be used with this Oracle Management Server?</p>
+<p>a The Management Server will require a new repository 를 선택</p>
+<p>k. Create Database a 예</p>
+<p>l. Summary 창 a 설치</p>
+<p>m. root.sh 에러 a /home/oracle/oracle/product/9.2.0/root.sh 실행</p>
+<p>Enter the full pathname of the local bin directory:[/usr/local/bin:]: 그냥 엔터</p>
+<p>n. Oracle Net Configuration Assistant 창에서 a 기본구성수행체크하지 않고 다음 클릭</p>
+<p>o. 아니오 , 다음에 이 구성을 완료하겠습니다. 다음 클릭</p>
+<p>p. 리스너명 : LISTNENR 다음 클릭</p>
+<p>q. 표준 포트번호 1521 사용 다음 클릭</p>
+<p>r. 다른 리스너를 구성하겠습니까? a 아니오 다음 클릭</p>
+<p>s. 리스너 구성이 완료되었습니다. a 아니오 구성된 이를 지정 메소드를 변경하지 않습니다 다음클릭</p>
+<p>t. Oracle Net 구성이 완료되었습니다. 완료 클릭</p>
+<p>u. 오라클 데이터베이스용 Database Configuration Assistant 시작 a 다음클릭</p>
+<p>v. 데이터베이스 생성 다음 클릭</p>
+<p>w. New Database 다음클릭</p>
+<p>x. 전역데이타베이스 이름과 sid입력</p>
+<p>y. 데이터베이스 기능창에서 다음 클릭</p>
+<p>z. 데이터베이스를 실행할 기본모드 선택 창에서 a 전용서버모드 다음 클릭</p>
+<p>aa. 메모리탭 보이면 문자집합 탭에 클릭 a 문자 집합목록에서 선택에 KO16KSC5601 선택 다음 클릭</p>
+<p>bb. 데이터 베이스 저장 영역 창에서 다음 클릭</p>
+<p>cc. 다음 데이터베이스 생성 옵션 선택창에서 데이터 베이스 생성에 체크가 되어 있으면 완료에 클릭</p>
+<p>dd. 다음 작업이 수행됨 ocpdba 를 가진 데이터베이스 생성 창에서 a 확인 클릭</p>
+<p>ee. SYS 암호 SYSTEM 암호를 입력하고 종료에 클릭</p>
+<p>ff. 환영합니다………a 다음 클릭</p>
+<p>gg. 새 저장소 옵션 생성 창에서 a 사용자 정의 선택 다음 클릭</p>
+<p>hh. 데이터 베이스 위치 선택창에서 저장소를 어느 위치에 배치하겠습니까? a 다른 기존 데이터베이스 클릭 다음</p>
+<p>ii. Select Database for Repository 창에서 사용자이름 : sys 암호:****</p>
+<p>서비스:&#x3C;호스트>:&#x3C;포트>:&#x3C;sid> 입력후 다음으로 접속</p>
+<p>jj. Repository 로그인 정보창 a 암호 정하고 다음</p>
+<p>kk. Is the usrname “OEM_OCP_OCPDBA” unique 예 클릭</p>
+<p>ll. 저장소 사용자 테이블스페이스 … a 그냥 다음에 클릭</p>
+<p>mm. 저장소 요약 생성 a 완료</p>
+<p>nn. 프로세스가 완료되었습니다. 창에서 닫기 클릭</p>
+<p>oo. 설치 완료 창에서 종료버튼클릭</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60016392028" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2005/050821-60016391792/"><span>이전 글</span>[리눅스][펌] 리눅스 명령어</a><a class="newer" href="/blog/posts/2005/050821-60016392098/"><span>다음 글</span>[리눅스]Redhat 9.0 기반에서 오라클 9.2.0 설치하기</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

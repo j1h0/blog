@@ -1,0 +1,128 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[솔라리스*오라클][펌] [Oracle]솔라리스에 오라클 설치하기2 · 심플하고 여유있는 삶</title><meta name="description" content="솔라리스 9 IA 9/04, 10 IA 3/05에서 Oracle 설치 설치할 Oracle 버전 - Oracle 10g Release 1 들어가기 전에 - 최종 갱신일: 2005-06-16 이 문서는…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2005/050820-60016372972/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[솔라리스*오라클][펌] [Oracle]솔라리스에 오라클 설치하기2"><meta property="og:description" content="솔라리스 9 IA 9/04, 10 IA 3/05에서 Oracle 설치 설치할 Oracle 버전 - Oracle 10g Release 1 들어가기 전에 - 최종 갱신일: 2005-06-16 이 문서는…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2005/050820-60016372972/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2005-08-20T14:15:00.000Z" data-pagefind-meta="date:2005-08-20">2005.08.20.</time></p><h1>[솔라리스*오라클][펌] [Oracle]솔라리스에 오라클 설치하기2</h1></header><div class="prose"><h3 id="솔라리스-9-ia-904-10-ia-305에서-oracle-설치">솔라리스 9 IA 9/04, 10 IA 3/05에서 Oracle 설치</h3>
+<h3 id="설치할-oracle-버전">설치할 Oracle 버전</h3>
+<ul>
+<li>Oracle 10g Release 1</li>
+</ul>
+<h3 id="들어가기-전에">들어가기 전에</h3>
+<ul>
+<li>최종 갱신일: 2005-06-16  이 문서는 <a href="http://www.solanara.net/">http://www.solanara.net/</a> 에서 최신버전을 구할 수 있다.</li>
+</ul>
+<h3 id="1-설치-전에">1. 설치 전에</h3>
+<ul>
+<li>전부 설치를 선택한다.  Software 1/2, Software 2/2, Language 시디를 모두 설치한다.  Oracle은 모두 /export/home/oracle에 설치할 것이다. 필자는 /export/home/oracle을 4GB 주었다.  오라클사에서 말하는 오라클 인스톨을 위한 필수 패키지는 SUNWarc SUNWlibms SUNWi1of SUNWbtool SUNWsprot SUNWi1cs SUNWhea SUNWsprox SUNWi15cs SUNWlibm SUNWtoo SUNWxwfnt 이다. 전체 설치시 모두 설치되어있다. 또한 솔라리스 9의 경우 최신의 커널 패치와 최신의 libm 패치를 해야 한다. 물론 솔라리스 9 9/04에서는 이미 설치되어있다.  오라클에서 권장하는 사양은 512MB이상의 램, 1GB이상의 스왑공간, /tmp이 400MB이상 남아있어야 한다. 임시공간이 문제될 것이라 생각되면 TEMP환경변수와 TMPDIR 환경변수를 수정해준다. 예) export TEMP=/disk2/tmp</li>
+</ul>
+<ol>
+<li>시스템 커널 파라메터 변경해야 한다. 주로 공유메모리와 관련된 파라미터를 늘려주어야 한다. 자세한 사항은 솔라리스 매뉴얼의 Tunable Parameter부분을 참고한다. /etc/system 파일은 매우 중요하므로 백업받은 후 수정하자. root@wl ~ # cp /etc/system /etc/systemold root@wl ~ # vi /etc/system set semsys:seminfo_semmni=100 set semsys:seminfo_semmns=1024 set semsys:seminfo_semmsl=256 set semsys:seminfo_semvmx=32767 set shmsys:shminfo_shmmax=4294967295 set shmsys:shminfo_shmmin=1 set shmsys:shminfo_shmmni=100 set shmsys:shminfo_shmseg=10 root@wl ~ # sync; sync; reboot  오라클 계정을 생성한다. 오라클은 root로 설치할 수 없다. 오라클에서는 설치를 위해 oinstall 그룹, dba 그룹, oracle 유저를 생성하는 것을 권하고 있다. root@wl ~ # groupadd -g 101 oinstall root@wl ~ # groupadd -g 102 dba root@wl ~ # useradd -d /export/home/oracle -g oinstall -G dba -m -u 103 -s /bin/bash oracle root@wl ~ # passwd oracle  오라클 계정의 환경을 설정한다. ORACLE_HOME과 같은 중요한 환경 변수를 설정한다. root@wl ~ # /usr/openwin/bin/xhost + # 빼먹지 말자 root@wl ~ # su - oracle oracle@wl ~ $ mkdir oraapp # 오라클 어플리케이션이 설치될 곳. 2.5GB정도 필요 oracle@wl ~ $ mkdir oradata # 오라클 데이터가 설치될 곳. 1.2GB이상 필요 oracle@wl ~ $ chmod -R 775 oraapp oracle@wl ~ $ vi .profile DISPLAY=localhost:0.0; export DISPLAY # 다른 호스트의 X윈도우를 사용하려면 해당 호스트의 IP를 localhost대신 적는다. DISPLAY=192.168.0.8:0.0; export DISPLAY ORACLE_BASE=/export/home/oracle/oraapp; export ORACLE_BASE ORACLE_SID=orcl; export ORACLE_SID if [ -x /usr/local/bin/dbhome ] # 오라클 설치시 root.sh를 실행하면 dbhome이 존재하며 실행 가능하게 된다. then ORACLE_HOME=`dbhome orcl`; export ORACLE_HOME PATH=$PATH:$ORACLE_HOME/bin; export PATH LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib fi # TNS_ADMIN 환경변수는 설정하지 않는다. oracle@wl ~ $ . .profile oracle@wl ~ $ cksum solarisx86_DB_10_1_0_3_Disk1.cpio.gz 3520147492 634888056 solarisx86_DB_10_1_0_3_Disk1.cpio.gz oracle@wl ~ $ gunzip solarisx86_DB_10_1_0_3_Disk1.cpio.gz # 파일은 오라클 다운로드 페이지에서 받는다. 주1) oracle@wl ~ $ cpio -idcmv &#x3C; solarisx86_DB_10_1_0_3_Disk1.cpio # Solaris 10에서는 oraparam.ini 와 oraparam.var 를 수정해야 한다. oracle@wl ~ $ vi /Disk1/install/oraparam.ini Solaris=5.6,5.7,5.8,5.9,5.10 oracle@wl ~ $ vi /Disk1/install/oraparam.var Solaris=5.8,5.9,5.10 oracle@wl ~ $ cd Disk1 oracle@wl ~/Disk1 $ ./runInstaller</li>
+</ol>
+<p>주1) 오라클 다운로드 사이트: <a href="http://www.oracle.com/technology/software/products/database/oracle10g/index.html">가기</a><br>
+~DB~.cpio.gz: Oracle 10g 데이터베이스<br>
+~CCD~.cpio.gz: Oracle 10g 컴패니언 시디<br>
+~CLIENT~.cpio.gz: Oracle 10g 클라이언트<br>
+~CRS~.cpio.gz: Oracle 10g 클러스터링(Cluster Ready Services)<br>
+가 있는데 이중 ~DB~와 ~CCD~를 받는다. cksum (CRC32유틸. 솔라리스 기본 제공)으로 다운로드 한 파일의 이상 유무를 반드시 확인해본다.</p>
+<h3 id="2-오라클-및-오라클-컴패니언-설치">2. 오라클 및 오라클 컴패니언 설치</h3>
+<p>위와같이 한후 마지막에 runInstaller를 실행했다면 GUI화면이 뜰 것이다. 자바로 되어있어 썩 모양이 좋지는 않지만 그럭저럭 봐줄만 한다. 각각의 화면마다 선택해야할 것은 다음과 같다. 빠른 설치를 위해 설정은 대부분 기본값으로 해 놓았다. (필요한 설정은 이전에 .profile을 수정할 때 모두 했다) 또한 이 내용은 Oracle Quick Installation Guide의 내용이기도 하다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>스크린 제목</th><th>내용</th></tr></thead><tbody><tr><td>Welcome</td><td>Next를 클릭한다.</td></tr><tr><td>Specify Inventory Directory and Credentials</td><td>오라클 인벤토리설정 화면이다. 기본값으로 놔둔다. Next를 클릭하면 루트 권한으로 orainstRoot.sh를 실행하라고 나오는데 화면을 참조해 실행해준다.</td></tr><tr><td>Specify File Locations</td><td>파일이 설치될 디렉토리이다. $ORACLE_BASE/product/10.1.0/db_1에 설치된다. Next를 클릭한다.</td></tr><tr><td>Select Installation Type</td><td>Enterprise Edition을 선택하고 Next를 클릭한다.</td></tr><tr><td>Select Database Configuration</td><td>Next를 클릭한다.</td></tr><tr><td>Specify Database Configuration Options</td><td>Global Database Name이 orcl로 되어있는 것을 확인한다. Database Character Set은 KO16KSC5601(완성형)으로 선택되어있는데, 필요하다면 KO16MSWIN949 (확장완성형)로 수정한다. 예제 스키마를 생성할 것인가를 물어보는데 체크하는 것이 테스트용으로 설치하는 목적에 부합할 것이다. Next를 클릭한다.</td></tr><tr><td>Select Database Management Option</td><td>Next를 클릭한다.</td></tr><tr><td>Specify Database File Storage Option</td><td>위에서 생성한 디렉토리를 선택해준다. 기본값은 $ORACLE_BASE/oradata 이다.</td></tr><tr><td>Specify Backup and Recovery Options</td><td>Next를 클릭한다.</td></tr><tr><td>Specify Database Schema Passwords</td><td>각각의 계정에 대해 암호를 입력한 후 Next를 클릭한다.</td></tr><tr><td>Summary</td><td>이제까지 설정한 것을 보여준다. 확인 후 Next를 클릭한다.</td></tr><tr><td>Install</td><td>인스톨 화면이다. 기다리면 다음 화면으로 자동으로 넘어간다.</td></tr><tr><td>Configuration Assistants</td><td>설정 화면이다. 데이터 베이스 생성이 끝나면 안내 메시지가 나오는데, 전역데이터베이스이름, SID식별자, <a href="http://localhost:5500/em">http://localhost:5500/em</a> 과 SYS,SYSTEM암호는 반드시 외워놓는다. OK를 클릭한 후 Next를 클릭하면 다음 화면으로 넘어간다.</td></tr><tr><td>Setup Privileges</td><td>루트 유저로 $ORACLE_HOME/root.sh 을 실행하라는 메시지가 나온다. 루트로 실행해준다. 나오는 메시지 중에서 필요한 것은 다음과 같다. ORACLE_OWNER= oracle ORACLE_HOME=/export/home/oracle/oraapp/product/10.1.0/Db_1</td></tr><tr><td>End of Installation</td><td>주어진 내용을 읽어본 후 Exit를 클릭해 인스톨러를 마친다. (포트 리스트는 $ORACLE_HOME/install/portlist.ini 에 있다.) 이것으로 인스톨을 모두 끝냈다. Ultra Search URL: <a href="http://localhost:5620/ultrasearch">http://localhost:5620/ultrasearch</a> Ultra Search Administration Tool URL: <a href="http://localhost:5620/ultrasearch/admin">http://localhost:5620/ultrasearch/admin</a> iSQL*Plus URL: <a href="http://localhost:5560/isqlplus">http://localhost:5560/isqlplus</a> iSQL*Plus DBA URL: <a href="http://localhost:5560/isqlplus/dba">http://localhost:5560/isqlplus/dba</a> Enteprise Manager 10g Database Control URL: <a href="http://localhost:5500/em">http://localhost:5500/em</a></td></tr></tbody></table>
+<p>여기까지 하면 오라클의 설치가 끝난것이다. 여기까지만 설치하더라도 오라클의 운영에는 문제 없지만, 좀 더 편한 관리를 위해 컴패니언을 설치한다. (필자는 오라클은 컴패니언까지 인스톨해야 한다고 보고 있다)</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>oracle@wl ~ $ cksum solarisx86_CCD_10_1_0_3_Disk1.cpio.gz 4119132538 438221549 solarisx86_CCD_10_1_0_3_Disk1.cpio.gz oracle@wl ~ $ rm -rf Disk1 # 기존에 압축 풀었던 오라클 데이터베이스 인스톨 파일을 지운다 oracle@wl ~ $ gunzip solarisx86_CCD_10_1_0_3_Disk1.cpio.gz oracle@wl ~ $ cpio -idcmv &#x3C; solarisx86_CCD_10_1_0_3_Disk1.cpio oracle@wl ~/Disk1 $ ./runInstaller </span></span></code></pre>
+<h3 id="3-오라클-인스턴트-클라이언트-설치">3. 오라클 인스턴트 클라이언트 설치</h3>
+<p>Oracle Instant Client는 오라클 10g에서 새롭게 선 보이는 배포버전이다. 오라클 OCI 라이브러리와 SDK, SQL*Plus, JDBC드라이버만을 지원해준다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>파일이름 크기(바이트) CRC32 instantclient-basic-solarisx86-10.1.0.3-20050404.zip 30,141,480 4208528557 instantclient-jdbc-solarisx86-10.1.0.3-20050404.zip 4,572,527 556902813 instantclient-sqlplus-solarisx86-10.1.0.3-20050404.zip 266,435 793421160 instantclient-sdk-solarisx86-10.1.0.3-20050404.zip 293,993 1919831458 </span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>root@wl ~ # unzip instantclient-basic-solarisx86-10.1.0.3-20050404.zip root@wl ~ # unzip instantclient-sqlplus-solarisx86-10.1.0.3-20050404.zip root@wl ~ # unzip instantclient-sdk-solarisx86-10.1.0.3-20050404.zip root@wl ~ # unzip instantclient-jdbc-solarisx86-10.1.0.3-20050404.zip root@wl ~ # mv instantclient10_1 /usr/local/instantclient10_1 root@wl ~ # vi /usr/local/instantclient10_1/tnsnames.ora ORCL = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.0.100)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = orcl) ) ) root@wl ~ # vi /etc/profile # for Oracle Instant Client if [ -d /usr/local/instantclient10_1 ] then LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/instantclient10_1; export LD_LIBRARY_PATH PATH=$PATH:/usr/local/instantclient10_1; export PATH; NLS_LANG=Korean_Korea.KO16KSC5601; export NLS_LANG; TNS_ADMIN=/usr/local/instantclient10_1; export TNS_ADMIN; SQLPATH=/usr/local/instantclient10_1; export SQLPATH; fi root@wl ~ # sqlplus 사용자아이디/사용자패스워드@//호스트주소:포트/DB이름 </span></span></code></pre>
+<p>* 오라클 인스턴트 클라이언트는 라이브러리 파일 크기가 크기 때문에, 가상 메모리를 많이 소모한다.</p>
+<h3 id="4-오라클-관련-어플리케이션-설정">4. 오라클 관련 어플리케이션 설정</h3>
+<ol>
+<li>모든 오라클 관련 어플리케이션은 ORACLE_HOME 환경변수가 있어야 동작한다. 따라서 톰캣이나 아파치/PHP을 사용할 때에도 웹서버를 띄우기 전에 ORACLE_HOME이 환경변수에 존재하는지 확인해야 한다.  한글문제 해결의 기본은 NLS_LANG 환경 변수를 지정해주는 것이다. NLS_LANG=Korean_Korea.KO16KSC5601 또는 NLS_LANG=American_America.KO16MSWIN949 의 조합으로도 사용할 수 있다. 오라클 데이터베이스에 접속하기 전에 NLS_LANG 환경 변수가 존재하며, 올바르게 설정되었는지 반드시 확인해야 한다.  오라클 시작/종료</li>
+</ol>
+<h1 id="오라클-데이터베이스-시작-oraclewl---sqlplus-nolog--dbstart-스크립트를-이용할-수도-있다-sql-connect-sys패스워드-as-sysdba-sql-startup-sql-exit-oraclewl---lsnrctl-start--리스너-시작-외부에서-접속하기-위해서는-필요하다-oraclewl---searchctl-start--ultra-search-시작-oraclewl---isqlplusctl-start--isqlplus-시작-oraclewl---emctl-start-dbconsole--oemoracle-enterprise-manager-시작--인스톨-이후-오라클을-시작한-상태에서-실행한다--plsql-모듈-재-컴파일-oraclewl---sqlplus--as-sysdba-sql-rdbmsadminutlrpsql--스태틱-라이브러리-생성-oraclewl---oracle_homebingenclntst--종료-oraclewl---emctl-stop-dbconsole-oraclewl---isqlplusctl-stop-oraclewl---searchctl-stop-oraclewl---lsnrctl-stop-oraclewl---sqlplus-nolog--dbshut-스크립트를-이용할-수도-있다-sql-connect-sys패스워드-as-sysdba-sql-shutdown-immediate-sql-exit-oraclewl----java와-oracle연동">오라클 데이터베이스 시작. oracle@wl ~ $ sqlplus /nolog # 'dbstart' 스크립트를 이용할 수도 있다. SQL> connect sys/패스워드 as sysdba SQL> startup SQL> exit oracle@wl ~ $ lsnrctl start # 리스너 시작 (외부에서 접속하기 위해서는 필요하다) oracle@wl ~ $ searchctl start # Ultra Search 시작 oracle@wl ~ $ isqlplusctl start # iSQL*Plus 시작 oracle@wl ~ $ emctl start dbconsole # OEM(Oracle Enterprise Manager) 시작 # 인스톨 이후. 오라클을 시작한 상태에서 실행한다. # PL/SQL 모듈 재 컴파일 oracle@wl ~ $ sqlplus "/ AS SYSDBA" SQL> @?/rdbms/admin/utlrp.sql # 스태틱 라이브러리 생성 oracle@wl ~ $ $ORACLE_HOME/bin/genclntst # 종료 oracle@wl ~ $ emctl stop dbconsole oracle@wl ~ $ isqlplusctl stop oracle@wl ~ $ searchctl stop oracle@wl ~ $ lsnrctl stop oracle@wl ~ $ sqlplus /nolog # 'dbshut' 스크립트를 이용할 수도 있다. SQL> connect sys/패스워드 as sysdba SQL> shutdown immediate SQL> exit oracle@wl ~ $  Java와 Oracle연동</h1>
+<p>* 자바용 오라클 JDBC드라이버는 크게 두가지가 있다. 하나는 THIN을 지원해주는 드라이버고 다른 하나는 OCI기반의 드라이버이다. THIN드라이버의 경우 오라클 라이브러리를 설치할 필요 없다는 장점이있다. (성능은 비슷한것으로 판단된다) 아래는 THIN드라이버를 기준으로 한다.<br>
+* Java 1.4인 경우 $ORACLE_HOME/jdbc/lib/ojdbc14.jar 과 $ORACLE_HOME/jdbc/lib/orai18n.jar 를 CLASS_PATH 에 환경변수 넣어준다.<br>
+* Java 1.2, Java 1.3인 경우 $ORACLE_HOME/jdbc/lib/classes12.jar 과 $ORACLE_HOME/jdbc/lib/nls_charset12.jar 를 환경변수 CLASS_PATH에 넣어준다.<br>
+PHP 와 Orale연동<br>
+* PHP컴파일시 ./configure부분을 다음으로 대체한다. 반드시 설치하기 전에 오라클에 설치되어있어야 하며 컴파일 할때 환경 변수 ORACLE_HOME 이 설정되어있어야 한다. root@wl ~/php-5.0.4 # . ~oracle/.profile root@wl ~/php-5.0.4 # ./configure \ --prefix=/usr/local/php \ --with-apxs2=/usr/local/apache2/bin/apxs \ --with-mysql=/usr/local/mysql \ --with-mysqli=/usr/local/mysql/bin/mysql_config \ --with-oci8 \ --enable-sigchild \ --with-iconv \ --with-libxml-dir=/usr/local/xml \ --enable-modules=so \ --enable-mbstring \ --enable-mbregex \ --with-gd \ --enable-gd-native-ttf \ --with-jpeg-dir=/usr/sfw \ --with-png-dir=/usr/sfw \ --with-zlib-dir=/usr/local root@wl ~/php-5.0.4 # make root@wl ~/php-5.0.4 # make install * PHP 4.3.11, PHP 5.0.4부터 오라클 인스턴트 클라이언트(Oracle Instant Client)를 공식 지원한다. 아래는 인스턴트 클라이언트를 이용한 방법이다.<br>
+root@wl ~/php-5.0.4 # ./configure \ --prefix=/usr/local/php \ --with-apxs2=/usr/local/apache2/bin/apxs \ --with-mysql=/usr/local/mysql \ --with-mysqli=/usr/local/mysql/bin/mysql_config \ --with-oci8-instant-client=/usr/local/instantclient10_1 \ --enable-sigchild \ --with-iconv \ --with-libxml-dir=/usr/local/xml \ --enable-modules=so \ --enable-mbstring \ --enable-mbregex \ --with-gd \ --enable-gd-native-ttf \ --with-jpeg-dir=/usr/sfw \ --with-png-dir=/usr/sfw \ --with-zlib-dir=/usr/local root@wl ~/php-5.0.4 # make root@wl ~/php-5.0.4 # make install</p>
+<p>Copyright © 2004-2005 Jo HoSeok. All rights reserved.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60016372972" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2005/050820-60016372961/"><span>이전 글</span>[유닉스][펌] AIX, Solaris, HP-UX, Linux들의 특징 및 명령 비교</a><a class="newer" href="/blog/posts/2005/050820-60016372990/"><span>다음 글</span>[솔라리스*오라클][펌] 솔라리스 Solaris 에 오라클 Oracle 817 설치하기</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BATCH(배치) 파일 문법 · 심플하고 여유있는 삶</title><meta name="description" content="bat(배치)파일 문법 일괄처리(Batch) 파일 1 1.배치파일(Batch File, 일괄처리용 화일) 1.1. 배치파일? Batch(배치)는 '한 묶음','한벌'의 의미하며, 배치파일은 여러 가…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2006/060525-60024657244/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="BATCH(배치) 파일 문법"><meta property="og:description" content="bat(배치)파일 문법 일괄처리(Batch) 파일 1 1.배치파일(Batch File, 일괄처리용 화일) 1.1. 배치파일? Batch(배치)는 '한 묶음','한벌'의 의미하며, 배치파일은 여러 가…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2006/060525-60024657244/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2006-05-25T01:46:00.000Z" data-pagefind-meta="date:2006-05-25">2006.05.25.</time></p><h1>BATCH(배치) 파일 문법</h1></header><div class="prose"><p>bat(배치)파일 문법<br>
+일괄처리(Batch) 파일 #1</p>
+<p>1.배치파일(Batch File, 일괄처리용 화일)</p>
+<p>1.1. 배치파일?<br>
+Batch(배치)는 '한 묶음','한벌'의 의미하며, 배치파일은 여러 가지 명령어를 한 파일에 모아 작업하는 파일, 즉 하나의 일을 처리하기 위해 여러번 내리는 명령어를 한 번만에 처리할 수 있도록 만들어 놓은 실행파일이다.</p>
+<p>① 확장자 이름은 반드시 'BAT'이어야 한다.<br>
+② 파일명은 도스의 내부명령어 이름을 피하라.<br>
+③ COM, EXE 파일의 이름을 피하라.</p>
+<p>④ 명령어 이름이 서로 같아 충돌할 때, DOS는 도스키-->내부명령-->외부명령( *.COM-->*.EXE)-->*.BAT) 순으로 실행한다.</p>
+<p>다만 '파일명.BAT'라고 확장자 이름까지 써서 명령을 내리면 이런 문제는 해결된다.</p>
+<p>⑤ BAT파일은 표준 ASCII 문장(Text) 파일이어야 한다.</p>
+<p>1.2. BAT파일 만드는 방법.<br>
+일반 도스 명령어와 배치전용 명령어를 사용하여 다음의 3가지 방식을 사용하여 아스키 문장파일 형식으로 만든다.</p>
+<p>① COPY명령사용 .... C:\>COPY CON XXXX.BAT<br>
+② 문서편집기 이용 ... 'EDIT', 'SAN'<br>
+③ 문서 작성기(WordProcessor) .. 아래한글,훈민정음 등</p>
+<p>작성 예①) C:\>COPY CON SAMPLE.BAT &#x3C;엔터><br>
+───── CLS<br>
+DIR A:<br>
+V3 C:<br>
+^Z<br>
+1 File(s) Copied</p>
+<p>&#x3C;설명1> COPY 명령을 사용하여 텍스트 파일 만드는 방법을 이용한다.<br>
+CON은 장치 파일명으로 여기서는 키보드를 지칭한다.키보드로 입력한 문자를 SAMPLE.BAT라는 파일명으로 복사.출력하라는 뜻이다.</p>
+<p>입력한 배치 내용을 보면<br>
+화면을 깨끗이지우고(CLS), A드라이브의 파일목록을 보이라, 그리고 C 디스크에 바이러스 감염 여부를 점검.치료하라는 명령이다.</p>
+<p>줄을 바꿀 때는 항상 엔터하면 된다. 끝낼 때는 언제나 Ctrl+Z 또는 F6키를 누르고 엔터하면 1개 파일이 복사되었다는 메시지가 나오면서 C루트에 SAMPLE.BAT란 파일이 1개 생긴다.</p>
+<p>&#x3C;실행> C:\>SAMPLE &#x3C;엔터>하면 배치파일 내용 순서데로 명령을 실행한다.</p>
+<hr>
+<p>작성 예②) C:\>EDIT &#x3C;엔터></p>
+<p>도스 편집기 화면이 뜬다. 이때 ESC키를 한번 눌러 메시지 상자를 제거하고 깨끗한 화면에다 첫째 줄부터 입력하되, 줄을 바꿀 때는 엔터한다.</p>
+<p>CLS<br>
+DIR A:<br>
+V3 C:</p>
+<p>끝내려고 저장글쇠(@F,S)를 누르면 파일이름을 써넣으라고 상자자 나온다. SAMPLE.BAT라고 입력하고 &#x3C;엔터>하여 저장한 후, 에디트를 끝(@F, X)낸다.그러면 C루트 디렉토리에 SAMPLE.BAT 라는 배치파일이 생긴다.</p>
+<p>&#x3C;실행> C:\>SAMPLE &#x3C;엔터>하면 C루트에 있는 SAMPLE.BAT 파일이 실행된다.</p>
+<p>******* 배치파일 내용에 파일스펙 경로명을 쓸 때 주의점.****</p>
+<p>ⓐ 배치파일 내용 중에<br>
+C:\GAME\SUPER\SUPER.EXE 라고 해놓으면</p>
+<p>현재 도스 작업방을 바꾸지 말고 C:\GAME\SUPER\ 방에있는 SUPER.EXE를 실행하라는 뜻이기 때문에 경우에 따라서는 실행이 되지 않는다.</p>
+<p>ⓑ 배치 내용을 아래와 같이 하면 틀림없이 실행하게 된다.<br>
+C:<br>
+CD\GAME\SUPER<br>
+SUPER</p>
+<p>현재 도스작업방이 먼저 C드라이브로 바뀌고,절대경로명 CD\GAME\SUPER<br>
+디렉토리로 이동한 후에 SUPER.EXE 파일을 실행한다 ******</p>
+<p>1.3.배치파일 명령어들</p>
+<p>① 일반적인 도스명령를 그대로 사용한다.</p>
+<p>CLS COPY DEL DIR DATE TIME PAYH PROMPT CHKDSK 등등.</p>
+<p>② 배치에만 사용하는 전용 명령가 있다.<br>
+ECHO REM PAUSE CALL GOTO CHOICE IF FOR SHIFT<br>
+(메아리)(설명) (쉼) (부름) (가기) (선택) (조건)(순환) (옮김)</p>
+<p>ⓐ REM<br>
+[베치파일 속에 달고 싶은 설명.주석]....설명이 화면에 나옴.</p>
+<p>ⓑ PAUSE<br>
+배치파일 실행중 일시 멈추게함.<br>
+화면에 'Press any key to continue...'<br>
+(계속하려면 아무키나 누르세요)</p>
+<p>배치실행을 중단하려면 Ctrl+C키를 누른다. 그러면 화면에<br>
+'Terminate batch job (Y/N)?'<br>
+(배치작업을 끝내겠읍니까?) Yes / No</p>
+<p>ⓒ ECHO 명령<br>
+형식> ECHO 문자열<br>
+에코명령 다음에 오는 문자열을 화면에 나타낸다.</p>
+<p>ECHO ON<br>
+이후부터 '명령어'라인을 화면에 보인다.(도스 초기값)</p>
+<p>ECHO OFF<br>
+이후 실행되는 명령어 라인을 화면에 나타내지 않는다.<br>
+화면이 깨끗하고, 화면출력속도.가독성 증가한다.<br>
+'ECHO OFF'라는 그 자체까지 보이지 않게 하려면 @ 을 앞에 쓴<br>
+다.( @ECHO OFF )</p>
+<p>ECHO<br>
+현재 ECHO ON/OFF 상태를 확인한다.</p>
+<p>&#x3C;예> C:\>COPY CON EDIT2.bat<br>
+ECHO OFF<br>
+이후에 실행되는 명령어는 화면에 나타나지 않는다.<br>
+화면에 ECHO OFF 자체는 나타난다.</p>
+<p>TB<br>
+태백한글을 메모리에 상주 띄우기.<br>
+각자 지원되는 다른 한글코드(HANME,HT,DKBY 등)를<br>
+실행하면 된다.<br>
+한글도스인 때는 HBIOS.COM을 실행한다.</p>
+<p>PAUSE<br>
+잠시 중지. 엔터하면 다시 진행한다.</p>
+<p>CLS<br>
+화면청소</p>
+<p>ECHO 'This is Hangul Edit.'<br>
+'문자열'을 화면에 출력한다.</p>
+<p>PAUSE<br>
+REM NOW,DOS EDIT IS HANGUL EDITOR.</p>
+<p>REM 다음에 오는 설명은 화면에 나오지 않는다. 다만<br>
+사용자가 배치파일 내용을 볼 때 참고할 내용이다.</p>
+<p>ECHO ON<br>
+이후에 실행되는 명령어는 화면에 나타남</p>
+<p>EDIT<br>
+도스 에디터 화면이 나오면 한글로 문서를 작성.저장한<br>
+후 끝낸다.</p>
+<p>@ECHO OFF</p>
+<p>이후에 실행되는 명령어는 화면에 나타나지 않는다.<br>
+ECHO OFF자체도 나타나지않음.</p>
+<p>TB/U<br>
+태백한글 메모리서 제거한다.</p>
+<p>CLS<br>
+^Z<br>
+CTRL+Z 또는 F6를 누른다.</p>
+<p>1 File(s) Copied</p>
+<p>실습을 위하여 일부러 여러가지 명령 종류를 써 보았으며,한글로 설 명을 하느라고 줄이 떨어졌으나 각자 실습할 때는 영문글자 부분만 쓰고 엔터하여 줄울 바꾸고 줄간격을 붙여가며 쓴다.</p>
+<p>&#x3C;실행 예> C:\>EDIT2 &#x3C;엔터> 하면</p>
+<p>위의 내용을 순서데로 실행하고 도스 문서편집기가 화면에 나타난다. 문서작성기를 끝내면 한글프로그램을 메모리에서 제거하고 도스로 나온다. (계속)</p>
+<p>제14장 배치파일 #2 (계속)</p>
+<p>1.4 배치파일 전용 명령에서<br>
+? 판단과 분기에 관한 명령 .... CALL, CHOICE, IF, GOTO</p>
+<p>앞에서 공부한 배치파일의 경우는 입력된 명령어들의 순서데로 실행되었었지만, 판단과 분기의 명령들은 명령어의 실행의 흐름을 사용자가 임의로 변경,지정할 수있어 배치파일의 기능을 보다 강력하게 한다.</p>
+<p>분기 명령..배치파일의 순차적 수행을 필요에 따라 변경할 때 사용하며<br>
+배치파일에 프로그램적 기능을 갖게하는 명령이다.</p>
+<p>조건분기(Conditional Branching).......IF명령</p>
+<p>무조건분기(Unconditional Branching)...GOTO명령</p>
+<p>① CALL [배치파일 인자]</p>
+<p>배치파일 실행 중 다른 배치파일을 도중에 호출하여 실행시키고 다시<br>
+원래 배치파일로 돌아오게 하는 명령이다.</p>
+<p>&#x3C;예> H1.BAT의 내용이 'DIR C:\ > A:MDIRLIST.TXT' ( C루트의 파일목<br>
+록을 A드라이브에 MDIRLIST.TXT 란 파일로 출력하라) 이라고 하자.</p>
+<p>C:\>COPY CON H2.BAT<br>
+CALL H1.BAT<br>
+TYPE A:MDIRLIST<br>
+^Z</p>
+<p>&#x3C;실행> C:\>H2 엔터하면 H1.BAT란 배치파일을 불러(CALL) 실행하여 MDIRLIST.TXT 파일을 A드라이브에 만든 후, 다시 H2.BAT 파일로 돌아와서 A드라이브의 'MDIRLIST.TXT' 파일을 화면에 타이프해 보인다.</p>
+<p>② IF 조건</p>
+<p>주어진 조건에 따라 명령을 선별적으로 선택.실행케 하는 명령이다.</p>
+<p>IF EXIST [파일이름] [명령]<br>
+찾는 파일이 존재하면 명령을 실행하라</p>
+<p>IF NOT EXIT [파일이름] [명령]<br>
+찾는 파일이 없으면 명령을 실행하라</p>
+<p>&#x3C;예> IF EXIST *.BAK DEL *.BAK<br>
+BAK라는 백업파일이 있으면 모두 지워버리라.</p>
+<p>IF [NOT] "문자열1" == "문자열2" [명령]<br>
+"문자열1"과 "문자열2"가 서로 일치 [불일치] 하면 명령을 실행하라. (양쪽 비교 문자열의 영문 대소문자를 구분한다)<br>
+==은 EQ로, !=은 같지 않다는 부호인데 NE로 대신할 수 있다.<br>
+문자열은 " " 으로 반드시 구분하고 부호와는 한 칸 띈다.</p>
+<p>&#x3C;예> C:\>COPY CON TEST1.BAT<br>
+@ECHO OFF<br>
+IF "%1" == "A" ECHO TESTING A<br>
+IF NOT "%1" == "A" ECHO IT IS NOT EQUAL.<br>
+^z</p>
+<p>&#x3C;실행> C:\>TEST1 A 엔터하면 화면에 TESTING A 라고 표시한다.<br>
+C:\>TEST1 C 엔터하면 A와 같지 않으므로 IT IS NOT EQUAL 라고 표시한다.</p>
+<p>IF [NOT] ERRORLEVEL [값] [명령]<br>
+IF명령 바로 앞에서 수행되었던 프로그램이 수행을 마치면서 남긴 종료코드(ExitCode)를 검사하여 지정 값보다 크면(작으면) 명령을 실행하라는 뜻이다.</p>
+<p>종료코드를 발생하는 명령어(FORMAT,XCOPY,COPY,BACKUP,RESTORE 등 일<br>
+반 도스명령어들 메뉴얼 참조)들은 0~255 범위에서 종료코드(EXITCODE)<br>
+값을 가지는데<br>
+에를 들면 XCOPY명령에서 성공적 수행일 때는 0, 화일이 없을 때 1, CTRL+C로 중단하면 2, 초기화 오류발생 때는 4, 디스크 에러에는 5를 반환하는 식으로 정해저 있다.</p>
+<p>예> C:\>COPY CON XY.BAT<br>
+XCOPY %1 A:<br>
+IF NOT ERRORLEEVEL 0 ECHO COPY FAILED !<br>
+IF ERRORLEVEL 0 ECHO SUCCESSFULLY !<br>
+^Z</p>
+<p>실행> C:\>XY *.* 엔터하면 성공적 수행여부에 따라 'FAILED !' 또는<br>
+'SUCCESSFULLY !' 라는 메시지가 나온다.</p>
+<p>③ GOTO [레이블이름]<br>
+레이블 이름이 있는 행으로 실행 순서를 옮긴다.<br>
+'레이블(Label)'은 8자이 내로, 레이블 앞에는 콜론(:)을 사용한다.</p>
+<p>&#x3C;예> 현재 디렉토리에 *.HWP 파일을 C:\HNCDOC 디렉토리로 옮겨주는<br>
+배치파일을 만들어 보자.</p>
+<p>C:\>COPY CON HWPMV.BAT<br>
+@ECHO OFF<br>
+IF NOT EXIST *.HWP GOTO FIRST<br>
+MOVE /-Y *.HWP C:\HNCDOC<br>
+ECHO HWPFILE MOVE DONE !<br>
+GOTO END<br>
+:FIRST<br>
+ECHO *.HWP FILE NOT FOUND !<br>
+:END<br>
+^Z</p>
+<p>실행> C:\>HWPMV 엔터하면 C루트 디렉토리에 있는 모든 HWP 파일을 C:\HNCDOC 디렉토리로 옮기고 'HWP 파일을 모두 옮겼다'는 메시지를 화면에 보이고 END(끝) 레이블로 와서 도스상태로 빠저나 온다. 옮길 HWP 파일이 없으면 ' HWP 파일을 찾지 못했다'는 메시지가 나오고 끝(END) 낸다.</p>
+<p>GOTO 문에서는 항상 END 레이블로 배치를 끝낸다.</p>
+<p>배치 안에서 COPY,XCOPY,MOVE 명령은 /-Y 스위치를 써야 만이 목적지에 같은 이름의 파일이 있을 경우 덮어 쓸지여부를 확인하는 메시지를 출력한다.</p>
+<p>④ 의사변수(Dummy Variables 가상의 변수)</p>
+<p>바꿔 쓸 수 있는 인자(Replaceable Parameter)를 의사변수라 하며,<br>
+%0 ~ %9(10개)으로 표시한다.</p>
+<p>형식> C:\>명령어 파일1 파일2 " " " " " " 파일9<br>
+%0 %1 %2 %3 %4 %5 %6 %7 %8 %9</p>
+<p>작성예1> C:\>COPY CON DIRALL.BAT<br>
+DIR %1<br>
+pause<br>
+DIR %2<br>
+pause<br>
+type %0<br>
+^Z</p>
+<p>실행예> C:\>DIRALL A: B: (엔터)</p>
+<p>설명> 위 '실행 예'에서 명령어 DIRALL(.BAT)은 %0, A:은 %1, B:은 %2 에 해당하므로 '작성예1'의 내용 중 %1,%2,%0에 대입하여 명령을 수행한 결과가 화면에 나오게 된다. 즉 화면에는 'DIR A:'과, 'DIR B:'이 차례로 출력되고 멈췄다가 'DIRALL.BAT' 파일 내용이 출력된다.</p>
+<p>작성예2> C:\>COPY CON EDIT2.BAT<br>
+@ECHO OFF<br>
+CLS<br>
+TB .....tb라는 프로그램을 메모리에 설치<br>
+EDIT %1 ......%1은 '지정 파일'로 대체된다.<br>
+TB/U .......태백 한글을 메모리에서 제거<br>
+^Z</p>
+<p>실행예> C:\>EDIT2 SAMPLE.TXT (엔터)<br>
+%0 %1</p>
+<p>설명> 위 '실행예'에서 명령어(EDIT2.BAT)는 %0, 파일1(SAMPLE.TXT)은 %1 에 해당하므로, '작성예2'의 배치파일 내용중 %1 대신에 SAMPLE.TXT라는 텍스트 파일이 대입된다.</p>
+<p>화면은 한글을 읽고 쓸 수 있도록 태백한글을 메모리에 상주시킨다. 편집기는 SAMPLE.TXT 라는 파일을 읽어 화면에 띄워 수정.삽입 등 편집하고 저장할 수 있다. 편집을 끝내면 한글코드가 메모리에서 제거된다.</p>
+<p>⑤ SHIFT</p>
+<p>쉬프트는 옮김,변위를 의미하는 데 10개 이상의 대체 인자(Replaceable<br>
+Paramete)도 사용 가능하다. 대체인자를 한 자리씩 왼쪽으로 이동한다.</p>
+<p>작성예> 지정한 문장(text) 파일들을 차례로 TYPE시키는 배치파일 예.</p>
+<p>A:\>COPY CON TELLME.BAT<br>
+@ECHO OFF<br>
+:BEGIN<br>
+IF NOT EXIST %1 GOTO END<br>
+TYPE %1<br>
+SHIFT<br>
+GOTO BEGIN<br>
+:END<br>
+ECHO 더이상 파일이 없습니다.<br>
+^Z</p>
+<p>실행예> A:\>TELLME AAA.TXT BBB.TXT CCC.TXT ......... 엔터<br>
+%0 %1 %2 %3 ........%15</p>
+<p>설명> 위 '실행예'의 텍스트 파일명은 특정해야 하며 Wildcard문자(*,?)는 사용할 수 없다. 지정된 여러 파일들에 %1 변수가 차례로 SHIFT(변위)되면서 파일을 대입시켜 내용을 출력한다.<br>
+즉 AAA.TXT가 먼저 %1이 되고, 다음 BBB.TXT, 또 CCC.TXT, .....등이 %1에 대입된다. 계속 10개 이상의 변수도 지정할 수 있다.</p>
+<p>지정된 파일이 모두 옮겨 대입되고 나면 배치파일이 끝나게 된다. 배치파일 내용 중 GOTO 명령에서 BEGIN 레이블로 가서 다시 시작하게하는 것을 LOOP(고리)라고 한다.</p>
+<p>⑥ FOR<br>
+FOR 명령은 지정된 횟수 만큼 배치파일이 같은 명령을 계속 반복하게하는 명령, 즉 반복수행 (Looping) 명령이다.</p>
+<p>형식) FOR %%변수 IN (셋트 파라미터) DO [명령어] %%변수</p>
+<p>'(셋트 파라미터)'는 일련의 많은 갯수의 파일들을 말하고, '%%변수'는 SET에 명시된 각 파일에 순차적으로 설정되어 명령을 실행하는 대입변수이다.</p>
+<p>셋트 파라미터에 와일드카드문자(*,?)를 사용할 수 있다.</p>
+<p>작성예> 확장명이 BAT,DOC,TXT,CAP인 문장 파일 모두를 차례로 화면에 출력(TYPE)되게 배치파일을 만들어 보자.</p>
+<p>C:\> COPY CON TYPEALL.BAT<br>
+FOR %%Z IN (*.BAT *.DOC *.TXT *.CAP) DO TYPE %%Z<br>
+^Z</p>
+<p>&#x3C;실행> C:\>TYPEALL C:\MDIR\*.BAT 엔터</p>
+<p>(*.BAT, *.DOC, *.TXT, *.CAP 중에서 한 종류 파일만 지정한다.)</p>
+<p>위 TYPEALL.BAT 파일을 실행할 때는 파일스펙(경로특정)이 있어야 한다.</p>
+<p>2. 자동형 배치파일 (Aautoexec.bat)</p>
+<p>일반배치파일 만들기와 동일하며 다만 이름만 AUTOEXEC.BAT로 한다.</p>
+<p>컴퓨터를 구입할 때 이미 작성되어 있으므로 그 내용만 자기 필요에 따라 변경하면 될 것이다. 만약을 위해 원본 파일을 다른 곳에 백업해 놓고 필요시 다시 복사하면 좋을 것이다.</p>
+<p>&#x3C;작성예> C:\>COPY CON AUTOEXEC.BAT<br>
+@ECHO OFF<br>
+CLS<br>
+SMARTDRV<br>
+LH V3RES<br>
+PROMPT $P$G<br>
+PATH=C:\;C:\DOS;C:\MDIR;C:\V&#x26;P<br>
+LH DOSKEY<br>
+M<br>
+^Z<br>
+1 FIle(s) Copied</p>
+<p>① 컴퓨터가 부팅할 때 DOS 시스템 프로그램을 메모리에 상주시킨 후<br>
+곧 바로 자동실행 배치파일의 내용의 명령들을 실행한다.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60024657244" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2006/060525-60024657212/"><span>이전 글</span>IP변경 배치파일</a><a class="newer" href="/blog/posts/2006/060603-60024937301/"><span>다음 글</span>[델파이-WinAPI] 윈도우 메시지 이용하여 Ctrl+V 하기</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

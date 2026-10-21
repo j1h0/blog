@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[WinAPI]SHFileOpStruct , SHFileOperation · 심플하고 여유있는 삶</title><meta name="description" content="라이브 업데이트에서 사용되는 SHFileOpStruct , SHFileOperation를 이용한 파일 컨트롤(이동, 삭제, 복사, 이름바꾸기) 펑션. 생각보다 간편한듯 했다. Uses ShellAP…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2006/061130-60031477488/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[WinAPI]SHFileOpStruct , SHFileOperation"><meta property="og:description" content="라이브 업데이트에서 사용되는 SHFileOpStruct , SHFileOperation를 이용한 파일 컨트롤(이동, 삭제, 복사, 이름바꾸기) 펑션. 생각보다 간편한듯 했다. Uses ShellAP…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2006/061130-60031477488/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2006-11-30T01:31:00.000Z" data-pagefind-meta="date:2006-11-30">2006.11.30.</time></p><h1>[WinAPI]SHFileOpStruct , SHFileOperation</h1></header><div class="prose"><p>라이브 업데이트에서 사용되는 SHFileOpStruct , SHFileOperation를 이용한</p>
+<p>파일 컨트롤(이동, 삭제, 복사, 이름바꾸기) 펑션. 생각보다 간편한듯 했다.</p>
+<p>Uses ShellAPI.h</p>
+<p>function F_MoveFile(const Src, Dest: String): Boolean;</p>
+<p>var<br>
+AData : TSHFileOpStruct;<br>
+AFrom, ATo: String;<br>
+begin<br>
+AFrom := Src + #0#0;<br>
+ATo := Dest + #0#0;<br>
+AData.fFlags := FOF_NOCONFIRMATION or FOF_NOCONFIRMMKDIR or</p>
+<p>FOF_MULTIDESTFILES or FOF_SILENT or</p>
+<p>FOF_WANTMAPPINGHANDLE;<br>
+AData.pFrom := PChar(AFrom);<br>
+AData.pTo := PChar(ATo);<br>
+AData.Wnd := 0;<br>
+AData.wFunc := FO_COPY; // FO_DELETE or FO_MOVE or FO_RENAME</p>
+<p>Result := SHFileOperation(AData) = 0;<br>
+end;</p>
+<p>=====================================================================================</p>
+<p><strong>[SHFileOpStruct]</strong></p>
+<p>Contains information that the SHFileOperation function uses to perform file operations.</p>
+<p>typedef struct _SHFILEOPSTRUCT { // shfos<br>
+HWND hwnd;<br>
+UINT wFunc;<br>
+LPCSTR pFrom;<br>
+LPCSTR pTo;<br>
+FILEOP_FLAGS fFlags;<br>
+BOOL fAnyOperationsAborted;<br>
+LPVOID hNameMappings;<br>
+LPCSTR lpszProgressTitle;<br>
+} SHFILEOPSTRUCT, FAR *LPSHFILEOPSTRUCT;</p>
+<p>Members</p>
+<p><strong>hwnd</strong></p>
+<p>Handle of the dialog box to use to display information about the status of the operation.</p>
+<p><strong>wFunc</strong></p>
+<p>Operation to perform. This member can be one of the following values:</p>
+<p>FO_COPY Copies the files specified by pFrom to the location specified by pTo.<br>
+FO_DELETE Deletes the files specified by pFrom (pTo is ignored).<br>
+FO_MOVE Moves the files specified by pFrom to the location specified by pTo.<br>
+FO_RENAME Renames the files specified by pFrom.</p>
+<p><strong>pFrom</strong></p>
+<p>Pointer to a buffer that specifies one or more source file names. Multiple names must be null-separated. The list of names must be double null-terminated.</p>
+<p><strong>pTo</strong></p>
+<p>Pointer to a buffer that contains the name of the destination file or directory. The buffer can contain mutiple destination file names if the fFlags member specifies FOF_MULTIDESTFILES. Multiple names must be null-separated. The list of names must be double null-terminated.</p>
+<p><strong>fFlags</strong></p>
+<p>Flags that control the file operation. This member can be a combination of the following values:</p>
+<p>FOF_ALLOWUNDO Preserves undo information, if possible.<br>
+FOF_CONFIRMMOUSE Not implemented.<br>
+FOF_FILESONLY Performs the operation only on files if a wildcard filename (*.*) is specified.<br>
+FOF_MULTIDESTFILES Indicates that the pTo member specifies multiple destination files (one for each source file) rather than one directory where all source files are to be deposited.<br>
+FOF_NOCONFIRMATION Responds with "yes to all" for any dialog box that is displayed.<br>
+FOF_NOCONFIRMMKDIR Does not confirm the creation of a new directory if the operation requires one to be created.<br>
+FOF_RENAMEONCOLLISION Gives the file being operated on a new name (such as "Copy #1 of...") in a move, copy, or rename operation if a file of the target name already exists.<br>
+FOF_SILENT Does not display a progress dialog box.<br>
+FOF_SIMPLEPROGRESS Displays a progress dialog box, but does not show the filenames.<br>
+FOF_WANTMAPPINGHANDLE Fills in the hNameMappings member. The handle must be freed by using the SHFreeNameMappings function.</p>
+<p><strong>fAnyOperationsAborted</strong></p>
+<p>Value that receives TRUE if the user aborted any file operations before they were completed or FALSE otherwise.</p>
+<p><strong>hNameMappings</strong></p>
+<p>Handle of a filename mapping object that contains an array of SHNAMEMAPPING structures. Each structure contains the old and new path names for each file that was moved, copied, or renamed. This member is used only if fFlags includes FOF_WANTMAPPINGHANDLE.</p>
+<p><strong>lpszProgressTitle</strong></p>
+<p>Pointer to a string to use as the title for a progress dialog box. This member is used only if fFlags includes FOF_SIMPLEPROGRESS.</p>
+<p>Remarks</p>
+<p>If pFrom or pTo are unqualified names, the current directories are taken from the global current drive and directory settings as managed by the GetCurrentDirectory and SetCurrentDirectory functions.</p>
+<p>=====================================================================================</p>
+<p><strong>[SHFileOperation]</strong></p>
+<p>Performs a copy, move, rename, or delete operation on a file system object.</p>
+<p>WINSHELLAPI int WINAPI SHFileOperation(</p>
+<p>LPSHFILEOPSTRUCT lpFileOp<br>
+);</p>
+<p>Parameters</p>
+<p>lpFileOp</p>
+<p>Pointer to an SHFILEOPSTRUCT structure that contains information the function needs to carry out the operation.</p>
+<p>Return Values</p>
+<p>Returns zero if successful or nonzero if an error occurs.</p>
+<p>끝</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60031477488" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2006/061122-60031161585/"><span>이전 글</span>[공유] [Java] Queue 예제</a><a class="newer" href="/blog/posts/2006/061212-60031921452/"><span>다음 글</span>[MSSQL, TSQL]LEN과 DATALENGTH 비교</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

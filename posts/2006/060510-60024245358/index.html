@@ -1,0 +1,174 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[공유] 배치파일 만들기 · 심플하고 여유있는 삶</title><meta name="description" content="배치파일 만들기 도스에는 명령어를 일괄적으로 처리하기위한 배치파일이라는 것이 있습니다. 대부분의 사람들은 배치파일이 도스환경을 쉽게 만든다는 사실을 과소평가하는데, 컴퓨터를 좀더 쉽게 사용하고 싶다…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2006/060510-60024245358/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[공유] 배치파일 만들기"><meta property="og:description" content="배치파일 만들기 도스에는 명령어를 일괄적으로 처리하기위한 배치파일이라는 것이 있습니다. 대부분의 사람들은 배치파일이 도스환경을 쉽게 만든다는 사실을 과소평가하는데, 컴퓨터를 좀더 쉽게 사용하고 싶다…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2006/060510-60024245358/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2006-05-10T10:47:00.000Z" data-pagefind-meta="date:2006-05-10">2006.05.10.</time></p><h1>[공유] 배치파일 만들기</h1></header><div class="prose"><p><strong>배치파일 만들기</strong></p>
+<hr>
+<p>도스에는 명령어를 일괄적으로 처리하기위한 배치파일이라는 것이 있습니다.<br>
+대부분의 사람들은 배치파일이 도스환경을 쉽게 만든다는 사실을 과소평가하는데, 컴퓨터를 좀더 쉽게 사용하고 싶다면 배치파일을 꼭 짚고 넘어가는것이 좋습니다.</p>
+<p>▶ 배치파일이란 ?</p>
+<p>컴퓨터의 동작 상태를 살펴 보면 항상 사용자와의 상호작용에 의하여 작업이이루어진다는것을 알 수 있습니다. 도스라는 운영체제도 사용자가 명령을 입력하면 그 명령에 대해 도스가 분석하여 사용자가 원하는 실행 결과를 제공합니다.<br>
+따라서 사용자는 항상 도스 프롬프트 상에서 일일이 키보드를 이용한 타이핑으로 명령을 내려야 하고, 하나의 명령이 내려지면 완료될 때까지 다음 명령을 내릴수가 없습니다. 작업 과정이 얼마되지 않는다면 큰 상관이 없으나 그 과정이 매우 길고 복잡하다면 사용자는 지루함을 느끼게 됩니다. 또한 비록 짧은 작업과정이라도 컴퓨터를 켤때마다 매번 똑같은 과정을 일일이 지시하는 것도 귀찮을 것입니다.<br>
+이러한 경우 배치 파일은 가장 확실한 해결책입니다.</p>
+<p>배치파일의 기능은 순차적이고 반복된 동일한 작업 과정을 몇개의 혹은 수십, 수백 개의 연관된 명령어를 하나의 파일로 집약하여 그 하나의 파일(배치파일)만 실행함으로써 원하는 작업 과정을 수행하는것입니다.배치파일에 붙는 확장자는 .bat(batch 의 약어) 입니다.도스에서 실행이 가능하기 때문에 .com, .exe 확장자가 붙는 외부 명령어와 함께 실행 가능한 파일로 분류됩니다.차이가 있다면 .com, .exe 명령어는 컴퓨터만 해석 가능한 기계어 코드로 구성되어 있는반면, 배치 파일은 사람이 알아볼수 있는 일반 텍스트로 이루어져있다는 것입니다.</p>
+<p>그래서 사용자들은 문서작성에 이용하는 워드프로세서나 텍스트에디터 등을 이용해 배치 파일을 작성할 수 있습니다. 그러나 워드프로세서는 덩치가 크고 원래 목적이 편집과 출력을 위해 만들어진 것이므로 단순한 배치 파일을 작성하는 데는 권하고 싶지 않습니다.</p>
+<h2 id="저장할때도-워드프로세서-고유의-포맷예-hwp-확장자를-가지는-아래아한글-데이터-파일으로-저장하면-인식이-되지-않으므로-아스키-파일로-저장해야-합니다가장-편리한-방법은-일반-문서-에디터-도스의-edit-q에디터u에디터-등를-이용하거나-도스의-copy-con-명령으로-배치-파일을-만드는-것입니다다음과-같이-copy-con-파일명-형식으로-입력하고-엔터를-누르면-도스-프롬프트-상태에서-편집할-수-있는-상태가-됩니다">저장할때도 워드프로세서 고유의 포맷(예" .hwp 확장자를 가지는 아래아한글 데이터 파일)으로 저장하면 인식이 되지 않으므로 아스키 파일로 저장해야 합니다.가장 편리한 방법은 일반 문서 에디터( 도스의 Edit, Q에디터,U에디터 등)를 이용하거나 도스의 'Copy Con' 명령으로 배치 파일을 만드는 것입니다.다음과 같이 'Copy con 파일명' 형식으로 입력하고 엔터를 누르면 도스 프롬프트 상태에서 편집할 수 있는 상태가 됩니다.</h2>
+<p>C:\Bats> copy con Timedate.bat<br>
+cls<br>
+time<br>
+date<br>
+^Z</p>
+<h2 id="1-files-copied">1 File(s) copied</h2>
+<p>여기서 쓰고 싶은 대로 적기만 하면 됩니다.제일 마지막행의 ^Z 는 파일의 제일 마지막 부분이라는 것을 도스에게 알려주는 코드로 &#x3C; Ctrl + Z > 키 또는 F6 키를 누르면 됩니다. 그리고 엔터키를 한번더 누르면 '1 File(s) copied' 라는 메세지가 출력되는데, 이는 방금 ' copy con 파일명 ' 으로 작성된 문서파일이 성공적으로 만들어졌다는 뜻입니다.위의 문서파일은 확장자가 .BAT 로 붙었기 때문에 실행가능한 외부 명령어가 되는데, 배치파일은 명령이 기록되어 있는 순서대로 실행되기 때문에 timedate.bat 를 실행시키면 먼저 화면을 지우고 난뒤 시스템의 시간과 날짜를 설정합니다.간단한 배치파일은 'copy con 파일명' 으로 작성하는 것이 다른 프로그램의 도움없이 쉽고 빠르게 처리할 수 있습니다. 하지만 배치파일이 조금 길거나 작성중에 수시로 편집할 일이 생기는 경우에는 불가능합니다. 'copy con 파일명' 으로 파일을 작성하면 행으로 다시돌아갈 수 없을 뿐 아니라 수정이 불가능하기 때문입니다. 그러므로 배치파일을 만들 필요가 있을때는 문서 에디터를 이용하는 것이 좋습니다.</p>
+<p>▶ 배치파일 작성 명령어 9인방</p>
+<p>배치 파일은 파일 안에 기록되어 있는 명령의 순서대로 실행됩니다.가장 대표적인 것이 부팅에 이용되며, 컴퓨터의 루트 디렉토리에 위치하고 있는 Autoexec.bat 파일입니다. 그런데 만약 배치 파일의 실행의 순서를 순차적이 아닌멀티부팅용 Autoexec.bat 처럼 사용자 마음대로 정하고 싶다면 배치파일에 제공되는배치명령어의 용도를 알고 있어야 합니다.</p>
+<p><strong>1. CALL</strong></p>
+<p>현재 실행중인 배치 파일을 종료하지 않고 필요한 다른 배치파일을 호출하여 실행한 다음 원래의 배치파일로 다시 돌아오려고 할 때 사용됩니다.</p>
+<p>◇ 사용법 : <strong>Call [drive:]\[경로]\&#x3C;배치파일명>[.BAT]</strong></p>
+<p>◇ 예 : Call c:\bats\sample.bat</p>
+<p>어떤 배치 파일을 실행하는 도중에 경로 C:\bats 에 있는 sample.bat 파일을 실행한 다음 다시 원래의 배치파일로 돌아옵니다.</p>
+<p><strong>2. CHOICE</strong></p>
+<p>배치 프로그램 내에서 사용자의 선택을 묻기 위해 사용됩니다. 배치 파일 제작자가 설정한 물음을 출력하면서 지정된 키 입력을 기다립니다. 이 명령은 배치파일 내에서만 사용 가능합니다.</p>
+<p>◇ 사용법 :<strong>choice [/C[:]문자열][/N][/S][/T[:]기본키,대기시간][메세지]</strong></p>
+<p>◇ 옵션</p>
+<p>- /C[:]문자열 : 사용자가 선택할 수 있는 키목록을 [] 괄호 내에 ', ' 로 구분하여 출력하고 /C 스위치를 사용하지 않으면 기본적으로 YN이 사용됩니다.</p>
+<p>- /N : 프롬프트를 출력하지 않도록 합니다.</p>
+<p>- /S : 사용자의 입력에서 소문자, 대문자를 구분하도록 합니다.</p>
+<p>- /T[:]기본키, 대기시간 : 기본키를 지정한 후 대기시간 동안 사용자의 키 입력이 없으면 자동적으로 기본키가 입력된 것으로 간주하고 진행됩니다. 지정 가능한 대기시간은 초단위이며 0에서 99 사이의 값입니다.</p>
+<p>- 메세지 : 화면에 출력될 메세지를 지정합니다.</p>
+<p>◇ 예 : choice /c:abCD /s /t : C, 5 다음중에서 하나를 선택하십시오 a, b, C, D<br>
+◇ 설명 : 입력 가능한 키를 a,b,C,D로 한정하며 사용자로부터 입력되는 영문자의 대,소문자를 구분하는데, 만약 5초 내에 사용자로부터 키 입력이 없다면 C 가 입력된 것으로 간주합니다. 그리고 화면에는<br>
+'다음중에서 하나를 선택하십시오 a, b, C, D[a,b,C,D]? '<br>
+라는 메세지가 출력됩니다.</p>
+<p><strong>3. ECHO</strong></p>
+<p>배치파일 실행중에 명령어를 화면에 표시할 것인지의 여부를 설정하며, 그 상태를 표시합니다. 한편 ECHO 명령 뒤에 오는 메세지는 화면에 나타납니다.</p>
+<p>◇ 사용법 : <strong>echo [on/off] [문자열]</strong></p>
+<p>◇ 옵션<br>
+- on : 배치 파일 실행중에 그 배치 파일 내의 명령어를 화면에 표시합니다.<br>
+- off : 배치 파일 실행중에 명령어를 화면에 출력하지 않도록 합니다.<br>
+- 문자열 : 화면에 출력하고 싶은 메세지를 적어줍니다.<br>
+- 없음 : 현재 ECHO 설정 상태를 표시합니다.</p>
+<p>◇ 예  :</p>
+<p>echo off<br>
+☞ 현재 실행중인 배치 파일 내의 명령어를 화면에 나타나지 않도록 함.<br>
+echo<br>
+echo 안녕하세요?~<br>
+☞ 현재 echo 설정상태를 표시하며 안녕하세요?~ 라는 문구를 화면에 출력합니다.</p>
+<p><strong>4. FOR</strong></p>
+<p>지정된 집합 중의 각각의 요소에 대하여 명령으로 설정한 처리를 반복 실행합니다.</p>
+<p>◇ 사용법</p>
+<p><strong>For %%&#x3C;변수> IN (&#x3C;집합>) DO &#x3C;명령> [&#x3C;옵션>]</strong> ☞ 배치파일용.<br>
+<strong>For %&#x3C;변수> IN (&#x3C;집합>) DO &#x3C;명령> &#x3C;옵션>]</strong>  ☞ 순차처리용.</p>
+<p>◇ 옵션</p>
+<p>- %%&#x3C;변수>, &#x26;&#x3C;변수>  : 변수로 사용되는 것은 임의의 영문자로 1자만 허용됩니다. 주의할 점은 배치파일에서 사용할 경우는 반드시 %%처럼 두개를 연달아 사용해야 하며, 일반 도스 프롬프트에서 사용할 때는 % 하나만 사용합니다.</p>
+<p>- &#x3C;집합> : %%&#x3C;변수>에 대입하고 싶은 값을, 또는 스페이스로 구분하여 대입하고 싶은 순서대로 나열합니다.</p>
+<p>- &#x3C;명령> : %%&#x3C;변수>에 대입되어 있는 값에대해 반복적으로 실행하고 싶은 명령을 지정합니다.</p>
+<p>- &#x3C;옵션> : 지정한 명령의 옵션이나 FOR 명령에서 지정한 옵션을 설정합니다.</p>
+<p>◇ 예</p>
+<p>for %%f in (bak tmp $$$) do del *.%%f /p  ☞ 배치파일의 경우<br>
+for %d in (read,wh,file) do hlist %d*.*  ☞ 도스 프롬프트에서 실행시</p>
+<p>◇ 설명 : 첫 번째는 bak, tmp, $$$ 를 순서대로 %%f 환경 변수에 대입하여 차례대로<br>
+DEL *.bak /p, DEL *.tmp /p, DEL *.$$$ .p 를 실행한 것과 동일한 결과를 얻게됨.</p>
+<p>두번째는 READ,WH,FILE 를 순서대로 %d 환경변수에 대입하여 차례대로<br>
+HLIST READ*.*, HLIS TWH *.* , HLIST FILE *.* 를 실행한 것과 동일한 결과를 얻게 됩니다.</p>
+<p><strong>5. GOTO</strong></p>
+<p>배치 처리의 흐름을 &#x3C;레이블>에서 정의되어 있는 위치로 옮깁니다.</p>
+<p>◇ 사용법 : <strong>Goto &#x3C;레이블></strong></p>
+<p>◇ 예 :<br>
+goto loop<br>
+:loop<br>
+각종 처리할 내용</p>
+<p>◇ 설명 : 레이블 loop 로 배치 처리의 제어권을 이동시켜 loop 항목에 지정된 각종 처리할 내용을 실행시킵니다.</p>
+<p>◇ 참고 : 배치 파일에 레이블 표시는 레이블명 앞에 콜론(:) 을 붙여주며 줄을<br>
+바꿔 맨 앞에 지정해 주어야 합니다.</p>
+<p><strong>6. IF</strong></p>
+<p>지정한 조건의 판단 결과에 따라서 배치 처리를 진행합니다.</p>
+<p>◇ 사용법 :  <strong>If [NOT] &#x3C;조건> &#x3C;명령></strong></p>
+<p>◇ 옵션</p>
+<p>- NOT : 지정한 조건의 반대 조건일 때만 실행합니다.</p>
+<p>- 조건</p>
+<p>- ERRORLEVEL &#x3C;수치> : 바로 전에 실행한 명령(프로그램)의 종료 코드가 &#x3C;수치> 이상일 때에는 참이 되고 &#x3C;명령> 이 실행됨.</p>
+<p>- &#x3C;문자열1> == &#x3C;문자열2> : &#x3C;문자열1> 과 &#x3C;문자열2> 가 같을 때에만 참이되고 &#x3C;명령>이 실행됩니다. 주의할 점은 문자열의 대,소문자가 구별되며, 문자열중에 구분기호(콤마,스페이스,세미콜론,등호,탭)가 포함되어 있으면 않됩니다.</p>
+<p>- EXIST &#x3C;파일명> : &#x3C;파일명>으로 지정한 파일(경로포함)이 존재할 때에만 참이 되고 &#x3C;명령>이 실행됩니다. &#x3C;파일명>에는 와일드카드 문자의 사용이 가능합니다.</p>
+<p>◇ 예 :<br>
+if errorlevel 2 goto quit<br>
+if not %1 ==%2 goto process<br>
+if exist d:\work\temp.$$$ del d:\work\temp.$$$</p>
+<p>◇ 설명 :<br>
+직전에 실행한 명령의 종료 코드가 2 이상일 경우 레이블 QUIT로 이동합니다.</p>
+<p>환경변수 %1과 환경변수 %2에 대입되어 있는 문자열이 같지 않을 경우에만 레이블 PROCESS 로 이동합니다.</p>
+<p>경로 D:\Work 에 temp.$$$ 라는 파일이 존재하면 그 파일을 삭제합니다.</p>
+<p><strong>7. PAUSE</strong></p>
+<p>배치 파일 실행을 일시 정지합니다.</p>
+<p>◇ 사용법 : <strong>Pause [문자열]</strong></p>
+<p>◇ 옵션</p>
+<p>- 문자열 : 문자열을 생략하면 'press any key to continue...'라는 메세지가 화면에 출력됩니다. 만약 PAUSE 명령 뒤에 어떤 메세지를 지정하여 그 메시지를 출력하고 싶다면 'Echo On' 명령을 우선 내려야 합니다.</p>
+<p>◇ 예 :<br>
+echo on<br>
+pause 준비가 되었으면 아무키나 누르세요...</p>
+<p>◇ 설명 : 배치 처리 중 pause명령을 만났을때 임의의 다른 메시지를 화면에 출력하고 싶다면 예 에서와 같이 반드시 echo on 명령이 선행되어야 하며 예의 경우에는 ' 준비가 되었으면 아무키나 누르세요...' 라는 메세지가 출력됩니다.</p>
+<p>◇ 참고 : 위 처럼 하면 화면에 Pause 라는 명령어까지 같이 출력되므로 이런경우<br>
+echo on<br>
+echo 준비가 되었으면 아무키나 누르세요...<br>
+pause > Null</p>
+<p>이런식으로 사용하면 출력하고자 하는 메세지만 화면에 출력됩니다.</p>
+<p><strong>8. REM</strong></p>
+<p>배치 파일 내에 주석문을 부여하고 싶을 때 사용합니다.</p>
+<p>◇ 사용법 : <strong>rem [문자열]</strong></p>
+<p>◇ 옵션</p>
+<p>- 문자열 : 주석문으로 쓰고 싶은 것을 적어줍니다.</p>
+<p>◇ 예 : REM 이 배치파일은 샘플입니다.</p>
+<p>배치파일내의 적당한 위치에 적절한 주석문을 붙여두면 배치 처리의 흐름을 일목요연하게 볼 수 있습니다.</p>
+<p><strong>9. SHIFT</strong></p>
+<p>배치 파일에 주어진 파라미터(%1~%9)와 실행시에 지정되는 값과의 대응을 하나씩 뒤로 이동하여 표시합니다.</p>
+<p>◇ 예</p>
+<p>:loop<br>
+if "%1" == " " goto end<br>
+echo %0 %1 %2 %3 %4 %5 %6 %7 %8 %9<br>
+shift<br>
+goto loop<br>
+:end</p>
+<p>위와 같이 배치 파일을 작성해두고 다음과 같이 배치파일을 실행해 보면 shift 명령이 어떤 역할을 하는지 금방 알 수 있습니다..<br>
+C:\bats> test.bat A B C D E F G H I J 0 1 2 3 4 5  ☜똑같이 입력하고 실행후 확인.</p>
+<p>(컴퓨터관련)</p>
+<p><a href="http://www.wxp21.com/">http://www.wxp21.com/</a> &#x3C;- 컴퓨터<br>
+<a href="http://www.padapada.co.kr/">http://www.padapada.co.kr/</a><br>
+<a href="http://www.danawa.co.kr/">http://www.danawa.co.kr/</a><br>
+<a href="http://xpz.chinguya.net/">http://xpz.chinguya.net/</a><br>
+<a href="http://www.ilovepc.co.kr/">http://www.ilovepc.co.kr/</a><br>
+<a href="http://winbbs2.intizen.com">http://winbbs2.intizen.com</a><br>
+<a href="http://windows.ttc.ac.kr">http://windows.ttc.ac.kr</a><br>
+<a href="http://www.overclockers.co.kr/">http://www.overclockers.co.kr/</a> &#x3C;-- 오버클럭</p>
+<p>(와레즈,해킹)<br>
+<a href="http://www.starthomepage.com/">http://www.starthomepage.com</a> &#x3C;- 포토샾<br>
+블루와레즈 &#x3C;-- 검색치면 나옴<br>
+<a href="http://www.sinmadam.net">http://www.sinmadam.net</a> &#x3C;- warez</p>
+<p><a href="http://www.comicw.co.kr/">http://www.comicw.co.kr/</a> &#x3C;-- 코스프레<br>
+<a href="http://www.cospre.com/">http://www.cospre.com/</a></p>
+<p>(홈페이지 디자인 관련)<br>
+<a href="http://hero70.yezzang.com">http://hero70.yezzang.com</a><br>
+<a href="http://rinihouse.com">http://rinihouse.com</a><br>
+<a href="http://www.dyebyule.com/">http://www.dyebyule.com/</a><br>
+<a href="http://www.nzeo.com/">http://www.nzeo.com/</a><br>
+<a href="http://www.kevin.wo.ro/">http://www.kevin.wo.ro/</a></p>
+<p><a href="http://www.littleboss.com/">http://www.littleboss.com/</a> &#x3C;-- 종합포탈싸이트</p>
+<p>(리눅스)</p>
+<p>linux.co.kr</p>
+<p>chongnux.ilinuxbay.com</p>
+<p><a href="http://www.phpleader.co.kr/">http://www.phpleader.co.kr/</a></p>
+<p>잡학 백과사전님의 추천 사이트인데.. ㅋㅋ.. 한번 들어 가보려고 하는데 시간이 잘 안나네요.</p>
+<p>다른 분들은 한번씩 들어가 보세요.</p>
+<p>잡학님의 취미와 직업을 알수 있을듯 하네요.. ^^~</p>
+<p>모든 정보의 지식화를위하여...</p>
+<p>참고: 잘모르겠습니다..예전에 퍼온 블로그라.. ㅡ.ㅡ+</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60024245358" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2006/060510-60024232479/"><span>이전 글</span>[공유] Delphi Unit 작명법</a><a class="newer" href="/blog/posts/2006/060510-60024245423/"><span>다음 글</span>[공유] [IIS 웹 서버와 보안 ①] IIS 웹 서버의 취약점과 대응책</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

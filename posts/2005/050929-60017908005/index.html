@@ -1,0 +1,141 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[펌] 아파치와 톰켓의 설정방법 · 심플하고 여유있는 삶</title><meta name="description" content="/ 이 자료는 임형진 님의 제공에 apache.kr.net 에 게시되었습니다. 톰캣 + 아파치 하우투 저자: Costin Manolache <costin@eng.sun.com> Anil Vijend…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2005/050929-60017908005/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[펌] 아파치와 톰켓의 설정방법"><meta property="og:description" content="/ 이 자료는 임형진 님의 제공에 apache.kr.net 에 게시되었습니다. 톰캣 + 아파치 하우투 저자: Costin Manolache <costin@eng.sun.com> Anil Vijend…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2005/050929-60017908005/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2005-09-29T04:45:00.000Z" data-pagefind-meta="date:2005-09-29">2005.09.29.</time></p><h1>[펌] 아파치와 톰켓의 설정방법</h1></header><div class="prose"><p>/*<br>
+* 이 자료는 임형진 님의 제공에 apache.kr.net 에 게시되었습니다.<br>
+*<br>
+* 톰캣 + 아파치 하우투<br>
+*<br>
+* 저자: Costin Manolache &#x3C;<a href="mailto:costin@eng.sun.com">costin@eng.sun.com</a>><br>
+* Anil Vijendran &#x3C;<a href="mailto:akv@eng.sun.com">akv@eng.sun.com</a>><br>
+*<br>
+* 역자: 임형진 &#x3C;<a href="mailto:mechaic@yahoo.com">mechaic@yahoo.com</a>><br>
+*<br>
+* $개정판: 1.1<br>
+* $개정일: 2000/02/08 21:08:34 $<br>
+*<br>
+* 이문서는 '아파치(Apache)'와 실행할 '톰캣(Tomcat)'을<br>
+* 설정하는 방법을 설명한다. 이제 곧 이문서는 아파치 1.3.9와<br>
+* 톰캣 3.0을 묘사한다. 다른 아파치/톰캣 버전들을 위한<br>
+* 테스트된 설정에 관한 섹션들을 체크하라.<br>
+*/</p>
+<hr>
+<p>목차<br>
+1. 서론<br>
+2. 설치<br>
+2.1 아파치 1.3.9<br>
+2.2 톰캣 3.0<br>
+2.3 자신의 설정을 테스트하기<br>
+2.4 컨텍스트를 추가하기<br>
+3. 테스트된 설정<br>
+4. 더 많은 정보, 피드백과 버그들</p>
+<hr>
+<p>1. 서론</p>
+<p>이 문서는 하나의 배포판으로서의 아파치와 톰캣을 얻을 때까지<br>
+아파치와 함께 톰캣을 사용할 수 있도록 쓰여졌다.<br>
+여러분이 이 문서의 지시사항들을 따르다가 잘못된 부분을 발견하면<br>
+이 문서를 업데이트할 수 있도록 우리에게 알려주시오.</p>
+<p>문서의 나머지 부분에서 우리는<br>
+아파치 1.3.9에 대해서 /path/to/apache-1.3.9를,<br>
+톰캣 3.0에 대해서 /path/to/tomcat3.0를<br>
+설치경로로 사용할 것이다.<br>
+우리는 여러분이 디폴트 포트(80)로 아파치를 구동하고 있는 것으로<br>
+가정한다.</p>
+<p>2. 설치</p>
+<p>2.1 아파치 1.3.9</p>
+<p>* 여러분 컴퓨터 플랫폼에 맞추어 아파치 1.3.9를 아래의 사이트에서<br>
+다운로드하여 설치하라.</p>
+<p><a href="http://www.apache.org/dist/binaries">http://www.apache.org/dist/binaries</a></p>
+<p>* 여러분의 /path/to/apache-1.3.9/conf/httpd.conf 파일에서 디폴트<br>
+HTTP listener port를 설정하라.</p>
+<p>* /path/to/apache-1.3.9/conf/httpd.conf 파일에서 ServerName이<br>
+여러분의 호스트를 포함하고 있는지 확인하라.</p>
+<p>* 여러분이 스스로 컴파일한 아파치를 사용하고 있고 이미 컴파일된 버전의<br>
+mod_jserv.so를 사용하고 있다면 여러분이 적재될 수 있는(loadable) 모듈을<br>
+위한 지원을 컴파일하였는지 확인하라. configure와 함께 --enable-module=so를<br>
+사용한 mod_so.so를 컴파일하여 이것을 하라.</p>
+<p>2.2 톰캣 3.0</p>
+<p>* 여러분 컴퓨터 플랫폼에 맞추어 톰캣 3.0을 아래의 사이트에서<br>
+다운로드하여 설치하라.</p>
+<p><a href="http://jakarta.apache.org/builds/tomcat/release/v3.0/%5C">http://jakarta.apache.org/builds/tomcat/release/v3.0/\</a>&#x3C;os>/&#x3C;platform></p>
+<p>주)*<br>
+2000.4.13현재<br>
+<a href="http://jakarta.apache.org/builds/tomcat/release/v3.1%5C_beta%5C_1/bin/">http://jakarta.apache.org/builds/tomcat/release/v3.1\_beta\_1/bin/</a></p>
+<p>* 여러분 컴퓨터 플랫폼에 맞추어 mod_jserv를 아래의 사이트에서 다운로드하라.</p>
+<p><a href="http://jakarta.apache.org/builds/tomcat/release/v3.0/%5C">http://jakarta.apache.org/builds/tomcat/release/v3.0/\</a>&#x3C;os>/&#x3C;platform>/modules</p>
+<p>주)**<br>
+2000.4.13현재<br>
+<a href="http://jakarta.apache.org/builds/tomcat/release/v3.1%5C_beta%5C_1/bin/%5C">http://jakarta.apache.org/builds/tomcat/release/v3.1\_beta\_1/bin/\</a>&#x3C;os>/&#x3C;platform></p>
+<p>유닉스 설치를 위해서 /path/to/apache-1.3.9/libexec에 복사를 하고<br>
+Win32 설치를 위해서 \path\to\apache-1.3.9\modules에 복사를 하라.</p>
+<p>mod_jserv는 아파치와 톰캣이 서로 통신하도록 하는 소프트웨어이다.<br>
+통신하기 위해서 사용된 포트는 톰캣쪽을 위하여 server.xml 파일에,<br>
+아파치쪽을 위하여 tomcat.conf 파일에 설정되어 있다. 그것들은 서로<br>
+일치해야 한다. 현재 이 포트는 디폴트로 8007이고 AJP12 프로토콜을<br>
+사용한다.</p>
+<p>* /path/to/apache-1.3.9/conf/httpd.conf를 편집하고 마지막에 다음<br>
+줄을 추가하라.</p>
+<p>Include /path/to/tomcat3.0/etc/tomcat.conf</p>
+<p>* Win32 사용자를 위해서는 libexec/mod_jserv.so를 포함하는 줄을 비활성화<br>
+하고 modules/ApacheModuleJServ.dll를 활성화하시오.</p>
+<p>* 톰캣은 독자적인 HTTP서버로 설치되기 때문에 아파치와는 다른 포트상에서<br>
+작동해야 한다는 것은 중요하다.</p>
+<p>2.3 자신의 설정을 테스트하기</p>
+<p>* 아파치를 재시동하라. (/path/to/apache-1.3.9 디렉토리에서)</p>
+<p>$ apachectl restart on Unix/Linux<br>
+or<br>
+c:\apache-1.3.9\bin> apache -k restart on Win32</p>
+<p>* 웹브라우저에서 http://&#x3C;hostname>을 작동하라.</p>
+<p>* 톰캣을 시작하라.(/path/to/tomcat3.0 디렉토리에서)</p>
+<p>$ startup.sh on Unix/Linux<br>
+c:\tomcat3.0\bin> startup.bat on Win32</p>
+<p>* 웹브라우저상에서<br>
+http://&#x3C;hostname>/examples/servets/ or<br>
+http://&#x3C;hostname>/examples/jsp/ 가 작동되는지 확인하라.</p>
+<p>2.4 컨텍스트 추가하기</p>
+<p>이 설정에 컨텍스트를 추가할 수 있는 두 가지의 다른 방법들이 있다.</p>
+<p>(a) * /path/to/tomcat3.0/etc/tomcat.conf에<br>
+ApJservMount /&#x3C;context> /root를 추가한다.</p>
+<p>* 아파치를 재시동한다.</p>
+<p>(b) * /path/to/apache-1.3.9/htdocs/&#x3C;context>를 만든다.</p>
+<p>* 지정한 디렉토리에 지정한 컨텍스트 파일들을 설치한다.</p>
+<p>* /path/to/tomcat3.0/server.xml이<br>
+/path/to/apache-1.3.9/htdocs/&#x3C;context>를 지정하는지 확인하라.</p>
+<p>* /path/to/tomcat3.0/etc/tomcat.conf에</p>
+<p>ApJservMount /&#x3C;context>/servlet /root<br>
+&#x3C;Location /CONTEXT/WEB-INF/ ><br>
+AllowOverride None<br>
+deny from all<br>
+&#x3C;/Location><br>
+을 추가하라.</p>
+<p>3. 테스트된 설정들</p>
+<p>Apache 1.3.9 + Tomcat 3.0는 아래와 같은 운영체제에서 테스트됨</p>
+<p>* Linux (RedHat 6.1) on SPARC and Intel<br>
+- IBM JDK 1.1.8<br>
+* Solaris 2.6 on SPARC<br>
+- Sun JDK 1.1.8<br>
+- Sun JDK 1.2.2<br>
+* Windows NT SP 4<br>
+- Sun JDK 1.1.8<br>
+- Sun JDK 1.2.2</p>
+<p>주)***<br>
+역자는 Apache 1.3.12 + Tomcat 3.0를 Windows95에서 테스트하여<br>
+servlet과 jsp 예제 프로그램 실행에 성공하였슴</p>
+<p>4. 더 많은 정보, 피드백과 버그들</p>
+<p><a href="mailto:tomcat-dev@jakarta.apache.org">tomcat-dev@jakarta.apache.org</a>로 버그리포트를 보내주십시오.</p>
+<p>여러분이 여기에 나열되지 않은 플랫폼/운영체제에서 테스트하였다면<br>
+이 파일들을 업데이트하여 주시기를 바랍니다.<br>
+(만약 여러분이 jakarta상 CVS 접근권한을 가지고 있다면)<br>
+또는 <a href="mailto:tomcat-dev@jakarta.apache.org">tomcat-dev@jakarta.apache.org</a>로 메모를 보내주십시오.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60017908005" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2005/050924-60017747415/"><span>이전 글</span>[오라클]OS 부팅시 오라클 자동 시작하기</a><a class="newer" href="/blog/posts/2005/050930-60017939177/"><span>다음 글</span>[펌] SELinux의 이해</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

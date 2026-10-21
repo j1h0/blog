@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[공유] [IIS 웹 서버와 보안 ③] IIS 웹 서버 보호방법(2) · 심플하고 여유있는 삶</title><meta name="description" content="이번 호에서는 IIS 웹 서버를 보호하기 위하여 사용되지 않은 프로토콜을 비활성화하고 레지스트리 설정을 통해 TCP/IP 스택을 강화하는 방법을 살펴보도록 하겠다. 4. 프로토콜 설정으로 웹 서버를…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2006/060510-60024245443/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[공유] [IIS 웹 서버와 보안 ③] IIS 웹 서버 보호방법(2)"><meta property="og:description" content="이번 호에서는 IIS 웹 서버를 보호하기 위하여 사용되지 않은 프로토콜을 비활성화하고 레지스트리 설정을 통해 TCP/IP 스택을 강화하는 방법을 살펴보도록 하겠다. 4. 프로토콜 설정으로 웹 서버를…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2006/060510-60024245443/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2006-05-10T10:50:00.000Z" data-pagefind-meta="date:2006-05-10">2006.05.10.</time></p><h1>[공유] [IIS 웹 서버와 보안 ③] IIS 웹 서버 보호방법(2)</h1></header><div class="prose"><p>이번 호에서는 IIS 웹 서버를 보호하기 위하여 사용되지 않은 프로토콜을 비활성화하고 레지스트리 설정을 통해 TCP/IP 스택을 강화하는 방법을 살펴보도록 하겠다.</p>
+<p><strong>4. 프로토콜 설정으로 웹 서버를 보호한다.</strong></p>
+<p>불필요한 프로토콜을 비활성화시킴으로써 잠재적인 위협요소를 줄일 수 있다. 이러한 프로토콜에는 WebDAV나 NetBIOS, SMB이 있고 TCP/IP 스택을 강화하는 것도 도움이 된다.</p>
+<p>4.1 WebDAV</p>
+<p>WebDAV(Web Distributed and Versioning)는 웹서버 상에 존재하는 파일들을 공동으로 편집·관리하기 위한 도구로서 HTTP와 같은 웹 운영프로토콜의 확장된 형태이다. 2003년 3월에 IIS에서 지원하는 WebDAV에서 버퍼오버플로우 취약점이 발견되면서 주요 공격대상이 되고 있다. IIS 설치시 WebDAV가 기본으로 설치되기 때문에 사용하지 않는 경우 제거하는 것이 좋다. (지난 호에서 살펴본 IISLockdown 도구에서도 WebDAV를 비활성화하기 위한 옵션을 제공한다.)</p>
+<p>레지스트리 편집기(Regedit.exe)를 실행하고, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\W3SVC\Parameters 레지스트리 키를 찾아 DisableWebDAV라는 DWORD 값을 만들어 '1'로 설정한다. 변경된 값을 적용하기 위해서는 IIS를 재시작하면 된다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="430" height="297" src="/blog/_astro/60024245443-01.CmuyYI28_p8xBn.webp"></figure>
+<p>[그림 1] WebDAV 비활성화하기</p>
+<p>4.2 NetBIOS 비활성화하기</p>
+<p>NetBIOS는 별개의 컴퓨터 상에 있는 애플리케이션들이 근거리통신망 내에서 서로 통신 할 수 있게 해주는 프로토콜로서 Windows에 의해 채택되어 있다. 만약 웹 서버에서 네트워크를 통한 다른 컴퓨터와의 공유가 필요없다면 NetBIOS를 제거함으로써 DDos(Distributed Denial of Service) 공격이나 호스트 열거(host enumeration)에 대한 위험 요소를 줄일 수 있다.</p>
+<p>NetBIOS는 다음과 같은 포트를 사용한다.</p>
+<p>TCP와 UDP 137번 포트 (NetBIOS name service)</p>
+<p>TCP와 UDP 138번 포트 (NetBIOS datagram service)</p>
+<p>TCP와 UDP 139번 포트 (NetBIOS session service)</p>
+<p>TCP/IP에서 NetBIOS를 비활성화하는 방법은 다음과 같다.</p>
+<p>① 바탕화면 또는 제어판에서 [내 컴퓨터]의 등록정보에서 [하드웨어] 탭을 선택한다.<br>
+② [장치관리자]를 실행한다.<br>
+③ [장치관리자]의 [보기] 메뉴에서 [숨김 장치 표시]를 선택한다.<br>
+④ [장치관리자] 목록에서 [비 플러그 앤 플레이 드라이버]를 선택한다.<br>
+⑤ 하위 목록에서 [NetBios over Tcpip]를 선택하고 [제거] 한다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="430" height="304" src="/blog/_astro/60024245443-02.CgtB-NAz_13BK6.webp"></figure>
+<p>[그림 2] 장치관리자에서 NetBIOS 프로토콜 제거하기</p>
+<figure><img alt="" loading="lazy" decoding="async" width="38" height="12" src="/blog/_astro/60024245423-02.SZhGgEwQ_Z7jREg.webp"></figure>
+<p>4.3 SMB 비활성화 하기</p>
+<p>SMB(Session Message Block) 프로토콜은 Windows에서 디스크와 프린터를 네트워크 상에서 공유하는데 사용된다.</p>
+<p>SMB는 다음과 같은 포트를 사용한다.</p>
+<p>TCP 139번 포트</p>
+<p>TCP 445번 포트</p>
+<p>SMB를 비활성화하려면 다음과 같은 방법으로 TCP/IP에서 SMB를 언바인드 시키면 된다.</p>
+<p>① 바탕화면 또는 제어판에서 [네트워크 환경]의 [등록정보]를 실행한다.<br>
+② 현재 인터넷에 접속된 연결의 [등록정보]를 선택한다.<br>
+③ [Microsoft 네트워크용 클라이언트] 항목과 [Microsoft 네트워크용 파일 및 프린터 공유] 항목의 체크를 해제한다.</p>
+<figure><img alt="" loading="lazy" decoding="async" width="430" height="417" src="/blog/_astro/60024245443-04.CEwkLOb2_uaord.webp"></figure>
+<p>[그림 3] SMB 포로토콜 비활성화하기</p>
+<figure><img alt="" loading="lazy" decoding="async" width="38" height="12" src="/blog/_astro/60024245423-02.SZhGgEwQ_Z7jREg.webp"></figure>
+<p>4.4 TCP/IP 스택 강화하기</p>
+<p>Windows 2000에서는 TCP/IP을 제어할 수 있도록 많은 매개변수를 제공하고 있는데 기본적으로 제공되는 설정을 변경함으로써 더욱 효과적으로 웹 서버를 보호할 수 있다.</p>
+<p>Windows 운영체제는 레지스트리를 통해 TCP/IP와 관련된 많은 매개변수를 제공하는데 이를 이용해서 SYN Floods나 IMCP, SNMP 공격과 같은 네트워크 레벨에서의 DoS(서비스 거부) 공격을 막을 수 있다.</p>
+<p><strong>잠깐!</strong><br>
+레지스트리로 제공되는 TCP/IP의 매개변수에는 항목별로 허용하는 범위내의 값을 설정해야 하며 최적의 값을 설정해야 한다. 이 값을 잘못 설정할 경우 클라이언트의 연결이 제한되어 정상적인 서비스를 제공하지 못할 수 있으므로 실제 서버에 적용하기 전에 테스트 서버를 통해서 충분한 검증한 한 후에 적용해야 한다.</p>
+<p>참고사이트 : <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/secmod/html/secmod109.asp">http://msdn.microsoft.com/library/default.asp?url=/library/en-us/secmod/html/secmod109.asp</a></p>
+<p>1) SYN Floods 공격 방어</p>
+<p>SYN 공격은 TCP/IP에서 연결을 맺는 메카니즘의 취약점을 대상으로 하며, 공격자는 TCP의 SYN 요청을 의도적으로 발생시키는 프로그램을 이용해서 서버상의 커넥션 큐를 넘치게 만든다.</p>
+<p>SYN Floods 공격으로부터 웹 서버를 보호하려면 레지스트리 편집기를 이용해서 HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters 키에 다음과 같은 항목에 대한 값을 지정하면 된다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>항목명</strong></th><th><strong>권장</strong></th><th><strong>범위</strong></th><th><strong>설명</strong></th></tr></thead><tbody><tr><td>SynAttackProtect</td><td>2</td><td>0(비활성)-2</td><td>SYN 공격에 대한 보호 기능을 활성화시킨다. SYN-ACKS의 재전송을 적게 조절함으로써 SYN 공격을 막는다. TcpMaxHalfOpen나 TcpMaxHalfOpenRetried 설정과 함께 사용되어야 한다.</td></tr><tr><td>TcpMaxPortsExhausted</td><td>5</td><td>0-65535</td><td>SYN Floods 공격이 발생했음을 판단하는데 기준이 되는 TCP 연결의 최대값</td></tr><tr><td>TcpMaxHalfOpen</td><td>500</td><td>100-65535</td><td>SYN 공격이 동작하기 전에 SYN_RCVD 상태에서 연결을 허용할 최대값. 이를 적용하려면 먼저 SynAttackProtect가 활성화되어 있어야 한다.</td></tr><tr><td>TcpMaxHalfOpenRetried</td><td>400</td><td>80-65535</td><td>SYN 공격이 동작하기 전에 SYN_RCVD 상태에서 연결을 허용할 최대값. SYN_RCVD는 SYN 공격에 대한 방어가 동작하기 전에 적어도 한번의 SYN 플래그를 재전송한다. 이를 적용하려면 먼저 SynAttackProtect가 활성화되어 있어야 한다.</td></tr></tbody></table>
+<p>이 외에도 TcpMaxConnectResponseRetransmissions, TcpMaxDataRetransmissions, EnablePMTUDiscovery, KeepAliveTime, NoNameReleaseOnDemand와 같은 매개변수가 제공된다. 보다 자세한 내용은 <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/secmod/html/secmod109.asp">여기</a>를 참조하기 바란다.</p>
+<p>② AFD.SYS 설정</p>
+<p>FTP 서버 및 웹 서버와 같은 Windows 소켓 응용 프로그램에서는 연결 시도를 Afd.sys에서 처리한다. Afd.sys도 HKLM\System\CurrentControlSet\Services\AFD\Parameters 레지스트리 키에 대하여 많은 매개변수를 제공한다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>항목명</strong></th><th><strong>권장</strong></th><th><strong>범위</strong></th><th><strong>설명</strong></th></tr></thead><tbody><tr><td>EnableDynamicBacklog</td><td>1</td><td>0(사용안함) 1(사용)</td><td>많은 양의 SYN_RCVD 연결에 대해서 능동적으로 대처할 것인지에 대한 AFD.SYS 기능의 활성화 여부를 지정한다.</td></tr><tr><td>MinimumDynamicBacklog</td><td>20</td><td>0-4294967295</td><td>Listening endpoint에서 허용하는 접속의 최소 수를 지정한다. 접속수가 설정된 값 이하가 되면 새로운 스레드에서 추가 연결을 생성한다.</td></tr><tr><td>MaximumDynamicBacklog</td><td>20000</td><td>0-4294967295</td><td>Listening endpoint에서 허용하는 'Quansi-free' 연결의 최대 수를 지정한다. 'Quansi-free' 는 SYN_RCVD 상태의 연결과 free connections를 더한 값이다.</td></tr><tr><td>DynamicBacklogGrowthDelta</td><td>10</td><td>0-4294967295</td><td>추가적인 연결이 필요할 때 생성되는 free connections의 수를 지정한다.</td></tr></tbody></table>
+<p>③ ICMP 공격 방어</p>
+<p>ICMP(Internet Control Message Protocol)는 호스트 서버와 인터넷 게이트웨이 사이에서 메시지를 제어하고 에러를 알려주는 프로토콜이다(RFC 792 참조). 대표적인 예로 ping 명령어는 인터넷 접속을 테스트하기 위해 ICMP를 사용한다. 최근 발생한 윌시아 웜 바이러스는 ICMP 패킷을 무작위로 보내서 패치가 안된 컴퓨터에 침투한다.</p>
+<p>HKLM\System\CurrentControlSet\Services\AFD\Parameters 레지스트리 키에서 다음 항목을 설정한다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>항목명</strong></th><th><strong>권장</strong></th><th><strong>범위</strong></th><th><strong>설명</strong></th></tr></thead><tbody><tr><td>EnableICMPRedirect</td><td>0</td><td>0(사용안함) 1(사용)</td><td>이 값을 0으로 설정함으로써 ICMP 리디렉트 패킷을 수신했을 때 호스트 경로를 생성하지 않게 하여 부하를 줄일 수 있다.</td></tr></tbody></table>
+<p>④ SNMP 공격 방어</p>
+<p>SNMP(Simple Network Management Protocol)는 네트워크를 관리하기 위한 프로토콜로서 망 관리를 위해 SNMP manager와 agent가 서로 통신하는데 사용된다. 그러나 SNMP을 악용하면 네트워크 연결 장비를 무력화시킬 수 있을 뿐만 아니라 장비를 직접 조작하거나 서비스 거부 공격으로 웹사이트를 마비시킬 수 있다.</p>
+<p>HKLM\System\CurrentControlSet\Services\Tcpip\Parameters 레지스트리 키에서 다음 항목을 설정한다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>항목명</strong></th><th><strong>권장</strong></th><th><strong>범위</strong></th><th><strong>설명</strong></th></tr></thead><tbody><tr><td>EnableDeadGWDetect</td><td>0</td><td>0(사용안함) 1(사용)</td><td>공격자가 2차 게이트웨이로 스위칭하는 것을 막는다. 이 값을 1로 설정하면 TCP는 dead-gateway 탐지를 수행한다.</td></tr></tbody></table></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60024245443" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2006/060510-60024245435/"><span>이전 글</span>[공유] [IIS 웹 서버와 보안 ②] IIS 웹 서버 보호방법(1)</a><a class="newer" href="/blog/posts/2006/060510-60024245451/"><span>다음 글</span>[공유] [IIS 웹 서버와 보안 ④] IIS 웹 서버 보호방법(3)</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[리눅스][펌] Sendmail 서버 구축하기 · 심플하고 여유있는 삶</title><meta name="description" content="▷ Sendmail 이란? 메일서버의 구성을 놓고 얘기하자면 센드메일 서버만으로 이루어 지는것이 아니다. 정확히 말해 센드메일서버는 보내는 메일서버 즉 메일을 받기위함이 아닌 보내기위한 서버 SMT…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2005/051015-60018423436/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[리눅스][펌] Sendmail 서버 구축하기"><meta property="og:description" content="▷ Sendmail 이란? 메일서버의 구성을 놓고 얘기하자면 센드메일 서버만으로 이루어 지는것이 아니다. 정확히 말해 센드메일서버는 보내는 메일서버 즉 메일을 받기위함이 아닌 보내기위한 서버 SMT…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2005/051015-60018423436/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2005-10-15T02:22:00.000Z" data-pagefind-meta="date:2005-10-15">2005.10.15.</time></p><h1>[리눅스][펌] Sendmail 서버 구축하기</h1></header><div class="prose"><p>▷ Sendmail 이란?</p>
+<p>메일서버의 구성을 놓고 얘기하자면 센드메일 서버만으로 이루어 지는것이 아니다.</p>
+<p>정확히 말해 센드메일서버는 보내는 메일서버 즉 메일을 받기위함이 아닌 보내기위한 서버 SMTP(Simple Mail Transfer Protocol) 서버를 얘기 하는것이다.</p>
+<p>메일서버에 대한 이해가 잡혀있지 않는 상태에서는 센드메일 서버를 논하기가 어렵다.</p>
+<p>일반적인 메일서버의 구성을 보자면 메일을 메일을 보내기위한 SMTP 서버와 반대로 메일을 받기위해 존재하는 POP3서버나 IMAP 서버로 나뉜다.</p>
+<p>이중 센드메일은 SMTP 서버에 속하며 받는 메일서버의 경우 위에서 언급한대로 따로 구성된다.</p>
+<p>물론 클라이언트(사용자) 입장에서 보면 이들은 하나로 뭉처진 동일한 시스템으로 인식될수 있다.</p>
+<p>예를 들어 인터넷이 보급되면서 이제는 너무도 일반화된 웹메일 서비스(다음메일 혹은 핫메일등) 또한 이 메일서버의 구성을 기본으로 웹상에서 메일의 송수신을 제어할수 있도록 PHP나 ASP등의 서버기반 프로그램 언어를 통해 이루어지는 서비스이다.</p>
+<p>웹 메일의 관점에서 보자면 사용자들은 별도의 설정없이 메일의 보내기와 받기 서비스를 동시에 마치 하나의 시스템 처럼 생각하며 이용할수 있지만 실제의 구성은 앞에서 언급한대로 각각의 나누어진 서비스 들이다.</p>
+<p>자 이제부터 센드메일 관련된 파일들을 알아보고 하나하나 세팅해나가 보자.</p>
+<p>▶ 센드메일 서버 주요 설정파일과 관련 파일 및 디렉토리의 쓰임세</p>
+<p>/var/spool/mqueue ------------------ ①<br>
+/var/spool/mail ------------------ ②<br>
+/etc/mail/access ------------------ ③<br>
+/etc/aliases ------------------ ④<br>
+/etc/mail/local-host-names ------------------ ⑤</p>
+<p>/etc/mail/sendmail.mc ------------------ ⑥<br>
+/etc/mail/sendmail.cf ------------------ ⑦<br>
+/etc/mail/virtusertable ------------------ ⑧</p>
+<p><strong>①</strong> mqueue 는 사용자가 메일을 보낼때 사용하는 SMTP 서버에서 메일을 발송하기전 임시적으로 사용자의 메일을 보관하는 곳이다.</p>
+<p><strong>②</strong> mail은 다른사용자에 의해 전송된 메일이 내 내 SMTP 서버에 임시적으로 저장되는곳이며 POP3 서버에 의해 메일이 전달될때까지 보관하게 된다. 즉 어떻게 보면 SMTP서버는 우체통과 우체부의 역활을 모두 수행하면서 한편으로는 POP3라는 메일 전달자가 메일을 가져가기 전까지의 우편함의 역활도 수행하게 되는것이다.</p>
+<p><strong>③</strong> access 파일은 SMTP 서버의 이용을 제한하는 설정파일로서 다음과 같은 설정형식을 보인다.</p>
+<p># Check the /usr/share/doc/sendmail/README.cf file for a description<br>
+# of the format of this file. (search for access_db in that file)<br>
+# The /usr/share/doc/sendmail/README.cf is part of the sendmail-doc<br>
+# package.<br>
+#<br>
+# by default we allow relaying from localhost...</p>
+<p>localhost.localdomain RELAY<br>
+localhost RELAY<br>
+127.0.0.1 RELAY<br>
+mail.xfeelis.pe.kr RELAY<br>
+xfeelis.pe.kr RELAY<br>
+<a href="mailto:xfeel@xfeelis.pe.kr">xfeel@xfeelis.pe.kr</a> RELAY<br>
+211.188.120.198 RELAY<br>
+211.188.120.0 RELAY</p>
+<p><a href="mailto:r@spam.pe.kr">spam.pe.kr</a> REJECT</p>
+<p><a href="http://paper.cyworld.nate.com/paper/admin@spam.pe.kr">admin@spam.pe.kr</a> REJECT<br>
+<a href="mailto:spamer@spam.pe.kr">spamer@spam.pe.kr</a> DISCARD<br>
+<a href="mailto:xfeel@spam.pe.kr">xfeel@spam.pe.kr</a> OK</p>
+<p>- 보기에서와 같이 RELAY 설정한 부분들은 메일의 수발신을 허용하는 설정이다. 다만 access 파일에서의 RELAY 설정은 우선순위를 정하자면 2순위로 생각해야 한다.</p>
+<p>그 이유를 설명하자면 뒤에서 다시 언급할 부분인 sendmail.mc 파일과 sendmail.cf 파일의 설정 내역에 따라 외부 네트워크에서의 접근 즉 내부가 아닌 외부에서 smtp를 이용하고자 자신의 메일계정이나 IP를 RELAY 해두었다고 해도 인증 및 제한에 걸려 접근거부 처리가 되는 경우가 있다.</p>
+<p>그 이유는 레드헷 계열 7.1 이상의 배포 버전에 설치된 센드메일의 경우 기본적인 설정이 localhost 127.0.0.1 즉 로컬 네트워크나 로컬서버를 통한 메일의 발신을 제외하고 모두 거부하도록 정하고 있다.</p>
+<p>이유는 샌드메일서버가 외부 스패머에 의해 스팸메일이 뿌려지는 경유지가 되는것을 막고자 하는 스팸 거부/보안정책 때문이다.</p>
+<p>이 제한을 풀어주기 위해서는 다음과 같이 sendmail.mc 파일의 'DAEMON_OPTIONS' 부분을 수정하거나 해당 지시자 자체를 삭제하여야 한다.</p>
+<p>[root@xfeelis /]# vi /etc/mail/sendmail.mc</p>
+<p>...</p>
+<p>DAEMON_OPTIONS(`Port=smtp,Addr=127.0.0.1, Name=MTA')</p>
+<p>...</p>
+<p>센드메일의 설치 버전에 따라 약간의 기본 설정값이 다를수 있으나 레드헷 배포판에 포함되어 있는 샌드메일의 경우 위지시자 자체를 삭제하거나 Addr 부분의 IP를 0.0.0.0 으로 수정해주면 된다. 단 절대 #처리는 하지말라. 서버관리자 그룹 슈퍼유저코리아 센드메일 관련 문서를 보면 주석 #처리시 오류가 날수 있음을 알리고 삭제나 변경을 권장하고 있다.</p>
+<p>이유는 sendmail.mc 파일의 경우 주석구문 앞에 dnl을 같이 표기하도록 하고 있지만 위의 옵션의 경우 기본값이 활성화인 이유로 행의 첫부분에 dnl 처리가 되지 않아있다. 그렇기에 해당 사항을 잘 모르는 관리자의 경우 그냥 주석처리만 해버리고 설정오류를 찾지못해 애를 먹는 경우가 있다.</p>
+<p>이제 본 강좌에서 다루고 있는 Kore 리눅스 배포판에 설치된 센드메일의 sendmail.mc 파일의경우를 보자. 다음과 같은 기본값을 가지고 있을것이다.</p>
+<p>DAEMON_OPTIONS(`Port=smtp,Addr=0.0.0.0, Name=MTA')dnl</p>
+<p>이미 기본 설정값이 Addr 부분을 변경해주고 있음으로 당연히 뒷부분의 dnl 부분만 삭제해주면 되는것이다. 역시 릴리즈 버전인 국내 배포판이 좋기는 좋다. 알아서 이런 부분들을 염두해두어 수정해 주고있으니... >_&#x3C;</p>
+<p>자 이제 다시 access 파일의 설정으로 돌아가보자 자세한 sendmail.mc 파일의 설정에 관해서는 뒤에서 다시 다룰것이니 조급해 하지말자 ㅡㅡa</p>
+<p>RELAY 설정에 해당하는 값은 위에서 보는바와 같이 해당 도메인, 해당 이메일, 해당 IP, 해당 네트워크 등으로 허용할수 있다. 위의 설정을 참조하여 자신만의 릴레이 설정을 해보도록 하자.</p>
+<p>다음은 REJECT 설정이다. REJECT 설정은 RELAY 설정과 반대로 수/발신 거부 설정이다.</p>
+<p>이역시 해당 도메인, 해당 이메일, 해당 IP, 해당 네트워크등으로 나누어 설정할수 있다.</p>
+<p>다음은 DISCARD 설정이다. 이는 스팸에일을 받되 받은후 POP3 서버가 메일을 가져가지 않도록 바로 폐기해 버리며 메일을 발신한 스패머에게는 폐기통보를 하지않는다 즉 스패머는 메일이 정상적으로 발신된줄 알것이다.. 바보처럼... ㅡ_ㅡ;</p>
+<p>다음 설정은 OK 값이다. OK는 특정 도메인 또는 특정 IP나 네트워크 그룹이 REJECT 처리 되어있다고 하더라고 지정한 이메일주소나 IP등에 관계된 메일은 예외적으로 허용처리를 한다는 뜻이다.</p>
+<p>예를 들면 이런경우가 있다. 만약 필자가 악명높은 스패머라고 치자. ㅡㅡ;;</p>
+<p>필자는 관련 스패머 그룹에서 관련 스팸기법등을 공유할것이다. 어떤 새로운 스패머가 필자의 스팸기법에 관련한 메일링 리스트에 가입하여 필자의 이메일을 받기위해서는 스패머 그룹의 도메인 자체는 거부되어 있겠지만 필자의 이메일 만은 예외로 처리해야 할것이다.</p>
+<p>이럴때 쓰는것이 OK 설정 값이다.</p>
+<p>물론 OK 설정값을 다른 용도로 활용할수도 있지만 통상적으로 예외처리에 관련된 설정을 주고자 할때 쓰이게 되는것이다.</p>
+<p><strong>④</strong> aliases 파일은 말그대로 별칭 설정파일이다. 즉 root 에게로 온 메일을 다른 사용자 계정으로 돌리고 싶다던가 할때 쓰는 것이다.</p>
+<p>이 기법을 잘 이용하면 소규모의 메일링 리스트도 운용할수 있다.</p>
+<p>자 그 기법을 한번 둘러보자.</p>
+<p>[root@xfeelis /]# vi /etc/aliases</p>
+<p>...</p>
+<p># Basic system aliases -- these MUST be present.<br>
+mailer-daemon: postmaster<br>
+postmaster: root</p>
+<p>root: xfeel</p>
+<p>...</p>
+<p>위 설정을 살펴 보자. 위 설정은 mailer-daemon 이라는 계정 즉 sendmail 데몬의 제어를 위해 만들어진 mailer-daemon 계정으로 오는 관련 로그메일을 최종적으로 xfeel 계정 사용자에게 보내주고 있는것이다.</p>
+<p>즉 mailer-daemon 은 postmaster 로 별칭 설정 되었으며 다시 postmaster 는 root 로 또 다시 root 는 xfeel 사용자에게 별칭 설정 되어진것이다.</p>
+<p>기본적인 설정값에 의한다면 root: xfeel 의 설정은 없기 때문에 sendmail 에 관련된 로그 메일은 root 계정으로 보내어 지겠지만 필자는 이를 다시 xfeel 계정으로 돌려주고 있는것이다.</p>
+<p>뭐 굳이 이렇게 까지 설정할 필요가 있느냐고 반문하는 독자가 있다면 뭐라 할말은 없지만 보안적인 요소를 위해 필자는 이렇게 조치하고 있다.</p>
+<p>메일을 확인하기 위해서라면 서버에 직접 원격접속 혹은 콘솔상에서 확인하지 않는이상 대부분의 사용자가 Outlook Express 등을 이용할것이다.</p>
+<p>만약 root로 보내어진 메일을 Outlook Express등의 메일 확인 프로그램에서 보고자 한다면 해당 프로그램에 root 계정의 패스워드를 사용해야 할것이다.</p>
+<p>일반적으로 root 패스워드의 경우 사전상의 단어나 연속적인 숫자등으로 이루어진 패스워드를 사용하지 않는것이 원칙이기에 매우 길고 복잡하게 설정되는것이 일반적이다.</p>
+<p>때문에 대부분의 사용자의 경우 계정과 패스워드를 아웃룩에 저장하여 바로 사용하는 경우가 많다. 그럼 root 패스워드를 Outlook Express 따위의 프로그램에 저장하여 사용할것인가?</p>
+<p>만약 이런 발상을 하고있는 리눅서가 있다면 당장에 버려라...</p>
+<p>보안에 매우 취약하다.</p>
+<p>Outlook Express 프로그램은 MS 에서도 인정한 보안 취약점을 가지고 있는 매우 귀여운 놈이다.. ㅡ_ㅡ</p>
+<p>만약 크래커가 독자들이 사용하는 윈도우PC를 크래킹 하여 Outlook Express 에 저장된 root 계정의 패스워드를 습득한다면?</p>
+<p>혹은 독자들이 사용하는 그밖에 메일확인 프로그램을 크랙킹하여 root 패스워드를 습득한다면?</p>
+<p>생각하기 싫다.. 더설명할 이유가 없을것이라고 보며 다음으로 넘어가자 ㅡㅡa</p>
+<p>자 이제 소규모 메일링 리스트 운용에 대해서 다뤄 보자.</p>
+<p>독자들이 운영하는 리눅스 서버에 다음과 같은 계정들이 생성되어 있다고 가정해 보자.</p>
+<p>[root@xfeelis /]# vi /etc/passwd</p>
+<p>root</p>
+<p>admin</p>
+<p>adminuser1</p>
+<p>adminuser2</p>
+<p>adminuser3</p>
+<p>user1</p>
+<p>user2</p>
+<p>user3</p>
+<p>만약 메일을 보내고자 하는사람이 <a href="mailto:support@xfeelis.pe.kr">support@xfeelis.pe.kr</a> 에 메일을 보낼때 각각 admin, amdinuser1,2,3 계정에 모두 메일이 가도록 설정하고 싶다면 어떻게 해야 할것인가?</p>
+<p>물론 보는것과 같이 support 란 계정은 따로 생성되어 있지 않은 상황이다. (뭐 생성되어 있다고 해도 결과에는 차이가 없으나.. 일단 그렇다고 가정하자)</p>
+<p>별칭기능을 활용한 소규모 메일링 리스트 기법이 이것이다.</p>
+<p>[root@xfeelis /]# vi /etc/aliases</p>
+<p>...</p>
+<p># Person who should get root's mail</p>
+<p>support: admin,adminuser1,adminuser2,adminuser3</p>
+<p>...</p>
+<p>어떤가 대단하지 않은가? 이렇게 간단한 설정으로 메일 그룹을 지정하고 운용할수 있다니..</p>
+<p>잘활용하면 여러모로 쓰임세가 많다. 연구해 보자.</p>
+<p><strong>⑤</strong> local-host-names 파일은 메일의 최종 수신지를 지정하는 곳이다. 즉 쉽게 얘기하자면 이런경우가 있다. 독자들의 샌드메일 서버를 거처가는 메일중 최종 수신지가 독자들의 서버인 메일이 서버에 저장되기 위해서 독자들의 도메인 목록을 등록하는것이다. 만약 독자들이 웹호스팅 을 위한 서버를 운영하고 있다고 가정하면 독자 자신의 도메인 뿐만 아니라 고객의 도메인까지 등록해두어야 메일이 정상적으로 전달되는 것이다.</p>
+<p>설정은 다음과 같다.</p>
+<p>[root@xfeelis /]# vi /etc/mail/local-host-names</p>
+<p># local-host-names - include all aliases for your machine here.<br>
+xfeelis.pe.kr<br>
+xfeelis.co.kr</p>
+<p>xfeelis.or.kr</p>
+<p>userdomain.pe.kr</p>
+<p>userdomain.co.kr</p>
+<p>그냥 위와 같이 도메인만 설정해 주면 된다.</p>
+<p><strong>⑥</strong> sendmail.mc 파일은 샌드메일 서버의 주요 설정파일중 하나이며 /etc/mail/sendmail.mc 파일을 바탕으로 M4 유틸을 이용하여 /etc/mail/sendmail.cf 파일을 생성하게 된다.</p>
+<p>sedmail.mc 파일중 가장 중요한 지시자는 역시 앞부분에서 언급한 외부네트워크에 대한 smtp 이용 제한을 풀어주는 부분과 지금부터 다뤄가고자 하는 SMTP 인증에 관한 부분이다.</p>
+<p>앞에 access 부분에서 잠시 거론한대로 외부네트워크에 대한 smtp 이용을 풀어주었다면 샌드메일 서버가 가지고 있는 취약점을 이용하여 스팸메일의 경유지 혹은 스팸서버가 될수 있는 가능성이 존재하는것이다.</p>
+<p>이부분을 그냥 넘겨버린다면 심각한 상황이 초래된다. 스팸메일에 의해 샌드메일서버는 과부하가 걸려 시스템의 자원을 모두 고갈시킬것이며 그것마저 다된다면 메일서버는 다운되고 말것이다.</p>
+<p>이런것을 막기위한 방법중 하나가 바로 앞에서 언급한 access 파일 운영정책과 지금부터 거론할 SMTP 인증에 대한 부분이다.</p>
+<p>사용자가 smtp 서버를 이용하여 외부 네트워크로 메일을 발신하고자 할때 인증절차를 거처서 이용하도록 하는것이다.</p>
+<p>실제로 대부분의 메일 호스팅이나 웹호스팅 제공하는 업체에서 이 SMTP 인증 기법을 사용하며 해당 사용자들에게 Outlook Express 등의 메일 송수신 프로그램 옵션에서 SMTP 인증부분을 체크 할것을 공지하고 있다.</p>
+<p>그럼 SMTP 인증부분을 활성화 해보자.</p>
+<p>[root@xfeelis /]# vi /etc/mail/sendmail.mc</p>
+<p>...</p>
+<p>define(`confAUTH_OPTIONS', `A')dnl</p>
+<p>...</p>
+<p>define(`confAUTH_MECHANISMS', `EXTERNAL GSSAPI DIGEST-MD5 CRAM-MD5 LOGIN PLAIN')dnl &#x3C;- dnl 부분 삭제</p>
+<p>...</p>
+<p>...</p>
+<p>위 설정에서 define(`confAUTH_OPTIONS', `A') 부분은 dnl 처리를 해줘야 하며 define(`confAUTH_MECHANISMS' 부분은 맨뒤에 dnl을 삭제해야 SMTP 인증기능이 활성화 된다.</p>
+<p>위와 같이 설정해 주었다면 이제 다음과 같이 m4 유틸명령어를 사용하여 sendmail.cf 파일을 생성해 보자.</p>
+<p>[root@xfeelis /]# m4 /etc/mail/sendmail.mc > /etc/mail/sendmail.cf</p>
+<p><strong>⑦</strong> sendmail.cf은 전자에 sendmail.mc 파일을 통하여 생성된 세부 설정파일 정도로 이해하면 될것이다.</p>
+<p>sendmail.cf 파일에서 눈여겨 봐야할 지시자들은 다음과 같다.</p>
+<p><strong>FW</strong> 지시자 : FW 지시자는 메일의 최종수신지 설정파일에 경로를 지정하는 곳으로서 sendmail 8.9.x 버전까지는 sendmail.cw 의 값으로 되어있지만 8.10.x 이후 버전부터는 local-host-names 파일로 설정되어 있다. 독자들이 사용하는 배포판에 포함된 센드메일의 버전을 확인후 local-host-names 로 변경해주자.</p>
+<p># file containing names of hosts for which we receive email<br>
+Fw/etc/mail/local-host-names</p>
+<p><strong>MaxMessageSize</strong> : 첨부파일을 포함한 메일 메시지 최대크기 제한 설정 부분</p>
+<p># maximum message size<br>
+O MaxMessageSize=20000000</p>
+<p>메일의 크기가 20M를 넘는다면 메일은 발신되지 못한다.</p>
+<p><strong>MinQueueAge</strong> : 임시보관 최소 시간 설정 부분</p>
+<p>뒤에서 언급하게 될 Timeout 설정값 이전에 적용될 우선적인 옵션으로 발송에 실패한 메일이 다시 재발송을 시도하기까지의 대기 시간을 설정 한다.. 기본값은 30분이며 기본적으로 서버부하를 줄이기 위해 # 주석처리 되어있지만 필요로 한다면 사용하여도 무방하다.</p>
+<p># minimum time in queue before retry<br>
+O MinQueueAge=30m</p>
+<p><strong>LogLevel</strong> : sendmail 이 가동되면서 발생되는 로그의 기록에 관련한 레벨을 설정</p>
+<p># log level<br>
+O LogLevel=9</p>
+<p>각종 <strong>TimeOut</strong> 값 : 센드메일 서버의 각종 Timeout 값을 설정.</p>
+<p># timeouts (many of these)<br>
+#O Timeout.initial=5m<br>
+O Timeout.connect=1m</p>
+<p>- 사용자가 샌드메일 서버에 접속하여 작업하는 최대시간을 설정것으로 기본값은 1분이다.<br>
+#O Timeout.aconnect=0s<br>
+#O Timeout.iconnect=5m<br>
+#O Timeout.helo=5m<br>
+#O Timeout.mail=10m<br>
+#O Timeout.rcpt=1h<br>
+#O Timeout.datainit=5m<br>
+#O Timeout.datablock=1h<br>
+#O Timeout.datafinal=1h<br>
+#O Timeout.rset=5m<br>
+#O Timeout.quit=2m<br>
+#O Timeout.misc=2m<br>
+#O Timeout.command=1h<br>
+O Timeout.ident=0<br>
+#O Timeout.fileopen=60s<br>
+#O Timeout.control=2m<br>
+O Timeout.queuereturn=5d<br>
+- 특정한 사유로 인해 메일이 전달되지 못하고 mqueue 에보관되고 있을시 보관 기간을 지정하는것으로 기본값은 5일이다. 이기간을 넘길경우 메일은 자동적으로 최초 발신지로 되돌려져 반송처리가 된다.</p>
+<p>#O Timeout.queuereturn.normal=5d<br>
+#O Timeout.queuereturn.urgent=2d<br>
+#O Timeout.queuereturn.non-urgent=7d<br>
+#O Timeout.queuereturn.dsn=5d<br>
+O Timeout.queuewarn=4h<br>
+- 역시 특정한 사유로 인해 메일이 전달되지 못할시 최초 발신자에게 메일이 전달되지 못하고 있음을 경고하는 경고메일이 발송 되기까지의 대기 시간을 지정하며 기본값은 4시간이다.</p>
+<p>#O Timeout.queuewarn.normal=4h<br>
+#O Timeout.queuewarn.urgent=1h<br>
+#O Timeout.queuewarn.non-urgent=12h<br>
+#O Timeout.queuewarn.dsn=4h<br>
+#O Timeout.hoststatus=30m<br>
+#O Timeout.resolver.retrans=5s<br>
+#O Timeout.resolver.retrans.first=5s<br>
+#O Timeout.resolver.retrans.normal=5s<br>
+#O Timeout.resolver.retry=4<br>
+#O Timeout.resolver.retry.first=4<br>
+#O Timeout.resolver.retry.normal=4<br>
+#O Timeout.lhlo=2m<br>
+#O Timeout.auth=10m<br>
+#O Timeout.starttls=1h</p>
+<p>기타 지시자들은 필자또한 사용하지 않으며 또 자세한 그 쓰임을 알고 있지 못하다. 좀더 자세한 사항은 sendmail.org 의 지시자 관련 문서를 참조바라며 실제로 위 3가지 정도의 옵션으로도 충분히 센드메일 서버에 운영에 있어 부하를 최소화 할수 있다.</p>
+<p><strong>⑧</strong> virtusertable 파일은 가상메일 설정파일이라고 부르며 다음과 같은 상황에 사용된다.</p>
+<p>만약 필자가 웹호스팅 서버를 운영하고 있다고 가정하자.</p>
+<p>admin 이란 계정은 당연히 서버에 하나 밖에 존재 할수 없다.</p>
+<p>하지만 필자의 서버에서 웹호스팅을 받고 있는 사용자들은 자신들의 도메인을 가지고 메일을 운영할때 실계정명은 user1 등이지만 <a href="mailto:admin@userdomain.pe.kr">admin@userdomain.pe.kr</a> 이란 도메인으로 메일을 받고자 요청한다.</p>
+<p>일반적인 생각이라면 admin 이란 계정은 단 하나만 존재하기 때문에 필자의 서버에 매칭된 도메인만이 <a href="mailto:admin@xfeelis.pe.kr">admin@xfeelis.pe.kr</a> 이란 메일을 사용할수 있다.</p>
+<p>이를 해결하기 위한 파일이 바로 /etc/mail/virtusertable 파일인 것이다.</p>
+<p>다음과 같이 /etc/mail/virtusertable 파일을 편집해 보자.</p>
+<p>[root@xfeelis /]# vi /etc/mail/virtusertable</p>
+<p><a href="mailto:admin@xfeelis.pe.kr">admin@xfeelis.pe.kr</a> xfeel</p>
+<p><a href="mailto:admin@userdomain1.pe.kr">admin@userdomain1.pe.kr</a> user1</p>
+<p><a href="mailto:admin@userdomain2.pe.kr">admin@userdomain2.pe.kr</a> user2</p>
+<p><a href="mailto:admin@userdomain3.pe.kr">admin@userdomain3.pe.kr</a> user3</p>
+<p>[root@xfeelis /]# makemap hash /etc/mail/virtusertable &#x3C; /etc/mail/virtusertable</p>
+<p>어떤까? 매우 쉽지 않은가? 알고 보면 매우 쉬우며 간단한 설정들이 이런 유용한 기능을 발휘하고 있다. 이것이 오픈소스 진영과 리눅스의 힘인것이다.</p>
+<p>자 이제 모든 파일의 설정을 마쳤자. 이제 실제로 샌드메일의 가동여부를 테스트 해봐야 할것이다. 우선 샌드메일을 가동 시켜보자.</p>
+<p>[root@xfeelis /]# /etc/rc.d/init.d/sendmail restart<br>
+Shutting down sendmail: [ OK ]<br>
+Shutting down sm-client: [ OK ]<br>
+Starting sendmail: [ OK ]<br>
+Starting sm-client: [ OK ]<br>
+[root@xfeelis /]#</p>
+<p>이제 샌드메일이 정상적으로 가동하는지 확인해 봐야겠다.</p>
+<p>[root@xfeelis /]# telnet 211.188.120.198 25<br>
+Trying 211.188.120.198...<br>
+Connected to 211.188.120.198.<br>
+Escape character is '^]'.<br>
+220 xfeelis.pe.kr ESMTP Sendmail 8.13.0/8.13.0; Tue, 9 Nov 2004 14:18:10 +0900<br>
+HELP<br>
+214-2.0.0 This is sendmail version 8.13.0<br>
+214-2.0.0 Topics:<br>
+214-2.0.0 HELO EHLO MAIL RCPT DATA<br>
+214-2.0.0 RSET NOOP QUIT HELP VRFY<br>
+214-2.0.0 EXPN VERB ETRN DSN AUTH<br>
+214-2.0.0 STARTTLS<br>
+214-2.0.0 For more info use "HELP &#x3C;topic>".<br>
+214-2.0.0 To report bugs in the implementation send email to<br>
+214-2.0.0 <a href="mailto:sendmail-bugs@sendmail.org">sendmail-bugs@sendmail.org</a>.<br>
+214-2.0.0 For local information send email to Postmaster at your site.<br>
+214 2.0.0 End of HELP info<br>
+QUIT<br>
+221 2.0.0 xfeelis.pe.kr closing connection<br>
+Connection closed by foreign host.<br>
+[root@xfeelis /]#</p>
+<p>25번 포트 즉 SMTP 서버인 샌드메일 서버에 이상없이 접속하였음을 통해 샌드메일이 제대로 가동되고 있음을 확인할수 있다.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60018423436" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2005/051015-60018422515/"><span>이전 글</span>[리눅스][펌] Sendmail 구축</a><a class="newer" href="/blog/posts/2005/051015-60018423736/"><span>다음 글</span>[리눅스]sendmail SMTP포트변경</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

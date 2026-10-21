@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>드디어!!! 생물자원통합 마이그레이션 프로세스 개발 중간완료!!! · 심플하고 여유있는 삶</title><meta name="description" content="장장 3일간에 걸친 마이그레이션 프로세스를 완료하였다... 다행이 OPENROWSET이라는 고마운 내장 프로시져가 있어서 다행이었다. 아 개운해 해야겠지만.... ㅠㅠ 쥘쥘... 아직 남은 콜드룸에…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2006/061025-60030086552/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="드디어!!! 생물자원통합 마이그레이션 프로세스 개발 중간완료!!!"><meta property="og:description" content="장장 3일간에 걸친 마이그레이션 프로세스를 완료하였다... 다행이 OPENROWSET이라는 고마운 내장 프로시져가 있어서 다행이었다. 아 개운해 해야겠지만.... ㅠㅠ 쥘쥘... 아직 남은 콜드룸에…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2006/061025-60030086552/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2006-10-25T08:01:00.000Z" data-pagefind-meta="date:2006-10-25">2006.10.25.</time></p><h1>드디어!!! 생물자원통합 마이그레이션 프로세스 개발 중간완료!!!</h1></header><div class="prose"><p>장장 3일간에 걸친 마이그레이션 프로세스를 완료하였다...</p>
+<p>다행이 OPENROWSET이라는 고마운 내장 프로시져가 있어서 다행이었다.</p>
+<p>아~~ 개운해~~~~~ 해야겠지만.... ㅠㅠ 쥘쥘...</p>
+<p>아직 남은 콜드룸에 앰퓰 데이터들이... 감히 나를 압박해??? 하....</p>
+<p>다행이 야근 안하는 정도로 위안을 삼을란다.</p>
+<p>암튼!! 일단 여기까지 완료 졸 나름 개운하다~</p>
+<p>==============================================================================</p>
+<p><strong>[일괄 마이그레이션 순서]</strong></p>
+<p>1. GRAND_RESROUCE에 걸려있는 foreignkey Constraint를 제거한 후 마이그레이션 한다.</p>
+<p>* FK Constraint 제거</p>
+<p>- FK_rg_BARCODE_GRAND_RESOURCE</p>
+<p>- FK_rg_ALLOCATE_KCTCMAIN</p>
+<p>* 32번 KCTMAIN에서 33번 GRAND_RESOURCE로 마이그레이션한다.</p>
+<p>* FK Constraint 생성</p>
+<p>* 사용 프로시져</p>
+<p>- sp_sm_MIGRATE_KCTCMAIN</p>
+<p>★★ 1 의 일괄 작업을 MIGRATION_1.sql 로 실행하여 처리한다 ★★</p>
+<p><strong>##SL시리즈 관련 마이그레이션##</strong></p>
+<p>2. rg_DATA, rg_BARCODE, rg_ALLOCATE 에 걸려있는 foreignkey Constraint를 제거</p>
+<p>* rg_DATA</p>
+<p>- FK_sl_SELL_LINK_rg_DATA</p>
+<p>- FK_sl_SELL_HISTORY_rg_DATA</p>
+<p>* rg_BARCODE</p>
+<p>- FK_rg_DATA_rg_BARCODE</p>
+<p>* rg_ALLOCATE</p>
+<p>- FK_rg_DATA_rg_ALLOCATE</p>
+<p>3. RG Series Data Truncate</p>
+<p>* rg_DATA</p>
+<p>- rg_DATA -> sl_SELL_LINK, -> sl_SELL_HISTORY</p>
+<p>* rg_BARCODE</p>
+<p>- rg_BARCODE</p>
+<p>* rg_allocate</p>
+<p>- rg_ALLOCATE</p>
+<p>4. rg_data, rg_barcode, rg_allocate에 걸려있던 foreignkey Constraint를 생성한다.</p>
+<p>* rg_DATA</p>
+<p>- FK_sl_SELL_LINK_rg_DATA</p>
+<p>- FK_sl_SELL_HISTORY_rg_DATA</p>
+<p>* rg_BARCODE</p>
+<p>- FK_rg_DATA_rg_BARCODE</p>
+<p>* rg_ALLOCATE</p>
+<p>- FK_rg_DATA_rg_ALLOCATE</p>
+<p>5. 마이그레이션을 시작한다.</p>
+<p>* Deep Freezer, Nitrogen Tank 와 Cold Room을 분리하여 마이그레이션한다.</p>
+<p>* 사용 프로시져</p>
+<p>- sp_sm_MIGRATE_STORE</p>
+<p>여기까지 아무 문제 없어야 테이블간 FK 제약조건에 위배되지 않는 마이그레이션이 수행된 것임.</p>
+<p>★★ 2,3,4,5 의 일괄 작업을 MIGRATION_2.sql 로 실행하여 처리한다 ★★</p>
+<p><strong>##SL시리즈 관련 마이그레이션##</strong></p>
+<p>6. sl_SELL_REC, sl_SELL_DTL에 걸려있는 FK Constraint를 제거한다.</p>
+<p>* sl_SELL_REC</p>
+<p>- FK_sl_SELL_DTL_sl_SELL_REC</p>
+<p>- FK_sl_SELL_HISTORY_sl_SELL_REC</p>
+<p>* sl_SELL_DTL</p>
+<p>- FK_sl_SELL_LINK_sl_SELL_DTL</p>
+<p>- FK_sl_SELL_CLAIM_sl_SELL_DTL</p>
+<p>7. SL Series Data Truncate</p>
+<p>* sl_SELL_CLAIM -> sl_SELL_DTL -> sl_SELL_REC</p>
+<p>8. sl_SELL_REC, sl_SELL_DTL에 걸려있던 FK Constraint를 생성한다.</p>
+<p>9 마이그레이션을 시작한다.</p>
+<p>* 사용 프로시져</p>
+<p>- sp_sm_MIGRATE_SELLREC</p>
+<p>- sp_sm_MIGRATE_SELL</p>
+<p>- sp_sm_MIGRATE_CLAIM</p>
+<p>여기까지 아무 문제 없어야 테이블간 FK제약조건에 위배되지 않는 마이그레이션이 수행된 것임.</p>
+<p>★★ 6,7,8,9 의 일괄 작업을 MIGRATION_3.sql 로 실행하여 처리한다 ★★</p>
+<p>7. 기타 테이블들 데이터 마이그레이션</p>
+<p>* ATTRIBUTE, BACTERIA, FUNGI, ANIMAL_MAIN, PLANT_MAIN, ALGAE_MAIN2, REAGENT, PATENT</p>
+<p>- 생성해놓은 각 테이블 별 프로시져를 이용하여 일괄 마이그레이션 한다</p>
+<p>- ATTRIBUTE, BACTERIA, FUNGI 는 IDENTITY가 없으므로 IDENTITY_INSERT 세팅은 필요없음.</p>
+<p>* 사용 프로시져</p>
+<p>- sp_sm_MIGRATE_ATTRIBUTE</p>
+<p>- sp_sm_MIGRATE_BACTERIA</p>
+<p>- sp_sm_MIGRATE_FUNGI</p>
+<p>- sp_sm_MIGRATE_ANIMALMAIN</p>
+<p>- sp_sm_MIGRATE_PLANTMAIN</p>
+<p>- sp_sm_MIGRATE_ALGAEMAIN2,</p>
+<p>- sp_sm_MIGRATE_REAGENT</p>
+<p>- sp_sm_MIGRATE_PATENT</p>
+<p>★★ 10 의 일괄 작업을 MIGRATION_4.sql 로 실행하여 처리한다 ★★</p>
+<p>[고려사항]</p>
+<p>1.단위별 마이그레이션 가동 시험</p>
+<p>2.통합 일괄처리 스케줄링 가동시험</p>
+<p>3.새벽 동작하는 스케쥴링을 마이그레이션 - 나 새벽에 출근하지 싫다거~~~~~ -_-</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60030086552" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2006/061023-60029996432/"><span>이전 글</span>[MSSQL] OPENROWSET - SQL OLEDB 기반 원격 데이터 엑세스</a><a class="newer" href="/blog/posts/2006/061031-60030316560/"><span>다음 글</span>[MSSQL2005] 2005에서의 OPENROWSET / OPENDATASOURCE  사용하기</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

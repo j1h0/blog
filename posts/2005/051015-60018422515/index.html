@@ -1,0 +1,148 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[리눅스][펌] Sendmail 구축 · 심플하고 여유있는 삶</title><meta name="description" content="1. Sendmail 이란? | 메일시스템의 구성 | MUA(Mail User Agent) | 이용자가 메일을 보내기 위해 사용하는 프로그램을 말하며 Outlook express나 Netscape의…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2005/051015-60018422515/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[리눅스][펌] Sendmail 구축"><meta property="og:description" content="1. Sendmail 이란? | 메일시스템의 구성 | MUA(Mail User Agent) | 이용자가 메일을 보내기 위해 사용하는 프로그램을 말하며 Outlook express나 Netscape의…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2005/051015-60018422515/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2005-10-15T01:32:00.000Z" data-pagefind-meta="date:2005-10-15">2005.10.15.</time></p><h1>[리눅스][펌] Sendmail 구축</h1></header><div class="prose"><p>1. Sendmail 이란?</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>메일시스템의 구성</th><th>MUA(Mail User Agent)</th><th>이용자가 메일을 보내기 위해 사용하는 프로그램을 말하며 Outlook express나 Netscape의 메신저, mailx, mtool과 간은 프로그램이 해당된다.</th></tr></thead><tbody><tr><td>MTA(Mail Transfer Agent)</td><td>MUA가 전송하는 메일을 외부메일서버로 전달하거나, 메일을 닫는 대상 메일서버에서는 mail을 전송받아 /var/spool/mail 디렉토리 우편함에 저장하는 프로그램을 말하며 , 대표적인 프로그램이 sendmail 이다.</td><td></td></tr><tr><td>MDA(Mail Delivery Agent)</td><td>만약에 메일을 보내는 클라리언트와 받는 서버가 동일한 로컬 호스트라면 MTA가 작동하지 않고 mail.local 과 같은 프로그램이 구동되어 메일을 /var/spool/mail디렉토리에 분배한다.</td><td></td></tr></tbody></table>
+<p>SMTP : Simple Mail Transfer Protocol의 약어로 전자 우편 전송을 위해 만든 프로토콜이다. 이 프로토콜은 7비트 아스키데이터만 전송할수 있다. 지금 우리가 흔히 사용하는 SMTP는 ESMTP(Extended SMTP)로 8비트 코드를 처리하는 확장된 프로토콜이다.</p>
+<p>POP3: Post Office Protocol Version3. 으로 MUA가 MTA에 접속하여 자신의 우편물을 가져오는 프로토콜이다.</p>
+<p>Sendmail은 보안에 아주 취약한 프로그램이다. 많이 보완은 되었지만 가장 많은 공격을 받는 프로그램중의 하나이다. 시스템 관리자는 새로운 sendmail 버전이 나올때마다 적절하게 자신의 시스템을 업그레이드 시켜주는 것이 중요한 업무중에 하나라고 할 수 있겠다.</p>
+<p>2. sendmail 설정 파일들</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>설정파일들</th><th>내용</th></tr></thead><tbody><tr><td>/usr/sbin/sendmail</td><td>sendmail 데몬 실행 파일</td></tr><tr><td>/etc/mail/sendmail.cf</td><td>sendmail 주 설정 파일</td></tr><tr><td>/etc/mail/host-local-domains</td><td>메일을 처리할 도메인에 대한 정보 기록 파일</td></tr><tr><td>/etc/mail/sendmail.mc</td><td>sendmail 매크로 설정 파일</td></tr><tr><td>/etc/mail/aliases</td><td>sendmail alias 설정 파일</td></tr><tr><td>/etc/mail/aliases.db</td><td>sendmail alias 설정 DB 파일</td></tr></tbody></table>
+<p>/etc/mail/sendmail.cf 구성파일의 주요 내용들</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Cwlocalhost</th><th>메일 서버로 만들고자하느 도메인을 지정한다. 복수지정이가능 하다</th></tr></thead><tbody><tr><td>Fw/etc/mail/host-local-domains</td><td>sendmail.cw파일에 있는 도메인에 관하여 모두 메일 처리가 가능하다.</td></tr><tr><td>Djtest1.com</td><td>j 뒤에 특정값을 지정하면 그 특정겂을 강제적으로 메일이 처리될 수 있도록 한다.</td></tr><tr><td>DMtest1.com</td><td>메일을 전송할때 메일 전송자의 주소를 메일 호스트와 다르게 표시하여 전달해 주는 기능을 한다.</td></tr><tr><td>O MaxMessageSize=1000000</td><td>메일 메시지의 최대크기(바이트)를 지정한다.</td></tr><tr><td>O QueueDirectory=/var/spool/mqueue</td><td>메일 큐 디렉토리를 설정한다.</td></tr><tr><td>O Timeout.queuereturn=5d</td><td>메시지가 발신자에게 반환되기 까지의 시간(여기에서는 5일로 설정)</td></tr><tr><td>O MinQueueAge=30m</td><td>메일을 보내기전 메일큐에서 대기하는 시간을 설정</td></tr><tr><td>O LogLevel=9</td><td>기본 로그 레벨을 설정한다.</td></tr><tr><td>O ForwardPath=$z/.forward,$w:$z/.forward</td><td>사용자의 계정 디렉토리안에 .forward라는 파일이 존재하게 되면 메일 서버로 오는 메일들을 이 파일 안에 기록된 메일 주소로 전달해 주는 기능을 한다.</td></tr></tbody></table>
+<p>Sendmail 서비스 시작과 종료</p>
+<p># /etc/init.d/sendmail stop<br>
+# /etc/init.d/sendmail start</p>
+<p>메일 접근을 제어하는 access 파일 설정예제</p>
+<p>메일의 Relay에 대한 서버측의 방침을 적어놓은 파일이다.</p>
+<p>RELAY : 해당 호스트에 대해 메일 릴레이를 허용하며, 다른 룰이 거부하는 경우에도 메일을 수신한다.<br>
+OK : 다른 룰이 거부하는 메일에 대해서 수신한다.<br>
+REJECT : 메일 릴레이 접근에 대해 거부하여 반송한다.<br>
+DISCARD : 메일 릴레이에 대해 거부하나 아무런 메시지도 반송하지 않는다.</p>
+<p># vi /etc/mail/access<br>
+localhost.localdomain RELAY<br>
+localhost RELAY<br>
+127.0.0.1 RELAY<br>
+<a href="mailto:guest@unix00.gcc.go.kr">guest@unix00.gcc.go.kr</a> “571 메일 보내지 말라고 그랬지!!!”<br>
+g2.go.kr “550 이 도메인에서 오는 메일은 처리하지 않습니다”</p>
+<p># makemap hash /etc/mail/access.db &#x3C; /etc/mail/access</p>
+<p>사용자 별명을 설정하는 aliases 파일 설정 예제</p>
+<p># vi /etc/aliases</p>
+<p>master: root, user00, <a href="mailto:root@kiwi.gcc.go.kr">root@kiwi.gcc.go.kr</a><br>
+è 별명: 실제 이메일 주소</p>
+<p># newaliases<br>
+/etc/aliases.db 파일을 생성하는 명령이다.</p>
+<p>일반계정 사용자가 자신의 메일을 포워딩하기 위해 설정하는 .forward 파일 설정예제</p>
+<p># vi $HOME/.forward<br>
+<a href="mailto:user00@kiwi.gcc.go.kr">user00@kiwi.gcc.go.kr</a></p>
+<p>수신되는 모든 메일을 kiwi 시스템의 user00사용자에게로 포워딩된다. Sendmail은 기본적으로 사용자 계정 디렉토리와 그 상위 디렉토리에 대한 Group에 쓰기 권한이 있으면 .forward파일을 읽지 않는다.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60018422515" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2005/051013-60018361459/"><span>이전 글</span>[오라클][펌] Oracle의 백업 대상 및 종류 </a><a class="newer" href="/blog/posts/2005/051015-60018423436/"><span>다음 글</span>[리눅스][펌] Sendmail 서버 구축하기</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

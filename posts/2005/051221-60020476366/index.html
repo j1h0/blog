@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[MS-SQL] 한개의 인스턴스에 2개의 포트 오픈하기  · 심플하고 여유있는 삶</title><meta name="description" content="======================================================================================= 본 내용은 다른 여타 MSSQL 관련 커…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2005/051221-60020476366/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[MS-SQL] 한개의 인스턴스에 2개의 포트 오픈하기 "><meta property="og:description" content="======================================================================================= 본 내용은 다른 여타 MSSQL 관련 커…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2005/051221-60020476366/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2005-12-21T05:01:00.000Z" data-pagefind-meta="date:2005-12-21">2005.12.21.</time></p><h1>[MS-SQL] 한개의 인스턴스에 2개의 포트 오픈하기 </h1></header><div class="prose"><p>=======================================================================================</p>
+<p>본 내용은 다른 여타 MSSQL 관련 커뮤니티에도 많은 자료가 있으니 부족하시면 참고하시기 바랍니다.</p>
+<p>글쓴이 - 신지호</p>
+<p>=======================================================================================</p>
+<p><strong>대상 - Microsoft SQL Server 2000</strong></p>
+<p>MSSQL를 사용하는 중에 'Oracle처럼 서비스별로 리스너 포트를 따로따로 설정할 수 없는가...?' 라는 의문이 들었습니다.</p>
+<p>그래서 MS-SQL도움말도 찾아보고 인터넷도 뒤져보고 데이터베이스 바이블 책도 찾아봤는데...</p>
+<p>제가 못찾은 것인지... 찾을수가 없더군요..</p>
+<p>그래서 위험을 무릅쓰고.... 상용으로 올라가있는 데이터베이스를 실험대상으로 삼았습니다.</p>
+<p>여러가지 테스트를 한 결과 서비스별로 포트를 지정하는 방법은 아직 찾지 못했고요...</p>
+<p>한개의 인스턴스의 기본포트(1433 port)에 또 다른 포트를 추가할수 있다는 것을 알게되었습니다.</p>
+<p>서비스별(인스턴스별) 포트 설정방법은 또 다른 방법을 찾아봐야 할것 같습니다.</p>
+<p><strong>[설정방법]</strong></p>
+<p>1. <strong>SQL SERVER 네트워크 유틸리티</strong>를 실행합니다.</p>
+<p>2. '일반'탭의 '사용할 수 있는 프로토콜'이라는 리스트박스가 있는데...</p>
+<p>서버 설치시 기본으로 설치를 하셨으면 첫번째 줄에 '망명된 파이프'가 있고 두번째 'TCP/IP'가 있습니</p>
+<p>다.</p>
+<p>3. 'TCP/IP'를 선택하고 아래 '속성(P)'버튼 클릭!!!!</p>
+<p>4. 속성창을 클릭하게 되면 '{SQL서버이름} - TCP/IP' 라는 제목의 속성창이 뜨게됩니다.</p>
+<p>5. 서버 설치시 기본으로 설치를 하셨으면 기본포트가 '1433' 으로 설정되어있을것입니다.</p>
+<p>6. 1433이라고 적혀져있는것은 그대로 두시고....</p>
+<p>만약 12번포트를 추가로 사용하고 싶으시면 옆에 ','를 찍으시고 '12'라고 입력하시고 확인버튼!!! 클릭</p>
+<p>7. 그러고 나서 일반탭의 '적용(A)'을 누르시면 '모든 변경내용이 저장되지만, SQL SERVER 서비스를 중지</p>
+<p>했다가 다시 시작하기 전까지는 영향을 끼치지 않습니다.' 라는 확인창이 나옵니다.</p>
+<p>말인 즉슨!!!!!! SQL Server를 리스타트 하라는 것입니다. ^^;</p>
+<p>8. SQL Server를 중지했다가 다시 시작하시면 추가한 '12'번 포트가 적용되게 됩니다.</p>
+<p>참고로... 이 Tip의 위험성이나 안정성은 여러방면으로 테스트를 해보지 못했기에 보장할 수 없습니다. ^^</p>
+<p>다른 여타의 MS-SQL커뮤니티 사이트나 Microsoft에 문의를 해봐야 할것으로 예상됩니다.</p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60020476366" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2005/051129-60020017607/"><span>이전 글</span>[델파이] 델파이 단축키 정리 </a><a class="newer" href="/blog/posts/2005/051221-60020477333/"><span>다음 글</span>[델파이]프린터 직접제어 커맨드 보내기</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>

