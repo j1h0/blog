@@ -7,7 +7,7 @@
         : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', t);
     })();
-  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.CoPArwrU.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2005-12-22T01:33:00.000Z" data-pagefind-meta="date:2005-12-22">2005.12.22.</time></p><h1>[펌] 하드디스크 로우포맷하는 방법</h1></header><div class="prose"><hr>
+  </script><link rel="stylesheet" href="/blog/_astro/BaseLayout.C5hmuxU3.css"></head><body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="site-header"><div class="wrap header-row"><a class="brand" href="/blog/">심플하고 여유있는 삶</a><nav aria-label="주 메뉴"><a href="/blog/" aria-current="page">글</a><a href="/blog/category/">카테고리</a><a href="/blog/archive/">보관함</a><a href="/blog/search/">검색</a></nav><button id="theme-toggle" type="button" aria-label="화면 색 바꾸기" title="화면 색 바꾸기"><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></div></header><main id="main" class="wrap"><article class="post" data-pagefind-body><header class="post-head"><p class="meta"><a href="/blog/category/%5B%EC%A2%85%EB%A3%8C%5D%EA%B0%9C%EB%B0%9C%20%ED%8C%81%20%EC%A0%95%EB%A6%AC/" data-pagefind-filter="category">[종료]개발 팁 정리</a>· <time datetime="2005-12-22T01:33:00.000Z" data-pagefind-meta="date:2005-12-22">2005.12.22.</time></p><h1>[펌] 하드디스크 로우포맷하는 방법</h1></header><div class="prose"><hr>
 <p>하드디스크의 로우포맷</p>
 <hr>
 <p>포맷에는 하이포맷(일반포맷)과 로우포맷이 있는데 하이포맷은 하드디스크에 주소를 처음부터 끝까지 지정해 주는 것이고 로우포맷은 하드디스크를 공장에서 처음 판매될 때처럼 완전 초기화하는 것입니다.<br>
@@ -53,7 +53,16 @@ D를 누릅니다.<br>
 <p>하드의 자료를 잃게 된다는 경고 메시지가 나오는데 Y를 입력하고 ENTER를 누릅니다.</p>
 <p>포맷 진행 과정을 보여주면서 포맷을 진행합니다. 만약 하드에 배드 섹터가 있다면 Bad Track List 난에 나타나게 됩니다.</p>
 <p>하드에 문제가 없이 로우포맷이 완료되었다면 이와 같은 화면이 나옵니다.</p>
-<p>종료 후에 재부팅하고 FDISK, FORMAT를 실행하면 됩니다.</p></div></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2005/051221-60020477333/"><span>이전 글</span>[델파이]프린터 직접제어 커맨드 보내기</a><a class="newer" href="/blog/posts/2006/060108-60020880860/"><span>다음 글</span>[펌] cmd 네트웍 관련 명령어</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a></span></div></footer><script>
+<p>종료 후에 재부팅하고 FDISK, FORMAT를 실행하면 됩니다.</p></div></article><nav class="post-nav" aria-label="이전 글과 다음 글" data-pagefind-ignore><a class="older" href="/blog/posts/2005/051221-60020477333/"><span>이전 글</span>[델파이]프린터 직접제어 커맨드 보내기</a><a class="newer" href="/blog/posts/2006/060108-60020880860/"><span>다음 글</span>[펌] cmd 네트웍 관련 명령어</a></nav></main><footer class="site-footer"><div class="wrap footer-row"><span>심플하고 여유있는 삶</span><span class="links"><a href="/blog/rss.xml">RSS</a><span id="visit-total" hidden></span></span><script>
+          // 사이트 전체 누적 방문 수(GoatCounter). 못 읽으면 아무것도 표시하지 않는다.
+          fetch('https://dfslab.goatcounter.com/counter/TOTAL.json')
+            .then((r) => (r.ok ? r.json() : null))
+            .then((d) => {
+              const el = document.getElementById('visit-total');
+              if (d && d.count && el) { el.textContent = '방문 ' + d.count; el.hidden = false; }
+            })
+            .catch(() => {});
+        </script></div></footer><script>
     document.getElementById('theme-toggle').addEventListener('click', function () {
       var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', cur);
